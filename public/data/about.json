@@ -1,124 +1,117 @@
 {
   "personal": {
-    "name": "Sudhi",
-    "fullName": "Sudhi Kumar",
-    "role": "Full Stack Developer",
-    "tagline": "Crafting Digital Experiences",
-    "location": "India",
-    "email": "sudhi@portfolio.dev",
-    "phone": "+91 9876543210",
-    "website": "https://sudhi.dev",
-    "avatar": "/images/avatar.png",
+    "name": "Sudhir",
+    "fullName": "Sudhir Kumar",
+    "role": "Senior Full Stack Developer",
+    "tagline": "Building Scalable Solutions for the Next Billion Users",
+    "location": "Bengaluru, India",
+    "email": "sudhir.kumar@devmail.in",
+    "phone": "+91 91234 56789",
+    "website": "https://sudhirkumar.dev",
+    "avatar": "/images/sudhir-profile.png",
     "initials": "SK",
-    "status": "Available for Work",
+    "status": "Open for New Challenges",
     "statusColor": "#00FF88"
   },
   "bio": {
-    "short": "Passionate developer crafting digital experiences with modern web technologies.",
-    "long": "I'm a Full Stack Developer with 3+ years of experience building scalable web applications. I specialize in React, Node.js, and cloud technologies. I love creating intuitive user interfaces and robust backend systems. When I'm not coding, you'll find me exploring new technologies, contributing to open source, or enjoying a good cup of coffee.",
-    "mission": "Building the future, one line of code at a time."
+    "short": "Full Stack Engineer passionate about MERN stack and Cloud Native applications.",
+    "long": "I'm Sudhir, a Senior Full Stack Developer based in the tech heart of India, Bengaluru. With over 4 years of experience, I've navigated from fast-paced startups to large-scale enterprise environments. I specialize in building high-throughput APIs and responsive UIs. I'm a firm believer in clean code, automated testing, and the magic of a late-night coding session fueled by filter coffee.",
+    "mission": "Engineering excellence through simplicity and innovation."
   },
   "stats": {
-    "projects": "20+",
-    "experience": "3+ Years",
+    "projects": "30+",
+    "experience": "4+ Years",
     "coffee": "∞",
-    "commits": "2000+",
-    "clients": "15+",
-    "technologies": "25+"
+    "commits": "4500+",
+    "clients": "22+",
+    "technologies": "28+"
   },
   "social": {
     "github": {
-      "url": "https://github.com/sudhi",
-      "username": "sudhi",
+      "url": "https://github.com/sudhir-codes",
+      "username": "sudhir-codes",
       "icon": "github"
     },
     "linkedin": {
-      "url": "https://linkedin.com/in/sudhi",
-      "username": "sudhi",
+      "url": "https://linkedin.com/in/sudhir-kumar-dev",
+      "username": "sudhirkumar",
       "icon": "linkedin"
     },
     "twitter": {
-      "url": "https://twitter.com/sudhi",
-      "username": "@sudhi",
+      "url": "https://twitter.com/sudhir_tech",
+      "username": "@sudhir_tech",
       "icon": "twitter"
-    },
-    "instagram": {
-      "url": "https://instagram.com/sudhi",
-      "username": "sudhi",
-      "icon": "instagram"
     }
   },
   "resume": {
-    "url": "/resume.pdf",
-    "filename": "Sudhi_Resume.pdf"
+    "url": "/assets/Sudhir_Kumar_FullStack_Resume.pdf",
+    "filename": "Sudhir_Kumar_Resume.pdf"
   },
   "skills": {
     "languages": [
       { "name": "JavaScript", "level": 95, "icon": "js" },
-      { "name": "TypeScript", "level": 90, "icon": "ts" },
-      { "name": "Python", "level": 80, "icon": "python" },
-      { "name": "Rust", "level": 50, "icon": "rust" },
-      { "name": "Go", "level": 45, "icon": "go" }
+      { "name": "TypeScript", "level": 92, "icon": "ts" },
+      { "name": "Python", "level": 75, "icon": "python" },
+      { "name": "Java", "level": 70, "icon": "java" }
     ],
     "frameworks": [
       { "name": "React", "level": 95, "icon": "react" },
-      { "name": "Next.js", "level": 88, "icon": "nextjs" },
-      { "name": "Node.js", "level": 85, "icon": "nodejs" },
-      { "name": "Express", "level": 80, "icon": "express" },
-      { "name": "Vue.js", "level": 70, "icon": "vue" }
+      { "name": "Next.js", "level": 90, "icon": "nextjs" },
+      { "name": "Node.js", "level": 88, "icon": "nodejs" },
+      { "name": "Express", "level": 85, "icon": "express" },
+      { "name": "Tailwind CSS", "level": 95, "icon": "tailwind" }
     ],
     "tools": [
       { "name": "Git", "level": 95, "icon": "git" },
-      { "name": "Docker", "level": 75, "icon": "docker" },
-      { "name": "AWS", "level": 60, "icon": "aws" },
-      { "name": "Linux", "level": 88, "icon": "linux" },
-      { "name": "VS Code", "level": 95, "icon": "vscode" }
+      { "name": "Docker", "level": 82, "icon": "docker" },
+      { "name": "AWS", "level": 75, "icon": "aws" },
+      { "name": "Kubernetes", "level": 60, "icon": "k8s" },
+      { "name": "Linux", "level": 90, "icon": "linux" }
     ],
     "databases": [
-      { "name": "MongoDB", "level": 88, "icon": "mongodb" },
-      { "name": "PostgreSQL", "level": 80, "icon": "postgresql" },
-      { "name": "Redis", "level": 55, "icon": "redis" },
-      { "name": "MySQL", "level": 75, "icon": "mysql" }
+      { "name": "MongoDB", "level": 92, "icon": "mongodb" },
+      { "name": "PostgreSQL", "level": 85, "icon": "postgresql" },
+      { "name": "Redis", "level": 78, "icon": "redis" }
     ]
   },
   "experience": [
     {
-      "company": "Tech Startup XYZ",
+      "company": "Fast-Growth Fintech Startup",
       "role": "Senior Full Stack Developer",
       "duration": "2022 - Present",
-      "description": "Leading development of microservices architecture and mentoring junior developers."
+      "description": "Architected a real-time payment dashboard handling 1M+ monthly transactions. Reduced API latency by 35% using Redis caching."
     },
     {
-      "company": "Digital Agency ABC",
-      "role": "Full Stack Developer",
+      "company": "Global IT Solutions (MNC)",
+      "role": "Software Engineer",
       "duration": "2020 - 2022",
-      "description": "Built 15+ client projects using React, Node.js, and cloud services."
+      "description": "Developed and maintained legacy migration tools for Fortune 500 clients using React and Node.js."
     },
     {
-      "company": "Freelance",
-      "role": "Web Developer",
+      "company": "Tech Solutions India",
+      "role": "Junior Developer",
       "duration": "2019 - 2020",
-      "description": "Developed custom websites and web applications for various clients."
+      "description": "Focused on frontend development and UI/UX implementation for various e-commerce platforms."
     }
   ],
   "education": [
     {
-      "institution": "University of Technology",
-      "degree": "B.Tech in Computer Science",
+      "institution": "Visvesvaraya Technological University (VTU)",
+      "degree": "B.E. in Computer Science & Engineering",
       "year": "2019",
-      "grade": "First Class with Distinction"
+      "grade": "8.8 CGPA"
     }
   ],
   "certifications": [
-    "AWS Certified Developer Associate",
-    "MongoDB Certified Developer",
-    "Google Cloud Professional"
+    "AWS Certified Solutions Architect",
+    "Meta Front-End Developer Professional Certificate",
+    "MongoDB Associate Developer"
   ],
   "interests": [
-    "Open Source",
-    "AI/ML",
-    "Cybersecurity",
-    "Gaming",
-    "Music Production"
+    "Open Source Contributions",
+    "Cricket",
+    "System Design",
+    "Travel Photography",
+    "Building Micro-SaaS"
   ]
 }
