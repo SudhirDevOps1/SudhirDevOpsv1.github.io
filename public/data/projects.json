@@ -1,0 +1,92 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "name": "SudhiOS Portfolio",
+      "description": "A virtual desktop OS-themed developer portfolio built with React. Features include window management, terminal emulator, matrix rain effects, and multiple themes.",
+      "techStack": ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Canvas API"],
+      "liveUrl": "https://sudhi.dev",
+      "repoUrl": "https://github.com/sudhi/sudhios",
+      "image": "/images/project1.png",
+      "featured": true,
+      "category": "Web Application"
+    },
+    {
+      "id": 2,
+      "name": "DevConnect Platform",
+      "description": "A real-time developer collaboration and code sharing platform with live coding sessions, video calls, and integrated code review tools.",
+      "techStack": ["Next.js", "Socket.io", "MongoDB", "Redis", "Docker", "WebRTC"],
+      "liveUrl": "https://devconnect.io",
+      "repoUrl": "https://github.com/sudhi/devconnect",
+      "image": "/images/project2.png",
+      "featured": true,
+      "category": "Collaboration Tool"
+    },
+    {
+      "id": 3,
+      "name": "CryptoTracker Pro",
+      "description": "Live cryptocurrency portfolio tracker with real-time price alerts, interactive charts, portfolio analytics, and market sentiment analysis.",
+      "techStack": ["React", "Node.js", "CoinGecko API", "Chart.js", "PostgreSQL", "Redis"],
+      "liveUrl": "https://cryptotracker.pro",
+      "repoUrl": "https://github.com/sudhi/cryptotracker",
+      "image": "/images/project3.png",
+      "featured": false,
+      "category": "Finance"
+    },
+    {
+      "id": 4,
+      "name": "AI Code Reviewer",
+      "description": "Automated PR code review tool powered by GPT-4 and GitHub Actions. Provides intelligent code suggestions, security vulnerability detection, and best practice recommendations.",
+      "techStack": ["Python", "OpenAI API", "GitHub Actions", "FastAPI", "Docker"],
+      "liveUrl": "https://ai-reviewer.dev",
+      "repoUrl": "https://github.com/sudhi/ai-code-reviewer",
+      "image": "/images/project4.png",
+      "featured": true,
+      "category": "Developer Tools"
+    },
+    {
+      "id": 5,
+      "name": "E-Commerce Engine",
+      "description": "Scalable full-stack e-commerce platform with payment integration, inventory management, order tracking, and admin dashboard.",
+      "techStack": ["Next.js", "Stripe", "PostgreSQL", "Prisma", "AWS S3", "Redis"],
+      "liveUrl": "https://shopengine.io",
+      "repoUrl": "https://github.com/sudhi/ecommerce-engine",
+      "image": "/images/project5.png",
+      "featured": false,
+      "category": "E-Commerce"
+    },
+    {
+      "id": 6,
+      "name": "Terminal Blog",
+      "description": "A developer blog with terminal-style UI and markdown support. Features syntax highlighting, RSS feed, and SEO optimization.",
+      "techStack": ["Astro", "TypeScript", "MDX", "Tailwind CSS", "Vercel"],
+      "liveUrl": "https://terminalblog.dev",
+      "repoUrl": "https://github.com/sudhi/terminal-blog",
+      "image": "/images/project6.png",
+      "featured": false,
+      "category": "Blog"
+    },
+    {
+      "id": 7,
+      "name": "TaskFlow Manager",
+      "description": "A Kanban-style project management tool with drag-and-drop interface, team collaboration, time tracking, and reporting.",
+      "techStack": ["React", "Node.js", "MongoDB", "Socket.io", "AWS"],
+      "liveUrl": "https://taskflow.app",
+      "repoUrl": "https://github.com/sudhi/taskflow",
+      "image": "/images/project7.png",
+      "featured": false,
+      "category": "Productivity"
+    },
+    {
+      "id": 8,
+      "name": "Weather Dashboard",
+      "description": "Beautiful weather dashboard with 7-day forecasts, interactive maps, severe weather alerts, and location-based notifications.",
+      "techStack": ["Vue.js", "OpenWeather API", "Mapbox", "PWA", "IndexedDB"],
+      "liveUrl": "https://weatherdash.io",
+      "repoUrl": "https://github.com/sudhi/weather-dashboard",
+      "image": "/images/project8.png",
+      "featured": false,
+      "category": "Utility"
+    }
+  ]
+}

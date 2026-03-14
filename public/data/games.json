@@ -1,0 +1,31 @@
+{
+  "snake": {
+    "highScores": [
+      { "score": 450, "date": "2024-03-10", "player": "SUDHI" },
+      { "score": 380, "date": "2024-03-09", "player": "GUEST" },
+      { "score": 320, "date": "2024-03-08", "player": "PLAYER1" }
+    ],
+    "settings": {
+      "speed": "medium",
+      "gridSize": 20,
+      "startLength": 3
+    }
+  },
+  "minesweeper": {
+    "difficulties": [
+      { "name": "Beginner", "rows": 9, "cols": 9, "mines": 10 },
+      { "name": "Intermediate", "rows": 16, "cols": 16, "mines": 40 },
+      { "name": "Expert", "rows": 16, "cols": 30, "mines": 99 }
+    ],
+    "highScores": [
+      { "time": 45, "difficulty": "Beginner", "date": "2024-03-12" },
+      { "time": 120, "difficulty": "Intermediate", "date": "2024-03-11" }
+    ]
+  },
+  "tetris": {
+    "highScores": [
+      { "score": 15000, "level": 12, "date": "2024-03-13", "player": "SUDHI" },
+      { "score": 12000, "level": 10, "date": "2024-03-12", "player": "GUEST" }
+    ]
+  }
+}

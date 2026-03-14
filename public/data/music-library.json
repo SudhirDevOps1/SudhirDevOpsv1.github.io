@@ -1,0 +1,51 @@
+{
+  "playlists": [
+    {
+      "id": "1",
+      "name": "Coding Focus",
+      "tracks": [
+        {
+          "id": "t1",
+          "title": "Cyberpunk Dreams",
+          "artist": "Synthwave",
+          "duration": "3:45",
+          "album": "Digital Future"
+        },
+        {
+          "id": "t2",
+          "title": "Terminal Beats",
+          "artist": "Code Music",
+          "duration": "4:20",
+          "album": "Developer Life"
+        },
+        {
+          "id": "t3",
+          "title": "Matrix Flow",
+          "artist": "Electronic Mind",
+          "duration": "5:15",
+          "album": "Virtual Reality"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Retro Vibes",
+      "tracks": [
+        {
+          "id": "t4",
+          "title": "80s Nostalgia",
+          "artist": "Retrowave",
+          "duration": "3:30",
+          "album": "Time Machine"
+        },
+        {
+          "id": "t5",
+          "title": "Neon Nights",
+          "artist": "Outrun",
+          "duration": "4:10",
+          "album": "City Lights"
+        }
+      ]
+    }
+  ]
+}

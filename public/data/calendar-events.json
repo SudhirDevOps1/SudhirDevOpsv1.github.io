@@ -1,0 +1,58 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "title": "Team Meeting",
+      "date": "2024-03-15",
+      "time": "10:00",
+      "duration": 60,
+      "type": "meeting",
+      "description": "Weekly team sync",
+      "color": "#00FF88"
+    },
+    {
+      "id": "2",
+      "title": "Code Review",
+      "date": "2024-03-15",
+      "time": "14:00",
+      "duration": 30,
+      "type": "work",
+      "description": "Review PR #123",
+      "color": "#00BFFF"
+    },
+    {
+      "id": "3",
+      "title": "Project Deadline",
+      "date": "2024-03-20",
+      "time": "23:59",
+      "duration": 0,
+      "type": "deadline",
+      "description": "Submit final deliverables",
+      "color": "#FF0088"
+    },
+    {
+      "id": "4",
+      "title": "Tech Conference",
+      "date": "2024-03-25",
+      "time": "09:00",
+      "duration": 480,
+      "type": "event",
+      "description": "Annual Developer Conference",
+      "color": "#FFB300"
+    }
+  ],
+  "reminders": [
+    {
+      "id": "r1",
+      "title": "Update portfolio",
+      "date": "2024-03-16",
+      "priority": "high"
+    },
+    {
+      "id": "r2",
+      "title": "Backup code",
+      "date": "2024-03-17",
+      "priority": "medium"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "inbox": [
+    {
+      "id": "1",
+      "from": "recruiter@techcorp.com",
+      "subject": "Job Opportunity - Senior Full Stack Developer",
+      "preview": "We came across your portfolio and would love to discuss...",
+      "date": "2024-03-14T10:30:00",
+      "read": false,
+      "starred": true,
+      "body": "Hi Sudhi,\n\nWe came across your impressive portfolio and would love to discuss a Senior Full Stack Developer position at our company.\n\nBest regards,\nTech Corp Recruiting Team"
+    },
+    {
+      "id": "2",
+      "from": "github@notifications.com",
+      "subject": "New star on your repository",
+      "preview": "Someone starred your SudhiOS project...",
+      "date": "2024-03-14T09:15:00",
+      "read": false,
+      "starred": false,
+      "body": "Your repository 'SudhiOS' received a new star!\n\nCheck it out on GitHub."
+    },
+    {
+      "id": "3",
+      "from": "newsletter@dev.to",
+      "subject": "Weekly Dev Digest",
+      "preview": "This week's top articles in web development...",
+      "date": "2024-03-13T08:00:00",
+      "read": true,
+      "starred": false,
+      "body": "Here are this week's top articles:\n1. React 19 New Features\n2. TypeScript Best Practices\n3. Web Performance Optimization"
+    }
+  ],
+  "sent": [
+    {
+      "id": "s1",
+      "to": "client@company.com",
+      "subject": "Project Update - Week 12",
+      "date": "2024-03-13T16:00:00",
+      "body": "Dear Client,\n\nHere's the weekly update on your project...\n\nBest regards,\nSudhi"
+    }
+  ],
+  "drafts": []
+}

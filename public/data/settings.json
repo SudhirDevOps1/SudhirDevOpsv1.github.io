@@ -1,0 +1,53 @@
+{
+  "os": {
+    "name": "SUDHI OS",
+    "version": "2.0",
+    "buildDate": "2025",
+    "author": "Sudhi"
+  },
+  "defaultTheme": "green",
+  "matrixRainEnabled": true,
+  "autoSleepTimeout": 60000,
+  "showBootSequence": true,
+  "bootDuration": 4000,
+  "sounds": {
+    "enabled": false,
+    "startup": "/sounds/startup.mp3",
+    "shutdown": "/sounds/shutdown.mp3",
+    "notification": "/sounds/notification.mp3"
+  },
+  "features": {
+    "matrixRain": true,
+    "crtScanlines": true,
+    "backgroundGrid": true,
+    "neonGlow": true,
+    "bootSequence": true,
+    "desktopIcons": true,
+    "windowAnimations": true,
+    "toastNotifications": true,
+    "visitorCounter": true
+  },
+  "window": {
+    "minWidth": 320,
+    "minHeight": 240,
+    "defaultAnimation": "spring",
+    "snapToEdges": true,
+    "snapThreshold": 20
+  },
+  "terminal": {
+    "prompt": "sudhi@portfolio",
+    "fontSize": 13,
+    "cursorBlink": true,
+    "historyLimit": 50,
+    "welcomeMessage": "Type 'help' for available commands."
+  },
+  "taskbar": {
+    "height": 48,
+    "showClock": true,
+    "showDate": true,
+    "showBattery": true,
+    "showWifi": true,
+    "showVisitorCount": true,
+    "clockFormat": "24h"
+  }
+}

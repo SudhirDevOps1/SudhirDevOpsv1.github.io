@@ -1,0 +1,191 @@
+{
+  "config": {
+    "prompt": "sudhi@portfolio",
+    "hostname": "portfolio",
+    "username": "sudhi",
+    "shell": "TERMINAL.cmd",
+    "version": "2.0",
+    "welcomeMessage": "Type 'help' for available commands."
+  },
+  "systemInfo": {
+    "os": "SUDHI OS",
+    "osVersion": "v2.0",
+    "kernel": "React 18.x",
+    "host": "Portfolio Machine",
+    "packages": "12 modules",
+    "terminal": "Share Tech Mono",
+    "cpu": "Imagination × ∞",
+    "gpu": "Matrix Rain Engine",
+    "memory": "4096MB"
+  },
+  "customCommands": [
+    {
+      "command": "hello",
+      "description": "Say hello to the user",
+      "output": "👋 Hello! Welcome to SUDHI OS. Hope you're having a great day!",
+      "type": "simple"
+    },
+    {
+      "command": "fortune",
+      "description": "Get a random fortune",
+      "type": "random",
+      "outputs": [
+        "🔮 The code you write today will confuse you tomorrow.",
+        "🔮 A bug fixed is a feature earned.",
+        "🔮 Great developers don't write perfect code, they write maintainable code.",
+        "🔮 Your next project will be your best one yet.",
+        "🔮 Coffee is the fuel that powers the coding engine.",
+        "🔮 The best time to refactor was yesterday. The next best time is now.",
+        "🔮 Documentation is a love letter to your future self."
+      ]
+    },
+    {
+      "command": "joke",
+      "description": "Tell a programming joke",
+      "type": "random",
+      "outputs": [
+        "Why do programmers prefer dark mode? Because light attracts bugs! 🐛",
+        "A SQL query walks into a bar, walks up to two tables and asks... 'Can I join you?' 🍺",
+        "Why do Java developers wear glasses? Because they can't C# 👓",
+        "There are only 10 types of people in the world: those who understand binary and those who don't.",
+        "!false - It's funny because it's true. 😄",
+        "A programmer's wife tells him: 'Go to the store and get a loaf of bread. If they have eggs, get a dozen.' He comes home with 12 loaves of bread.",
+        "Why did the developer go broke? Because he used up all his cache! 💸"
+      ]
+    },
+    {
+      "command": "quote",
+      "description": "Get a programming quote",
+      "type": "random",
+      "outputs": [
+        "\"First, solve the problem. Then, write the code.\" - John Johnson",
+        "\"Code is like humor. When you have to explain it, it's bad.\" - Cory House",
+        "\"Simplicity is the soul of efficiency.\" - Austin Freeman",
+        "\"Make it work, make it right, make it fast.\" - Kent Beck",
+        "\"Any fool can write code that a computer can understand. Good programmers write code that humans can understand.\" - Martin Fowler",
+        "\"The only way to go fast is to go well.\" - Robert C. Martin",
+        "\"Programming isn't about what you know; it's about what you can figure out.\" - Chris Pine"
+      ]
+    },
+    {
+      "command": "ascii",
+      "description": "Display ASCII art",
+      "type": "simple",
+      "output": "    _____ _    _ _____  _    _ _____ \n   / ____| |  | |  __ \\| |  | |_   _|\n  | (___ | |  | | |  | | |__| | | |  \n   \\___ \\| |  | | |  | |  __  | | |  \n   ____) | |__| | |__| | |  | |_| |_ \n  |_____/ \\____/|_____/|_|  |_|_____|"
+    },
+    {
+      "command": "matrix",
+      "description": "Show Matrix quote",
+      "type": "random",
+      "outputs": [
+        "\"There is no spoon.\" 🥄",
+        "\"Follow the white rabbit.\" 🐰",
+        "\"Welcome to the real world.\"",
+        "\"I know kung fu.\" 🥋",
+        "\"Free your mind.\"",
+        "\"The Matrix has you...\"",
+        "\"What is real? How do you define 'real'?\""
+      ]
+    },
+    {
+      "command": "social",
+      "description": "Show all social links",
+      "type": "formatted",
+      "output": "┌─────────────────────────────────────┐\n│         SOCIAL LINKS               │\n├─────────────────────────────────────┤\n│  GitHub:    github.com/sudhi       │\n│  LinkedIn:  linkedin.com/in/sudhi  │\n│  Twitter:   twitter.com/sudhi      │\n│  Website:   sudhi.dev              │\n└─────────────────────────────────────┘"
+    },
+    {
+      "command": "hire",
+      "description": "Hiring information",
+      "type": "simple",
+      "output": "💼 HIRE ME!\n\n✓ Available for freelance projects\n✓ Open to full-time opportunities\n✓ Remote-friendly\n\n📧 Contact: sudhi@portfolio.dev\n🌐 Portfolio: sudhi.dev\n\nLet's build something amazing together!"
+    },
+    {
+      "command": "stack",
+      "description": "Show tech stack",
+      "type": "simple",
+      "output": "🛠️ MY TECH STACK\n\n▸ Frontend: React, Next.js, Vue, Tailwind CSS\n▸ Backend: Node.js, Express, Python, FastAPI\n▸ Database: MongoDB, PostgreSQL, Redis\n▸ Cloud: AWS, Vercel, Docker\n▸ Tools: Git, VS Code, Figma"
+    },
+    {
+      "command": "secret",
+      "description": "???",
+      "type": "simple",
+      "output": "🤫 Shh... You found a secret command!\n\n   ⭐ Thanks for exploring! ⭐\n\n   Use 'konami' for another surprise!"
+    },
+    {
+      "command": "ping",
+      "description": "Ping the server",
+      "type": "simple",
+      "output": "PING sudhi.dev (127.0.0.1): 56 bytes\n64 bytes from 127.0.0.1: icmp_seq=0 ttl=64 time=0.042 ms\n64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.038 ms\n64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.041 ms\n\n--- sudhi.dev ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss"
+    },
+    {
+      "command": "cowsay",
+      "description": "Make a cow say something",
+      "type": "simple",
+      "output": " _______________\n< Hello World! >\n ---------------\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||"
+    },
+    {
+      "command": "weather",
+      "description": "Show current weather",
+      "type": "simple",
+      "output": "☀️ Current Weather in India\n\n   Temperature: 28°C (82°F)\n   Condition: Partly Cloudy\n   Humidity: 65%\n   Wind: 12 km/h NE\n\n   (Simulated data)"
+    },
+    {
+      "command": "motivate",
+      "description": "Get motivated",
+      "type": "random",
+      "outputs": [
+        "💪 Keep pushing! Every line of code brings you closer to your goal.",
+        "🚀 You're doing great! Don't give up now.",
+        "⭐ Believe in yourself. You've got this!",
+        "🔥 Stay hungry, stay foolish. Keep learning!",
+        "💡 Every expert was once a beginner. Keep going!",
+        "🎯 Focus on progress, not perfection.",
+        "🌟 Your potential is unlimited. Unlock it!"
+      ]
+    }
+  ],
+  "aliases": {
+    "cls": "clear",
+    "h": "help",
+    "q": "exit",
+    "ll": "ls",
+    "cat": "echo",
+    "vi": "echo 'Vim is not installed. Use VS Code instead! 😄'",
+    "nano": "echo 'Nano is not installed. Use VS Code instead! 😄'",
+    "sudo": "echo 'Permission granted. You are the admin! 👑'",
+    "rm": "echo '⚠️ Careful! This is a read-only system.'",
+    "git": "echo 'git: All changes auto-committed to the cloud ☁️'",
+    "npm": "echo 'npm: All packages already installed! ✓'",
+    "node": "echo 'Node.js v18.x running...'",
+    "python": "echo 'Python 3.11 ready!'",
+    "exit": "echo 'There is no escape from SUDHI OS! 😈'",
+    "logout": "echo 'You cannot logout. You are trapped forever! 🔒'"
+  },
+  "bootMessages": [
+    { "prefix": "[BIOS]", "message": "POST check complete... OK", "delay": 300 },
+    { "prefix": "[KERNEL]", "message": "Initializing SUDHI-KERNEL v2.0...", "delay": 300 },
+    { "prefix": "[MEM]", "message": "Allocating 8192MB RAM... OK", "delay": 300 },
+    { "prefix": "[FS]", "message": "Mounting /portfolio... OK", "delay": 300 },
+    { "prefix": "[GPU]", "message": "Loading Matrix Rain Engine... OK", "delay": 300 },
+    { "prefix": "[NET]", "message": "Connecting to the grid... OK", "delay": 300 },
+    { "prefix": "[SYS]", "message": "Spawning portfolio modules...", "delay": 300 },
+    { "prefix": "[OK]", "message": "ABOUT.exe loaded", "delay": 200 },
+    { "prefix": "[OK]", "message": "SKILLS.sh loaded", "delay": 200 },
+    { "prefix": "[OK]", "message": "PROJECTS/ loaded", "delay": 200 },
+    { "prefix": "[OK]", "message": "TERMINAL.cmd loaded", "delay": 200 },
+    { "prefix": "[OK]", "message": "CONTACT.mail loaded", "delay": 200 },
+    { "prefix": "[READY]", "message": "Welcome, Sudhi. The system is yours.", "delay": 500 }
+  ],
+  "asciiLogo": [
+    "██████████████████████████████████████████████████",
+    "█                                                █",
+    "█     ███████╗██╗   ██╗██████╗ ██╗  ██╗██╗      █",
+    "█     ██╔════╝██║   ██║██╔══██╗██║  ██║██║      █",
+    "█     ███████╗██║   ██║██║  ██║███████║██║      █",
+    "█     ╚════██║██║   ██║██║  ██║██╔══██║██║      █",
+    "█     ███████║╚██████╔╝██████╔╝██║  ██║██║      █",
+    "█     ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝      █",
+    "█                    OS v2.0                     █",
+    "██████████████████████████████████████████████████"
+  ]
+}

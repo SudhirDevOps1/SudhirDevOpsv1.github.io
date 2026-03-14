@@ -1,0 +1,75 @@
+{
+  "templates": [
+    {
+      "id": "1",
+      "name": "Blank Canvas",
+      "width": 800,
+      "height": 600,
+      "background": "#FFFFFF"
+    },
+    {
+      "id": "2",
+      "name": "Desktop Wallpaper",
+      "width": 1920,
+      "height": 1080,
+      "background": "#000000"
+    },
+    {
+      "id": "3",
+      "name": "Square Icon",
+      "width": 512,
+      "height": 512,
+      "background": "#FFFFFF"
+    }
+  ],
+  "tools": [
+    {
+      "id": "pencil",
+      "name": "Pencil",
+      "icon": "pencil",
+      "cursor": "crosshair"
+    },
+    {
+      "id": "brush",
+      "name": "Brush",
+      "icon": "paintbrush",
+      "cursor": "crosshair"
+    },
+    {
+      "id": "eraser",
+      "name": "Eraser",
+      "icon": "eraser",
+      "cursor": "crosshair"
+    },
+    {
+      "id": "fill",
+      "name": "Fill",
+      "icon": "paint-bucket",
+      "cursor": "pointer"
+    },
+    {
+      "id": "line",
+      "name": "Line",
+      "icon": "minus",
+      "cursor": "crosshair"
+    },
+    {
+      "id": "rectangle",
+      "name": "Rectangle",
+      "icon": "square",
+      "cursor": "crosshair"
+    },
+    {
+      "id": "circle",
+      "name": "Circle",
+      "icon": "circle",
+      "cursor": "crosshair"
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "icon": "type",
+      "cursor": "text"
+    }
+  ]
+}

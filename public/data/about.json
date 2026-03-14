@@ -1,0 +1,124 @@
+{
+  "personal": {
+    "name": "Sudhi",
+    "fullName": "Sudhi Kumar",
+    "role": "Full Stack Developer",
+    "tagline": "Crafting Digital Experiences",
+    "location": "India",
+    "email": "sudhi@portfolio.dev",
+    "phone": "+91 9876543210",
+    "website": "https://sudhi.dev",
+    "avatar": "/images/avatar.png",
+    "initials": "SK",
+    "status": "Available for Work",
+    "statusColor": "#00FF88"
+  },
+  "bio": {
+    "short": "Passionate developer crafting digital experiences with modern web technologies.",
+    "long": "I'm a Full Stack Developer with 3+ years of experience building scalable web applications. I specialize in React, Node.js, and cloud technologies. I love creating intuitive user interfaces and robust backend systems. When I'm not coding, you'll find me exploring new technologies, contributing to open source, or enjoying a good cup of coffee.",
+    "mission": "Building the future, one line of code at a time."
+  },
+  "stats": {
+    "projects": "20+",
+    "experience": "3+ Years",
+    "coffee": "∞",
+    "commits": "2000+",
+    "clients": "15+",
+    "technologies": "25+"
+  },
+  "social": {
+    "github": {
+      "url": "https://github.com/sudhi",
+      "username": "sudhi",
+      "icon": "github"
+    },
+    "linkedin": {
+      "url": "https://linkedin.com/in/sudhi",
+      "username": "sudhi",
+      "icon": "linkedin"
+    },
+    "twitter": {
+      "url": "https://twitter.com/sudhi",
+      "username": "@sudhi",
+      "icon": "twitter"
+    },
+    "instagram": {
+      "url": "https://instagram.com/sudhi",
+      "username": "sudhi",
+      "icon": "instagram"
+    }
+  },
+  "resume": {
+    "url": "/resume.pdf",
+    "filename": "Sudhi_Resume.pdf"
+  },
+  "skills": {
+    "languages": [
+      { "name": "JavaScript", "level": 95, "icon": "js" },
+      { "name": "TypeScript", "level": 90, "icon": "ts" },
+      { "name": "Python", "level": 80, "icon": "python" },
+      { "name": "Rust", "level": 50, "icon": "rust" },
+      { "name": "Go", "level": 45, "icon": "go" }
+    ],
+    "frameworks": [
+      { "name": "React", "level": 95, "icon": "react" },
+      { "name": "Next.js", "level": 88, "icon": "nextjs" },
+      { "name": "Node.js", "level": 85, "icon": "nodejs" },
+      { "name": "Express", "level": 80, "icon": "express" },
+      { "name": "Vue.js", "level": 70, "icon": "vue" }
+    ],
+    "tools": [
+      { "name": "Git", "level": 95, "icon": "git" },
+      { "name": "Docker", "level": 75, "icon": "docker" },
+      { "name": "AWS", "level": 60, "icon": "aws" },
+      { "name": "Linux", "level": 88, "icon": "linux" },
+      { "name": "VS Code", "level": 95, "icon": "vscode" }
+    ],
+    "databases": [
+      { "name": "MongoDB", "level": 88, "icon": "mongodb" },
+      { "name": "PostgreSQL", "level": 80, "icon": "postgresql" },
+      { "name": "Redis", "level": 55, "icon": "redis" },
+      { "name": "MySQL", "level": 75, "icon": "mysql" }
+    ]
+  },
+  "experience": [
+    {
+      "company": "Tech Startup XYZ",
+      "role": "Senior Full Stack Developer",
+      "duration": "2022 - Present",
+      "description": "Leading development of microservices architecture and mentoring junior developers."
+    },
+    {
+      "company": "Digital Agency ABC",
+      "role": "Full Stack Developer",
+      "duration": "2020 - 2022",
+      "description": "Built 15+ client projects using React, Node.js, and cloud services."
+    },
+    {
+      "company": "Freelance",
+      "role": "Web Developer",
+      "duration": "2019 - 2020",
+      "description": "Developed custom websites and web applications for various clients."
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Technology",
+      "degree": "B.Tech in Computer Science",
+      "year": "2019",
+      "grade": "First Class with Distinction"
+    }
+  ],
+  "certifications": [
+    "AWS Certified Developer Associate",
+    "MongoDB Certified Developer",
+    "Google Cloud Professional"
+  ],
+  "interests": [
+    "Open Source",
+    "AI/ML",
+    "Cybersecurity",
+    "Gaming",
+    "Music Production"
+  ]
+}
