@@ -1,17 +1,17 @@
-# 🖥️ SUDHI OS v3.0 Pro — Virtual Desktop Portfolio
+# 🖥️ SUDHI OS v3.0 Pro — 2026 Virtual Desktop OS Portfolio
 
 <div align="center">
 
 ![Version](https://img.shields.io/badge/version-3.0_Pro-00FF88?style=for-the-badge)
-![React](https://img.shields.io/badge/React-19.x-00BFFF?style=for-the-badge&logo=react)
+![React](https://img.shields.io/badge/React-18.x-00BFFF?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)
 ![GitHub API](https://img.shields.io/badge/GitHub_API-SudhirDevOps1-FFB300?style=for-the-badge&logo=github)
-![Apps](https://img.shields.io/badge/Real_Apps-17+-00FF88?style=for-the-badge)
+![Apps](https://img.shields.io/badge/Real_Apps-23+-00FF88?style=for-the-badge)
 ![Build](https://img.shields.io/badge/build-passing-00FF88?style=for-the-badge)
 
-**The most feature-rich 2026 Web Desktop OS Portfolio for Sudhir Singh (SudhirDevOps1)**
+**The most advanced 2026 Web Desktop OS Portfolio for Sudhir Singh (SudhirDevOps1)**
 
-[Live Demo](https://sudhirdevopsv1.github.io) • [GitHub](https://github.com/SudhirDevOps1)
+[Live Demo](https://sudhirdevopsv1.github.io) • [GitHub Profile](https://github.com/SudhirDevOps1)
 
 </div>
 
@@ -19,91 +19,83 @@
 
 ## 🌟 Overview
 
-SUDHI OS is a **production-ready virtual desktop** that acts as a fully interactive developer portfolio for **Sudhir Singh (`SudhirDevOps1`)** — a BCA student & Full-Stack/DevOps engineer from Bihar, India.
+**SUDHI OS 3.0** is a production-ready, interactive virtual desktop operating system built as a portfolio for **Sudhir Singh (`SudhirDevOps1`)** — a BCA student, DevOps Engineer, and Full-Stack Developer from Bihar, India.
 
-Every feature is **actually functional** — not a mockup.
-
----
-
-## ✨ 2026 Real Applications (17 Total)
-
-| App | What it does |
-|-----|-------------|
-| 🎵 **Music Player** | Real HTML5 audio player with visualizer, waveform bars, shuffle/repeat, local file upload, volume control, playlist |
-| 🎬 **Video Player** | Full HTML5 video player with local file upload, URL streaming, speed control (0.5x–2x), fullscreen, chapter playlist |
-| 📒 **Notepad** | Real multi-tab notepad with auto-save, Find/Replace, download as .txt, font size, word/char/line count |
-| 🖼️ **Photo Gallery** | Grid/Lightbox view, zoom/rotate, local photo upload, thumbnail strip, keyboard navigation, download |
-| 🗺️ **Maps** | OpenStreetMap iframe with search, geolocation (GPS), saved places, 3 map types (road/satellite/terrain) |
-| 📅 **Calendar** | Full monthly calendar with event creation, time picker, color tags, notes, localStorage persistence |
-| 📂 **File Explorer** | VFS with `/public` directory tree, file preview drawer, create/delete files, image thumbnail preview |
-| 🎮 **Games** | 4 real arcade games: Retro Snake, Tic-Tac-Toe AI, Reaction Speed Test, Typing Speed Test |
-| 🌐 **Browser** | iframe browser with address bar, history, back/forward, bookmarks, Bing search fallback |
-| ▶️ **YouTube** | Embedded YouTube player with recommended video sidebar, channel thumbnails |
-| 🎨 **Paint** | Canvas drawing board with pencil, eraser, color palette, fill bucket |
-| >_ **Terminal** | 20+ commands: neofetch, benchmark, architecture, `ai <prompt>`, whoami, skills, history |
-| 👤 **About** | Live GitHub API fetch: profile avatar, followers, repos, bio — for `SudhirDevOps1` |
-| 📁 **Projects** | Live fetch of 87+ public GitHub repos with stars/forks metrics and filterable tabs |
-| ⚡ **Skills** | Animated skill bars with categories (Languages, Frameworks, Tools, Databases) |
-| ✉️ **Contact** | Working contact form |
-| ⚙️ **Settings** | 10+ wallpapers, 4 themes, Matrix rain, font scale, Night Mode |
+Every application is **fully interactive and functional in client memory** with real live public API integrations — zero fake placeholders.
 
 ---
 
-## 🪟 2026 Window Management
+## ✨ 2026 Functional Applications (23 Total)
 
-- 🪟 **Windows 11 Snap Zones & Translucent Preview**: Auto-snap windows to left/right/top.
-- 📌 **Always-On-Top Pinning**: Pin any app window above all others.
-- 🔄 **Alt+Tab Window Switcher**: Glassmorphic overlay window cycling.
-- 🔍 **Ctrl+P Command Palette**: Instant fuzzy app search launcher.
-- 🐙 **Live GitHub API**: Auto-fetches **87+ repos** & profile metrics for `SudhirDevOps1`.
-- ⛅ **Live Desktop Widgets** (top-right corner): Real-time clock, Open-Meteo weather, BTC price, SpaceX countdown — always visible.
-- 🌡️ **4 Free Live API Apps**: Weather (Open-Meteo), Crypto (CoinGecko), Space (SpaceX + ISS + USGS Earthquakes), Countries Explorer + Flag Quiz (REST Countries).
-- 📁 **Public VFS Explorer**: Browse `/public` directory tree with file preview drawer.
-- 🎮 **4 Real Arcade Games**: Retro Snake, Tic-Tac-Toe AI, Reaction Speed, Typing Speed.
-- 🎵 **Real Audio & Media**: Music Player with waveform visualizer, local video upload, YouTube embed.
-- 🎨 **Custom PNG & SVG Brand Logos**: 3D glass cube OS branding.
+| Icon | App Name | Description & Key Features |
+|------|----------|----------------------------|
+| 🤖 | **AI_BOT.exe** | **SUDHI AI Chatbot Assistant** trained on Sudhir Singh's portfolio dataset. Features 6 quick preset prompts & voice/text OS command launcher (*"open terminal"*, *"open weather"*). |
+| ⚡ | **DEVOPS.cloud** | **DevOps Cloud & CI/CD Telemetry Monitor** with live CPU/RAM/Bandwidth metrics, Docker container manager, Kubernetes status, and GitHub Actions pipeline feeds. |
+| 💻 | **SPECS.info** | **Hardware Diagnostic Tool** detecting user's actual device specs (CPU Cores, RAM Memory, Screen Res, Battery level, Network speed, Touch vs Mouse). |
+| ⛅ | **WEATHER.live** | **Open-Meteo Weather App** with 8 city presets, 24-hour bar chart, wind speed, humidity, and °C/°F toggle. |
+| ₿ | **CRYPTO.live** | **CoinGecko Crypto Tracker** streaming 10 top crypto prices live in USD/INR with 24h ▲▼ changes and favorite star pinning. |
+| 🚀 | **SPACE.track** | **SpaceX + ISS + USGS Earthquake Monitor** with upcoming launch countdowns, live ISS 5s map tracker, and M4.5+ earthquake alerts. |
+| 🌐 | **GLOBE.explore** | **REST Countries Explorer & Flag Quiz Game** featuring 250+ countries with flags, population, currency, and interactive trivia quiz. |
+| 🎵 | **MUSIC.mp3** | **Music Player** with HTML5 waveform visualizer, shuffle/repeat, playlist, and local audio file upload. |
+| 🎬 | **MEDIA.video** | **Video Player** supporting local video uploads, streaming URLs, playback speed (0.5x–2.0x), and fullscreen mode. |
+| 📋 | **NOTEPAD.txt** | **Multi-Tab Text Editor** with auto-save to localStorage, Find/Replace, word/char count, and .txt export. |
+| 🖼️ | **GALLERY.photos** | **Photo Gallery** with grid/lightbox views, zoom/rotate, thumbnail drawer, and local image upload. |
+| 🗺️ | **MAPS.exe** | **OpenStreetMap Application** with search, GPS location detector, saved locations, and road/satellite layers. |
+| 📅 | **CALENDAR.app** | **Event Calendar** with monthly grid view, event creator, time pickers, color tags, and local storage. |
+| 📂 | **EXPLORER.exe** | **Virtual File System (VFS)** browsing `/public` tree, PDF resume viewer, image drawer, and file creation. |
+| 🎮 | **GAMES.exe** | **4 Arcade Games**: Retro Snake, Tic-Tac-Toe AI, Reaction Speed Test, and Speed Typing Test. |
+| 🌍 | **BROWSER.net** | **Smart Web Browser** with Wikipedia homepage, bookmarks, DuckDuckGo search, and X-Frame-Options embedding detector. |
+| ▶️ | **YOUTUBE.app** | **Real YouTube Player** with 14 curated category videos, custom YouTube URL loader, and Open on YouTube link. |
+| 🎨 | **PAINT.art** | **Canvas Drawing Art Studio** with pencil, eraser, stroke width, color palette, fill bucket, and PNG export. |
+| >_ | **TERMINAL.cmd** | **DevOps Terminal** supporting 20+ commands (`neofetch`, `benchmark`, `ai <prompt>`, `whoami`, `skills`, `clear`). |
+| 👤 | **ABOUT.exe** | **GitHub Profile Fetcher** reading live bio, avatar, followers, and public repos for `SudhirDevOps1`. |
+| 📁 | **PROJECTS/** | **Live Repository Showcase** rendering all 87+ public GitHub repos with stars/forks and category tabs. |
+| ⚡ | **SKILLS.sh** | **Interactive Skill Matrix** with animated proficiency bars across DevOps, Frontend, Backend, and Databases. |
+| ⚙️ | **SETTINGS.cfg** | **OS Control Center** with 5 customization tabs: Wallpapers + Custom URL input, 4 Color Themes, Shader Effects (Matrix Rain, CRT Scanlines, Glass Blur), Display Brightness slider, and Audio feedback. |
 
 ---
 
-## 🚀 Quick Start
+## 🪟 2026 Window Management & Desktop Ergonomics
+
+- 💎 **Windows 11 Fluent 3D Glass Icons**: App-specific color gradients, subtle inner shadows, glass glow on hover, and Inter system typography.
+- 🖐️ **Draggable Live Desktop Widgets**: Floating real-time Clock, Open-Meteo Weather, CoinGecko BTC Price, and SpaceX Countdown panel that can be dragged anywhere on screen.
+- 🪟 **Windows 11 Snap Zones**: Auto-snap windows to Left Half, Right Half, or Top Maximize.
+- 📌 **Always-on-Top Pinning**: Pin any app window above all others with single click.
+- 🔄 **Alt + Tab Window Switcher**: Glassmorphic overlay cycling through active windows.
+- 🔍 **Ctrl + P Command Palette**: Instant fuzzy search launcher for apps and system commands.
+- 🔒 **Instant Lock Screen**: Quick lock screen via Taskbar lock button or `Ctrl + L`.
+- 📐 **Dynamic Screen Adaptation**: Auto-calculates desktop icon rows/columns based on user screen height so no icons ever hide below taskbar.
+
+---
+
+## 🚀 Local Setup & Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/SudhirDevOps1/SudhirDevOpsv1.github.io.git
+
+# Enter project directory
 cd SudhirDevOpsv1.github.io
+
+# Install dependencies
 npm install
+
+# Run development server
 npm run dev
 ```
 
 ### Production Build
 ```bash
+# Compile singlefile production bundle
 npm run build
-# → dist/index.html (single self-contained HTML file)
+# → dist/index.html (Self-contained 500KB production bundle)
 ```
 
 ---
 
-## 🗂️ Architecture
+<div align="center">
 
-```
-src/
-├── App.tsx                    # Slim shell with lazy routes, Alt+Tab, Cmd Palette
-├── data.ts                    # Desktop icons, themes, skills, boot messages
-├── index.css                  # CSS variables, animations, @keyframes spin
-├── context/OSContext.tsx      # Global state: windows, theme, wallpaper, power
-├── lib/storage.ts             # localStorage persistence (notepad, settings)
-├── types/os.ts                # TypeScript WinId & window state types
-├── components/
-│   ├── common/                # WindowFrame, Taskbar, StartMenu, DesktopIcon, MatrixRain
-│   └── windows/               # All 17 lazy-loaded app windows
-└── public/
-    ├── image/                 # logo.png, logo.svg, personal.png
-    ├── resume/                # resume.pdf
-    └── wallpaper/             # win11_bloom.png + 12 remote wallpapers
-```
+**Built with ❤️ by [Sudhir Singh (SudhirDevOps1)](https://github.com/SudhirDevOps1)**  
+*BCA Student & DevOps Engineer from Bihar, India*
 
----
-
-## 📜 License & Author
-
-Built with ❤️ by **Sudhir Singh (`SudhirDevOps1`)**  
-BCA Student · Full-Stack & DevOps Engineer · Bihar, India 🇮🇳
+</div>
