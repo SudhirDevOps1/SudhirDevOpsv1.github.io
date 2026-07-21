@@ -38,11 +38,11 @@ export const SpaceWindow = memo(() => {
   const fetchSpaceX = useCallback(() => {
     setLoading(true);
     const mockLaunches: SpaceXLaunch[] = [
-      { id: '1', name: 'Starship Orbital Test 5', date_utc: new Date(Date.now() + 864000000).toISOString(), flight_number: 120, details: 'Full Starship and Super Heavy booster integration orbital launch test from Starbase, Texas.', rocket: 'Starship', success: true },
-      { id: '2', name: 'Falcon 9 • Starlink v2-10', date_utc: new Date(Date.now() + 1200000000).toISOString(), flight_number: 312, details: 'Deployment of 23 Starlink v2 Mini satellites into low Earth orbit from SLC-40.', rocket: 'Falcon 9', success: true },
-      { id: '3', name: 'Falcon Heavy • USSF-51', date_utc: new Date(Date.now() + 1800000000).toISOString(), flight_number: 313, details: 'US Space Force national security payload insertion into geosynchronous transfer orbit.', rocket: 'Falcon Heavy', success: true },
-      { id: '4', name: 'Crew-9 Dragon • ISS Expedition', date_utc: new Date(Date.now() + 2500000000).toISOString(), flight_number: 314, details: 'NASA Commercial Crew Program mission carrying 4 astronauts to the ISS.', rocket: 'Falcon 9', success: true },
-      { id: '5', name: 'Starlink v2-11 Group 10', date_utc: new Date(Date.now() + 3200000000).toISOString(), flight_number: 315, details: 'Starlink internet satellite constellation expansion flight.', rocket: 'Falcon 9', success: true },
+      { id: '1', name: 'Starship Orbital Test 5', date_utc: new Date(Date.now() + 864000000).toISOString(), flight_number: 120, details: 'Full Starship and Super Heavy booster integration orbital launch test from Starbase, Texas.', rocket: 'Starship', success: true, links: { patch: { small: null }, webcast: 'https://www.youtube.com/spacex' } },
+      { id: '2', name: 'Falcon 9 • Starlink v2-10', date_utc: new Date(Date.now() + 1200000000).toISOString(), flight_number: 312, details: 'Deployment of 23 Starlink v2 Mini satellites into low Earth orbit from SLC-40.', rocket: 'Falcon 9', success: true, links: { patch: { small: null }, webcast: 'https://www.youtube.com/spacex' } },
+      { id: '3', name: 'Falcon Heavy • USSF-51', date_utc: new Date(Date.now() + 1800000000).toISOString(), flight_number: 313, details: 'US Space Force national security payload insertion into geosynchronous transfer orbit.', rocket: 'Falcon Heavy', success: true, links: { patch: { small: null }, webcast: 'https://www.youtube.com/spacex' } },
+      { id: '4', name: 'Crew-9 Dragon • ISS Expedition', date_utc: new Date(Date.now() + 2500000000).toISOString(), flight_number: 314, details: 'NASA Commercial Crew Program mission carrying 4 astronauts to the ISS.', rocket: 'Falcon 9', success: true, links: { patch: { small: null }, webcast: 'https://www.youtube.com/spacex' } },
+      { id: '5', name: 'Starlink v2-11 Group 10', date_utc: new Date(Date.now() + 3200000000).toISOString(), flight_number: 315, details: 'Starlink internet satellite constellation expansion flight.', rocket: 'Falcon 9', success: true, links: { patch: { small: null }, webcast: 'https://www.youtube.com/spacex' } },
     ];
 
     setLaunches(mockLaunches);
@@ -136,7 +136,7 @@ export const SpaceWindow = memo(() => {
               <div style={{ fontSize: 10, color: '#555', marginTop: 6 }}>
                 {new Date(nextLaunch.date_utc).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST
               </div>
-              {nextLaunch.links.webcast && (
+              {nextLaunch?.links?.webcast && (
                 <a href={nextLaunch.links.webcast} target="_blank" rel="noreferrer"
                   style={{ display: 'inline-block', marginTop: 10, padding: '5px 14px', border: '1px solid var(--accent)', color: 'var(--accent)', borderRadius: 4, fontSize: 11, textDecoration: 'none' }}>
                   ▶ Watch Livestream
