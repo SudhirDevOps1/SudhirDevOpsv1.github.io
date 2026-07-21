@@ -42,7 +42,7 @@ Every application is **fully interactive and functional in client memory** with 
 | 🖼️ | **GALLERY.photos** | **Photo Gallery** with grid/lightbox views, zoom/rotate, thumbnail drawer, and local image upload. |
 | 🗺️ | **MAPS.exe** | **OpenStreetMap Application** with search, GPS location detector, saved locations, and road/satellite layers. |
 | 📅 | **CALENDAR.app** | **Event Calendar** with monthly grid view, event creator, time pickers, color tags, and local storage. |
-| 📂 | **EXPLORER.exe** | **Virtual File System (VFS)** browsing `/public` tree, PDF resume viewer, image drawer, and file creation. |
+| 📂 | **EXPLORER.exe** | **Virtual File System (VFS)** with live media players & preview drawers for **local & online PDF documents** (`/public/resume/resume.pdf`), **Images** (`/public/image/personal.png`, `logo.png`, `logo.svg`), **Videos** (`demo_presentation.mp4`, `earth_from_space.mp4`), and file creation/deletion. |
 | 🎮 | **GAMES.exe** | **4 Arcade Games**: Retro Snake, Tic-Tac-Toe AI, Reaction Speed Test, and Speed Typing Test. |
 | 🌍 | **BROWSER.net** | **Smart Web Browser** with Wikipedia homepage, bookmarks, DuckDuckGo search, and X-Frame-Options embedding detector. |
 | ▶️ | **YOUTUBE.app** | **Real YouTube Player** with 14 curated category videos, custom YouTube URL loader, and Open on YouTube link. |
