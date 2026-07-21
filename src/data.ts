@@ -128,11 +128,16 @@ export const DESKTOP_ICONS = [
   { id: 'notepad',      label: 'NOTEPAD.txt',   icon: null, emoji: '📋',  lucide: 'FileText' },
   { id: 'calendar',     label: 'CALENDAR.app',  icon: null, emoji: '📅',  lucide: 'Calendar' },
   { id: 'map',          label: 'MAPS.exe',      icon: null, emoji: '🗺️',  lucide: 'Map' },
+  { id: 'weather',      label: 'WEATHER.live',  icon: null, emoji: '⛅',  lucide: 'Cloud' },
+  { id: 'crypto',       label: 'CRYPTO.live',   icon: null, emoji: '₿',   lucide: 'TrendingUp' },
+  { id: 'space',        label: 'SPACE.track',   icon: null, emoji: '🚀',  lucide: 'Rocket' },
+  { id: 'countries',    label: 'GLOBE.explore', icon: null, emoji: '🌐',  lucide: 'Globe2' },
   { id: 'email',        label: 'EMAIL.inbox',   icon: null, emoji: '📧',  lucide: 'Mail' },
   { id: 'settings',     label: 'SETTINGS.cfg',  icon: null, emoji: '⚙',  lucide: 'Settings' },
   { id: 'contact',      label: 'CONTACT.mail',  icon: null, emoji: '✉',   lucide: 'Send' },
   { id: 'matrix',       label: 'MATRIX.toggle', icon: null, emoji: '🌐',  lucide: 'Activity' },
 ];
+
 
 export const ASCII_LOGO = `██████████████████████████████████████████████████
 █                                                █

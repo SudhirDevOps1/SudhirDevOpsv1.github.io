@@ -29,6 +29,12 @@ const MusicPlayerWindow = lazy(() => import('./components/windows/MusicPlayer'))
 const PaintWindow = lazy(() => import('./components/windows/Paint'));
 const CalendarWindow = lazy(() => import('./components/windows/Calendar'));
 const MapWindow = lazy(() => import('./components/windows/Map'));
+const WeatherWindow = lazy(() => import('./components/windows/Weather'));
+const CryptoWindow = lazy(() => import('./components/windows/Crypto'));
+const SpaceWindow = lazy(() => import('./components/windows/Space'));
+const CountriesWindow = lazy(() => import('./components/windows/Countries'));
+
+import { DesktopWidgets } from './components/common/DesktopWidgets';
 
 function DesktopContent() {
   const {
@@ -138,6 +144,10 @@ function DesktopContent() {
             case 'paint': return <PaintWindow />;
             case 'calendar': return <CalendarWindow />;
             case 'map': return <MapWindow />;
+            case 'weather': return <WeatherWindow />;
+            case 'crypto': return <CryptoWindow />;
+            case 'space': return <SpaceWindow />;
+            case 'countries': return <CountriesWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}
@@ -159,6 +169,9 @@ function DesktopContent() {
 
       <div className="bg-grid" />
       <div className="crt-overlay" />
+
+      {/* Live Desktop Widgets (top-right) */}
+      <DesktopWidgets />
 
       {powerState === 'sleeping' && (
         <SleepScreen onWake={() => { setPowerState('running'); addToast('System Resumed', 'success'); }} />

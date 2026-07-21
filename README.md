@@ -51,11 +51,17 @@ Every feature is **actually functional** — not a mockup.
 
 ## 🪟 2026 Window Management
 
-- **Windows 11 Snap Zones** — Drag to left/right edge → half-screen snap; top → maximize
-- **Translucent Snap Preview Overlay** — Visual guide while dragging
-- **Always-On-Top Pin** — Pin any window above all others
-- **Alt+Tab Switcher** — Glassmorphic overlay window cycling
-- **Ctrl+P / `/` Command Palette** — Instant fuzzy app search launcher
+- 🪟 **Windows 11 Snap Zones & Translucent Preview**: Auto-snap windows to left/right/top.
+- 📌 **Always-On-Top Pinning**: Pin any app window above all others.
+- 🔄 **Alt+Tab Window Switcher**: Glassmorphic overlay window cycling.
+- 🔍 **Ctrl+P Command Palette**: Instant fuzzy app search launcher.
+- 🐙 **Live GitHub API**: Auto-fetches **87+ repos** & profile metrics for `SudhirDevOps1`.
+- ⛅ **Live Desktop Widgets** (top-right corner): Real-time clock, Open-Meteo weather, BTC price, SpaceX countdown — always visible.
+- 🌡️ **4 Free Live API Apps**: Weather (Open-Meteo), Crypto (CoinGecko), Space (SpaceX + ISS + USGS Earthquakes), Countries Explorer + Flag Quiz (REST Countries).
+- 📁 **Public VFS Explorer**: Browse `/public` directory tree with file preview drawer.
+- 🎮 **4 Real Arcade Games**: Retro Snake, Tic-Tac-Toe AI, Reaction Speed, Typing Speed.
+- 🎵 **Real Audio & Media**: Music Player with waveform visualizer, local video upload, YouTube embed.
+- 🎨 **Custom PNG & SVG Brand Logos**: 3D glass cube OS branding.
 
 ---
 
