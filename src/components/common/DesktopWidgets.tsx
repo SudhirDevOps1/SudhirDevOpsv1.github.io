@@ -38,16 +38,32 @@ export const DesktopWidgets = memo(() => {
     return () => clearInterval(t);
   }, []);
 
-  // SpaceX next launch
+  // SpaceX next launch (with CORS-safe fallback)
   useEffect(() => {
+    const defaultLaunch = { name: 'Starship IFT-5 Mission', date: new Date(Date.now() + 864000000).toISOString() };
     fetch('https://api.spacexdata.com/v4/launches/upcoming')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('SpaceX API failed');
+        return r.json();
+      })
       .then((data: { name: string; date_utc: string }[]) => {
+        if (!Array.isArray(data)) throw new Error('Invalid SpaceX data');
         const sorted = data.sort((a, b) => new Date(a.date_utc).getTime() - new Date(b.date_utc).getTime());
         if (sorted[0]) setNextLaunch({ name: sorted[0].name, date: sorted[0].date_utc });
+        else setNextLaunch(defaultLaunch);
       })
-      .catch(() => {});
+      .catch(() => {
+        // Fallback to CORS proxy or static upcoming launch if direct API blocked on Vercel
+        fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.spacexdata.com/v4/launches/upcoming'))
+          .then(r => r.json())
+          .then((data: { name: string; date_utc: string }[]) => {
+            if (Array.isArray(data) && data[0]) setNextLaunch({ name: data[0].name, date: data[0].date_utc });
+            else setNextLaunch(defaultLaunch);
+          })
+          .catch(() => setNextLaunch(defaultLaunch));
+      });
   }, []);
+
 
   // Countdown
   useEffect(() => {
