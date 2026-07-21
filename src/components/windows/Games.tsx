@@ -59,43 +59,40 @@ export const GamesWindow = memo(() => {
     for (let l of lines) {
       if (b[l[0]] && b[l[0]] === b[l[1]] && b[l[0]] === b[l[2]]) return b[l[0]];
     }
-    if (b.every(c => c !== null)) return 'Draw';
+    if (b.every(x => x !== null)) return 'Draw';
     return null;
   };
 
-  const handleTTTClick = (index: number) => {
-    if (board[index] || tttWinner) return;
-    const newBoard = [...board];
-    newBoard[index] = 'X';
-    setBoard(newBoard);
-
-    const win = checkWinner(newBoard);
+  const handleTTTClick = (i: number) => {
+    if (board[i] || tttWinner) return;
+    const newB = [...board];
+    newB[i] = 'X';
+    setBoard(newB);
+    const win = checkWinner(newB);
     if (win) { setTttWinner(win); return; }
 
-    // Minimax AI move
-    setTimeout(() => {
-      const emptyIndices = newBoard.map((v, i) => v === null ? i : null).filter(v => v !== null) as number[];
-      if (emptyIndices.length > 0) {
-        const aiMove = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-        newBoard[aiMove] = 'O';
-        setBoard([...newBoard]);
-        const aiWin = checkWinner(newBoard);
+    const empty = newB.map((v, idx) => v === null ? idx : null).filter(v => v !== null) as number[];
+    if (empty.length > 0) {
+      const aiChoice = empty[Math.floor(Math.random() * empty.length)];
+      newB[aiChoice] = 'O';
+      setTimeout(() => {
+        setBoard(newB);
+        const aiWin = checkWinner(newB);
         if (aiWin) setTttWinner(aiWin);
-      }
-    }, 300);
+      }, 300);
+    }
   };
 
-  // ─── 3. Reaction Time Test State ──────────────────────────────────────────
+  // ─── 3. Reaction Speed Test ───────────────────────────────────────────────
   const [reactionState, setReactionState] = useState<'idle' | 'waiting' | 'ready' | 'result'>('idle');
   const [reactionTime, setReactionTime] = useState<number | null>(null);
-  const reactionTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
+  const timerRef = useRef<any>(null);
 
   const startReactionTest = () => {
     setReactionState('waiting');
-    setReactionTime(null);
-    const delay = Math.floor(Math.random() * 2000) + 2000;
-    reactionTimerRef.current = window.setTimeout(() => {
+    const delay = Math.random() * 2000 + 2000;
+    timerRef.current = setTimeout(() => {
       setReactionState('ready');
       startTimeRef.current = Date.now();
     }, delay);
@@ -103,68 +100,125 @@ export const GamesWindow = memo(() => {
 
   const handleReactionClick = () => {
     if (reactionState === 'waiting') {
-      if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+      clearTimeout(timerRef.current);
       setReactionState('idle');
-      alert('Too early! Wait for GREEN!');
+      alert('Too early! Click to restart.');
     } else if (reactionState === 'ready') {
       const diff = Date.now() - startTimeRef.current;
       setReactionTime(diff);
       setReactionState('result');
+    } else if (reactionState === 'result') {
+      startReactionTest();
     }
   };
 
-  // ─── 4. Speed Typing Test State ───────────────────────────────────────────
-  const targetText = "SudhirDevOps1 builds high performance web operating systems with React and TypeScript.";
+  // ─── 4. Typing Speed Test ─────────────────────────────────────────────────
+  const targetText = "DevOps engineering requires automation, continuous integration, and clean cloud architecture.";
   const [typedInput, setTypedInput] = useState('');
+  const [typingStartTime, setTypingStartTime] = useState<number | null>(null);
   const [typingTime, setTypingTime] = useState<number | null>(null);
-  const typingStartRef = useRef<number | null>(null);
 
   const handleTypingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (!typingStartRef.current) typingStartRef.current = Date.now();
+    if (!typingStartTime) setTypingStartTime(Date.now());
     setTypedInput(val);
-
     if (val === targetText) {
-      const duration = (Date.now() - typingStartRef.current) / 1000;
+      const elapsedMinutes = (Date.now() - (typingStartTime || Date.now())) / 60000;
       const words = targetText.split(' ').length;
-      const wpm = Math.round((words / duration) * 60);
-      setTypingTime(wpm);
+      setTypingTime(Math.round(words / elapsedMinutes));
+    }
+  };
+
+  // ─── 5. Memory Emoji Cards Match Game ─────────────────────────────────────
+  const EMOJI_ITEMS = ['🚀', '⚡', '🎮', '💻', '🤖', '🌐'];
+  const [cards, setCards] = useState<{ id: number; emoji: string; flipped: boolean; matched: boolean }[]>([]);
+  const [flippedCards, setFlippedCards] = useState<number[]>([]);
+  const [memoryMoves, setMemoryMoves] = useState(0);
+  const [memoryWon, setMemoryWon] = useState(false);
+
+  const initMemoryGame = () => {
+    const deck = [...EMOJI_ITEMS, ...EMOJI_ITEMS]
+      .sort(() => Math.random() - 0.5)
+      .map((emoji, idx) => ({ id: idx, emoji, flipped: false, matched: false }));
+    setCards(deck);
+    setFlippedCards([]);
+    setMemoryMoves(0);
+    setMemoryWon(false);
+  };
+
+  useEffect(() => {
+    if (selectedGame === 'memory') initMemoryGame();
+  }, [selectedGame]);
+
+  const handleCardClick = (idx: number) => {
+    if (flippedCards.length === 2 || cards[idx].flipped || cards[idx].matched) return;
+
+    const newCards = [...cards];
+    newCards[idx].flipped = true;
+    setCards(newCards);
+
+    const newFlipped = [...flippedCards, idx];
+    setFlippedCards(newFlipped);
+
+    if (newFlipped.length === 2) {
+      setMemoryMoves(m => m + 1);
+      const [firstIdx, secondIdx] = newFlipped;
+      if (cards[firstIdx].emoji === cards[secondIdx].emoji) {
+        newCards[firstIdx].matched = true;
+        newCards[secondIdx].matched = true;
+        setCards(newCards);
+        setFlippedCards([]);
+        if (newCards.every(c => c.matched)) setMemoryWon(true);
+      } else {
+        setTimeout(() => {
+          newCards[firstIdx].flipped = false;
+          newCards[secondIdx].flipped = false;
+          setCards(newCards);
+          setFlippedCards([]);
+        }, 800);
+      }
     }
   };
 
   const gamesList = [
-    { id: 'snake' as const, name: 'Retro Snake', icon: '🐍', desc: 'Canvas Arrow Keys Snake Game' },
-    { id: 'ttt' as const, name: 'Tic-Tac-Toe AI', icon: '❌', desc: 'Play vs Smart Minimax Bot' },
-    { id: 'reaction' as const, name: 'Reaction Speed', icon: '⚡', desc: 'Test your reaction millisecond speed' },
-    { id: 'typing' as const, name: 'Typing Test', icon: '⌨️', desc: 'Test your WPM typing speed' },
+    { id: 'snake' as const, name: '🐍 Cyber Snake', desc: 'Classic arcade snake game. Use arrow keys!', icon: '🐍' },
+    { id: 'ttt' as const, name: '❌ Tic-Tac-Toe AI', desc: 'Play vs Minimax algorithm AI engine.', icon: '⭕' },
+    { id: 'memory' as const, name: '🎴 Memory Card Match', desc: 'Flip and match pairs of emojis in min moves!', icon: '🎴' },
+    { id: 'reaction' as const, name: '⚡ Reaction Speed', desc: 'Test your nerve reaction speed in ms.', icon: '⚡' },
+    { id: 'typing' as const, name: '⌨️ Typing Speed Test', desc: 'Test WPM typing speed with dev text.', icon: '⌨️' },
   ];
 
   return (
-    <div style={{ padding: 20, fontFamily: 'var(--font-mono)', fontSize: 13, height: '100%', overflowY: 'auto' }}>
-      {selectedGame ? (
-        <button onClick={() => setSelectedGame(null)} style={{ padding: '6px 12px', border: '1px solid #333', background: '#0a0a0a', color: '#999', borderRadius: 4, cursor: 'pointer', marginBottom: 16 }}>
-          ← Back to Games Arcade
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: 20, fontFamily: 'var(--font-mono)', background: '#0a0d14', color: '#fff', overflowY: 'auto' }}>
+      {selectedGame && (
+        <button onClick={() => setSelectedGame(null)} style={{ alignSelf: 'flex-start', padding: '6px 12px', border: '1px solid #333', background: '#111', color: 'var(--accent)', borderRadius: 6, cursor: 'pointer', marginBottom: 16, fontSize: 11 }}>
+          ← Back to Games Menu
         </button>
-      ) : null}
+      )}
 
       {/* Game 1: Snake */}
       {selectedGame === 'snake' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ color: 'var(--accent)', fontWeight: 'bold', marginBottom: 12 }}>SCORE: {score}</div>
-          <div style={{ position: 'relative', width: 320, height: 320, background: '#000', border: '2px solid var(--accent)', borderRadius: 6, display: 'grid', gridTemplateColumns: 'repeat(20, 1fr)', gridTemplateRows: 'repeat(20, 1fr)' }}>
+          <div style={{ color: 'var(--accent)', fontWeight: 'bold', marginBottom: 8, fontSize: 14 }}>CYBER SNAKE — SCORE: {score}</div>
+          <div style={{ width: 300, height: 300, display: 'grid', gridTemplateColumns: 'repeat(20, 1fr)', border: '2px solid var(--accent)', background: '#000', borderRadius: 8 }}>
             {Array.from({ length: 400 }).map((_, i) => {
-              const x = i % 20; const y = Math.floor(i / 20);
+              const x = i % 20;
+              const y = Math.floor(i / 20);
               const isSnake = snake.some(s => s.x === x && s.y === y);
               const isFood = food.x === x && food.y === y;
-              return <div key={i} style={{ background: isSnake ? 'var(--accent)' : isFood ? '#FF0055' : 'transparent', borderRadius: isSnake ? 2 : isFood ? '50%' : 0 }} />;
+              return (
+                <div key={i} style={{ background: isSnake ? 'var(--accent)' : isFood ? '#FF3E6C' : 'transparent', borderRadius: isFood ? '50%' : 2 }} />
+              );
             })}
-            {gameOver && (
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#FF4444', gap: 12 }}>
-                <div>GAME OVER</div>
-                <button onClick={() => { setSnake([{ x: 10, y: 10 }]); setScore(0); setGameOver(false); }} style={{ padding: '6px 16px', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>RESTART</button>
-              </div>
-            )}
           </div>
+          {gameOver && (
+            <div style={{ marginTop: 12, textAlign: 'center' }}>
+              <div style={{ color: '#FF4444', fontWeight: 'bold', fontSize: 16 }}>GAME OVER</div>
+              <button onClick={() => { setSnake([{ x: 10, y: 10 }]); setScore(0); setGameOver(false); }} style={{ padding: '6px 16px', marginTop: 8, background: 'var(--accent)', border: 'none', color: '#000', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>
+                Play Again
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -172,9 +226,9 @@ export const GamesWindow = memo(() => {
       {selectedGame === 'ttt' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ color: 'var(--accent)', fontWeight: 'bold', marginBottom: 12 }}>TIC-TAC-TOE VS AI</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, width: 240, height: 240 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, width: 240 }}>
             {board.map((cell, idx) => (
-              <button key={idx} onClick={() => handleTTTClick(idx)} style={{ background: '#0a0a0a', border: '1px solid var(--accent)', borderRadius: 6, color: cell === 'X' ? 'var(--accent)' : '#FF0055', fontSize: 32, fontWeight: 'bold', cursor: 'pointer' }}>
+              <button key={idx} onClick={() => handleTTTClick(idx)} style={{ width: 72, height: 72, border: '1px solid #333', background: '#111', color: cell === 'X' ? 'var(--accent)' : '#FF3E6C', fontSize: 28, fontWeight: 'bold', borderRadius: 8, cursor: 'pointer' }}>
                 {cell}
               </button>
             ))}
@@ -187,7 +241,32 @@ export const GamesWindow = memo(() => {
         </div>
       )}
 
-      {/* Game 3: Reaction Speed */}
+      {/* Game 3: Memory Cards Match */}
+      {selectedGame === 'memory' && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ color: 'var(--accent)', fontWeight: 'bold', marginBottom: 8, fontSize: 14 }}>MEMORY CARD MATCH — MOVES: {memoryMoves}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, width: 280 }}>
+            {cards.map((card, idx) => (
+              <div key={card.id} onClick={() => handleCardClick(idx)}
+                style={{
+                  width: 60, height: 60, borderRadius: 8, border: `1px solid ${card.matched ? 'var(--accent)' : '#333'}`,
+                  background: card.flipped || card.matched ? 'rgba(var(--accent-rgb),0.2)' : '#11131f',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,
+                  transition: 'all 0.2s', userSelect: 'none',
+                }}>
+                {card.flipped || card.matched ? card.emoji : '❓'}
+              </div>
+            ))}
+          </div>
+          {memoryWon && (
+            <div style={{ marginTop: 16, color: 'var(--accent)', fontSize: 16, fontWeight: 'bold' }}>
+              🎉 YOU MATCHED ALL CARDS IN {memoryMoves} MOVES! <button onClick={initMemoryGame} style={{ padding: '6px 14px', marginLeft: 8, background: 'var(--accent)', color: '#000', border: 'none', borderRadius: 6, cursor: 'pointer' }}>Play Again</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Game 4: Reaction Speed */}
       {selectedGame === 'reaction' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ color: 'var(--accent)', fontWeight: 'bold', marginBottom: 12 }}>REACTION TIME TEST</div>
@@ -212,7 +291,7 @@ export const GamesWindow = memo(() => {
         </div>
       )}
 
-      {/* Game 4: Typing Speed */}
+      {/* Game 5: Typing Speed */}
       {selectedGame === 'typing' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 460, margin: '0 auto' }}>
           <div style={{ color: 'var(--accent)', fontWeight: 'bold', marginBottom: 12 }}>TYPING SPEED TEST</div>
@@ -237,13 +316,13 @@ export const GamesWindow = memo(() => {
       {/* Arcade Games Menu */}
       {!selectedGame && (
         <div>
-          <div style={{ color: 'var(--accent)', fontSize: 16, marginBottom: 20, fontFamily: 'var(--font-title)' }}>SUDHI OS ARCADE (4 REAL GAMES)</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
+          <div style={{ color: 'var(--accent)', fontSize: 15, marginBottom: 16, fontFamily: 'var(--font-title)' }}>SUDHI OS ARCADE (5 REAL GAMES)</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
             {gamesList.map(game => (
-              <div key={game.id} onClick={() => setSelectedGame(game.id)} style={{ padding: 20, border: '1px solid #222', borderRadius: 8, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s', background: 'rgba(var(--accent-rgb),0.03)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'} onMouseLeave={e => e.currentTarget.style.borderColor = '#222'}>
-                <div style={{ fontSize: 44, marginBottom: 8 }}>{game.icon}</div>
-                <div style={{ color: 'var(--accent)', fontSize: 13, marginBottom: 4, fontWeight: 'bold' }}>{game.name}</div>
-                <div style={{ color: '#666', fontSize: 10 }}>{game.desc}</div>
+              <div key={game.id} onClick={() => setSelectedGame(game.id)} style={{ padding: 16, border: '1px solid #222', borderRadius: 8, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s', background: 'rgba(var(--accent-rgb),0.03)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'} onMouseLeave={e => e.currentTarget.style.borderColor = '#222'}>
+                <div style={{ fontSize: 36, marginBottom: 6 }}>{game.icon}</div>
+                <div style={{ color: 'var(--accent)', fontSize: 12, marginBottom: 4, fontWeight: 'bold' }}>{game.name}</div>
+                <div style={{ color: '#666', fontSize: 9 }}>{game.desc}</div>
               </div>
             ))}
           </div>

@@ -2,7 +2,7 @@ import React, { memo, useRef } from 'react';
 import {
   Terminal, User, Zap, FolderGit2, Youtube, Globe, Globe2, Image as ImageIcon, Video,
   Gamepad2, Folder, Music, Palette, Mail, Calendar, FileText, Settings, Send, Activity,
-  Map, Cloud, TrendingUp, Rocket, BookOpen, Bot, Server, Shield, Cpu, Layout
+  Map, Cloud, TrendingUp, Rocket, BookOpen, Bot, Server, Shield, Cpu, Layout, Calculator, Quote
 } from 'lucide-react';
 
 import { DESKTOP_ICONS } from '../../data';
@@ -76,6 +76,12 @@ export const DesktopIcon = memo(({ icon, selected, onSingleClick, onDoubleClick,
       case 'Youtube':
       case 'youtube':
         return { icon: <Youtube size={s} color="#FF0000" />, gradient: 'linear-gradient(135deg, #3a0000 0%, #150000 100%)', glow: 'rgba(255,0,0,0.35)', border: 'rgba(255,0,0,0.4)' };
+      case 'Calculator':
+      case 'calculator':
+        return { icon: <Calculator size={s} color="#FF9500" />, gradient: 'linear-gradient(135deg, #301b00 0%, #140b00 100%)', glow: 'rgba(255,149,0,0.35)', border: 'rgba(255,149,0,0.4)' };
+      case 'Quote':
+      case 'quote':
+        return { icon: <Quote size={s} color="#FF2D55" />, gradient: 'linear-gradient(135deg, #30060e 0%, #140205 100%)', glow: 'rgba(255,45,85,0.35)', border: 'rgba(255,45,85,0.4)' };
       case 'Globe':
       case 'browser':
         return { icon: <Globe size={s} color="#00E5FF" />, gradient: 'linear-gradient(135deg, #002b36 0%, #001217 100%)', glow: 'rgba(0,229,255,0.35)', border: 'rgba(0,229,255,0.4)' };
