@@ -17,7 +17,7 @@ const TerminalWindow = lazy(() => import('./components/windows/Terminal'));
 const AboutWindow = lazy(() => import('./components/windows/About'));
 const SkillsWindow = lazy(() => import('./components/windows/Skills'));
 const ProjectsWindow = lazy(() => import('./components/windows/Projects'));
-const ContactWindow = lazy(() => import('./components/windows/Contact'));
+const FormForgeContactWindow = lazy(() => import('./components/windows/FormForgeContact'));
 const SettingsWindow = lazy(() => import('./components/windows/Settings'));
 const YoutubeWindow = lazy(() => import('./components/windows/Youtube'));
 const BrowserWindow = lazy(() => import('./components/windows/Browser'));
@@ -40,6 +40,7 @@ const DevOpsMonitorWindow = lazy(() => import('./components/windows/DevOpsMonito
 const WorkspacesWindow = lazy(() => import('./components/windows/Workspaces'));
 const CalculatorWindow = lazy(() => import('./components/windows/Calculator'));
 const QuotesWindow = lazy(() => import('./components/windows/Quotes'));
+const GmailWindow = lazy(() => import('./components/windows/Gmail'));
 
 import { DesktopWidgets } from './components/common/DesktopWidgets';
 
@@ -212,7 +213,7 @@ function DesktopContent() {
             case 'about': return <AboutWindow />;
             case 'skills': return <SkillsWindow />;
             case 'projects': return <ProjectsWindow />;
-            case 'contact': return <ContactWindow />;
+            case 'contact': return <FormForgeContactWindow />;
             case 'settings': return <SettingsWindow />;
             case 'youtube': return <YoutubeWindow />;
             case 'browser': return <BrowserWindow />;
@@ -235,6 +236,7 @@ function DesktopContent() {
             case 'workspaces': return <WorkspacesWindow />;
             case 'calculator': return <CalculatorWindow />;
             case 'quotes': return <QuotesWindow />;
+            case 'email': return <GmailWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}

@@ -54,6 +54,8 @@ Every application is **fully interactive and functional in client memory** with 
 | >_ | **TERMINAL.cmd** | **DevOps Terminal** supporting 20+ commands (`neofetch`, `benchmark`, `ai <prompt>`, `whoami`, `skills`, `clear`). |
 | 👤 | **ABOUT.exe** | **GitHub Profile Fetcher** reading live bio, avatar, followers, and public repos for `SudhirDevOps1`. |
 | 📁 | **PROJECTS/** | **Live Repository Showcase** rendering all 87+ public GitHub repos with stars/forks and category tabs. |
+| ✉️ | **CONTACT.form** | **FormForge Contact Form** — Direct submission form endpoint (`apnaform.sudhirdevops1.workers.dev`) powered by Cloudflare Worker with honeypot bot trap. |
+| 📧 | **GMAIL.app** | **Sudhir's Official Gmail Mailbox** — Quick mail composer targeting **`SudhirDevOps100@gmail.com`**, 1-click **Open Gmail App**, and email clipboard copy. |
 | ⚡ | **SKILLS.sh** | **Interactive Skill Matrix** with animated proficiency bars across DevOps, Frontend, Backend, and Databases. |
 | ⚙️ | **SETTINGS.cfg** | **OS Control Center** with 5 customization tabs: Wallpapers + Custom URL input, 4 Color Themes, Shader Effects (Matrix Rain, CRT Scanlines, Glass Blur), Display Brightness slider, and Audio feedback. |
 

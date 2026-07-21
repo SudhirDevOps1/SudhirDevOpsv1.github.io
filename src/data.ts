@@ -140,7 +140,8 @@ export const DESKTOP_ICONS = [
   { id: 'workspaces',     label: 'SPACES.layout', icon: null, emoji: '🌌',  lucide: 'Layout' },
 
   { id: 'devops-monitor', label: 'DEVOPS.cloud', icon: null, emoji: '⚡',  lucide: 'Server' },
-  { id: 'email',          label: 'EMAIL.inbox',   icon: null, emoji: '📧',  lucide: 'Mail' },
+  { id: 'email',          label: 'GMAIL.app',     icon: null, emoji: '📧',  lucide: 'Mail' },
+  { id: 'contact',        label: 'CONTACT.form',  icon: null, emoji: '✉️',  lucide: 'Send' },
 
   { id: 'settings',       label: 'SETTINGS.cfg',  icon: null, emoji: '⚙',  lucide: 'Settings' },
 
