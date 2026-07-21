@@ -1,5 +1,6 @@
-import React, { useState, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Search, Layers, Command } from 'lucide-react';
 import { OSProvider, useOS } from './context/OSContext';
 import { MatrixRain } from './components/common/MatrixRain';
 import { WindowFrame } from './components/common/WindowFrame';
@@ -36,6 +37,12 @@ function DesktopContent() {
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [logoClickCount, setLogoClickCount] = useState(0);
 
+  // ─── Alt+Tab & Command Palette Overlay States ─────────────────────────────
+  const [showAltTab, setShowAltTab] = useState(false);
+  const [altTabIndex, setAltTabIndex] = useState(0);
+  const [showCmdPalette, setShowCmdPalette] = useState(false);
+  const [cmdSearch, setCmdSearch] = useState('');
+
   const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>(() => {
     const positions: Record<string, { x: number; y: number }> = {};
     const itemsPerCol = 6;
@@ -46,6 +53,43 @@ function DesktopContent() {
     });
     return positions;
   });
+
+  // ─── Keyboard Shortcuts: Alt+Tab & Ctrl+P Command Palette ──────────────────
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+P or / for Command Palette
+      if ((e.ctrlKey && e.key.toLowerCase() === 'p') || (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')) {
+        e.preventDefault();
+        setShowCmdPalette(v => !v);
+        setCmdSearch('');
+      }
+
+      // Alt+Tab window switcher
+      if (e.altKey && e.key === 'Tab') {
+        e.preventDefault();
+        if (windows.length > 0) {
+          setShowAltTab(true);
+          setAltTabIndex(prev => (prev + 1) % windows.length);
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Alt' && showAltTab) {
+        setShowAltTab(false);
+        if (windows[altTabIndex]) {
+          focusWindow(windows[altTabIndex].id as WinId);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [windows, altTabIndex, showAltTab, focusWindow]);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -64,6 +108,10 @@ function DesktopContent() {
   }, [addToast]);
 
   const topWindowId = [...windows].sort((a, b) => b.zIndex - a.zIndex)[0]?.id;
+
+  const filteredCmdApps = DESKTOP_ICONS.filter(i =>
+    i.label.toLowerCase().includes(cmdSearch.toLowerCase()) || i.id.toLowerCase().includes(cmdSearch.toLowerCase())
+  );
 
   const renderWindowContent = (id: WinId) => {
     return (
@@ -152,6 +200,97 @@ function DesktopContent() {
             {renderWindowContent(win.id)}
           </WindowFrame>
         ))}
+      </AnimatePresence>
+
+      {/* ─── Alt + Tab Switcher Overlay ─────────────────────────────────────── */}
+      <AnimatePresence>
+        {showAltTab && windows.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 99999,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(12px)'
+            }}
+          >
+            <div style={{ background: 'rgba(15,17,24,0.95)', border: '1px solid var(--accent)', borderRadius: 12, padding: 24, display: 'flex', gap: 16, boxShadow: '0 0 40px rgba(var(--accent-rgb),0.3)' }}>
+              {windows.map((win, idx) => (
+                <div
+                  key={win.id}
+                  style={{
+                    padding: 16, border: `2px solid ${idx === altTabIndex ? 'var(--accent)' : 'rgba(255,255,255,0.1)'}`,
+                    borderRadius: 8, background: idx === altTabIndex ? 'rgba(var(--accent-rgb),0.2)' : 'rgba(0,0,0,0.5)',
+                    textAlign: 'center', width: 110, transition: 'all 0.15s'
+                  }}
+                >
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>🪟</div>
+                  <div style={{ color: idx === altTabIndex ? 'var(--accent)' : '#aaa', fontSize: 11, fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{win.title}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Ctrl+P / / Command Palette ────────────────────────────────────── */}
+      <AnimatePresence>
+        {showCmdPalette && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 99999, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 100 }}
+            onClick={() => setShowCmdPalette(false)}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                width: 500, maxWidth: '90vw', background: 'rgba(15,17,24,0.95)', border: '1px solid var(--accent)',
+                borderRadius: 12, overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(var(--accent-rgb),0.3)',
+                fontFamily: 'var(--font-mono)', backdropFilter: 'blur(20px)'
+              }}
+            >
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Search size={18} color="var(--accent)" />
+                <input
+                  type="text"
+                  value={cmdSearch}
+                  onChange={e => setCmdSearch(e.target.value)}
+                  placeholder="Type to search apps or commands... (e.g. YouTube, Terminal)"
+                  autoFocus
+                  style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: 14, fontFamily: 'var(--font-mono)' }}
+                />
+              </div>
+
+              <div style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
+                {filteredCmdApps.map(app => (
+                  <div
+                    key={app.id}
+                    onClick={() => {
+                      if (app.id === 'matrix') toggleMatrix();
+                      else openWindow(app.id as WinId);
+                      setShowCmdPalette(false);
+                      addToast(`Opened ${app.label}`, 'success');
+                    }}
+                    style={{
+                      padding: '10px 14px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
+                      background: 'rgba(255,255,255,0.03)', marginBottom: 4, transition: 'all 0.15s'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.2)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                  >
+                    <span style={{ fontSize: 20 }}>{app.emoji || '🪟'}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 'bold' }}>{app.label}</div>
+                      <div style={{ color: '#666', fontSize: 10 }}>App identifier: {app.id}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {contextMenu && (
