@@ -65,30 +65,24 @@ export const LockScreen = memo(({ onLogin }: LockScreenProps) => {
     }
   }, []);
 
-  const doLogin = useCallback(async (type: 'user' | 'guest') => {
-    setLoading(true);
-
-    // Request fullscreen on login
-    await requestFullscreen();
-    await requestNotifications();
-
-    // Simulate brief loading
-    await new Promise(r => setTimeout(r, 800));
-
+  const doLogin = useCallback((type: 'user' | 'guest') => {
     if (type === 'user') {
-      // Password: "sudhir" or empty (demo)
       if (password !== '' && password.toLowerCase() !== 'sudhir' && password !== '1234') {
         setError('Wrong password. Try: sudhir or leave empty');
         setShake(true);
-        setLoading(false);
         setTimeout(() => setShake(false), 600);
         return;
       }
     }
 
-    setLoading(false);
+    // Trigger async browser APIs in background without blocking login transition
+    requestFullscreen();
+    requestNotifications();
+
+    // Instant login state update
     onLogin(type);
   }, [password, requestFullscreen, requestNotifications, onLogin]);
+
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') doLogin(loginType);
