@@ -5,8 +5,7 @@ import { WinId } from '../../types/os';
 export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => {
   const { windows, focusWindow, minimizeWindow, closeWindow, openWindow } = useOS();
   const [now, setNow] = useState(new Date());
-  const [battery, setBattery] = useState(87);
-  const [visitorCount, setVisitorCount] = useState(0);
+  const [battery, setBattery] = useState(92);
   const [tabMenu, setTabMenu] = useState<string | null>(null);
   const activeWinId = [...windows].sort((a, b) => b.zIndex - a.zIndex)[0]?.id;
 
@@ -15,33 +14,8 @@ export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => 
     return () => clearInterval(t);
   }, []);
 
-  useEffect(() => {
-    let isCharging = false;
-    const t = setInterval(() => {
-      setBattery(b => {
-        if (isCharging) {
-          const next = Math.min(100, b + 0.8);
-          if (next >= 98) isCharging = false;
-          return next;
-        } else {
-          const next = Math.max(8, b - 0.12);
-          if (next <= 12) isCharging = true;
-          return next;
-        }
-      });
-    }, 8000);
-    return () => clearInterval(t);
-  }, []);
-
-  useEffect(() => {
-    const key = 'sudhi_os_visitors';
-    const count = parseInt(localStorage.getItem(key) || '0') + 1;
-    localStorage.setItem(key, String(count));
-    setVisitorCount(count);
-  }, []);
-
-  const formatTime = (d: Date) => d.toLocaleTimeString('en-US', { hour12: false });
-  const formatDate = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  const formatTime = (d: Date) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const formatDate = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   const handleTabClick = (winId: string) => {
     const win = windows.find(w => w.id === winId);
@@ -54,26 +28,30 @@ export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => 
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, height: 48, zIndex: 1000,
-      background: 'rgba(0,0,0,0.92)', borderTop: '1px solid rgba(var(--accent-rgb),0.3)',
-      display: 'flex', alignItems: 'center', gap: 4, padding: '0 8px',
-      backdropFilter: 'blur(8px)',
+      background: 'rgba(15, 17, 23, 0.82)', borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px',
+      backdropFilter: 'blur(20px) saturate(180%)', boxShadow: '0 -4px 20px rgba(0,0,0,0.5)',
     }}>
-      <button
-        onClick={onStartClick}
-        style={{
-          padding: '4px 14px', border: '1px solid var(--accent)', borderRadius: 4,
-          background: 'transparent', color: 'var(--accent)', cursor: 'pointer',
-          fontFamily: 'var(--font-title)', fontSize: 11, letterSpacing: 1,
-          whiteSpace: 'nowrap', flexShrink: 0,
-          boxShadow: '0 0 8px rgba(var(--accent-rgb),0.3)',
-        }}
-      >
-        ▶ START
-      </button>
+      {/* Windows 11 Center Dock */}
+      <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button
+          onClick={onStartClick}
+          title="Start Menu"
+          style={{
+            width: 40, height: 40, border: 'none', borderRadius: 8,
+            background: 'rgba(255,255,255,0.06)', color: 'var(--accent)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
+            transition: 'all 0.2s', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)'
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.25)'; e.currentTarget.style.transform = 'scale(1.08)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.transform = 'scale(1)'; }}
+        >
+          🪟
+        </button>
 
-      <div style={{ width: 1, height: 28, background: '#333', margin: '0 4px' }} />
+        <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.15)', margin: '0 4px' }} />
 
-      <div style={{ flex: 1, display: 'flex', gap: 4, overflowX: 'auto', alignItems: 'center' }}>
+        {/* Windows Taskbar Tabs */}
         {windows.map(win => {
           const isActive = win.id === activeWinId && !win.minimized;
           return (
@@ -82,21 +60,23 @@ export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => 
                 onClick={() => handleTabClick(win.id)}
                 onContextMenu={e => { e.preventDefault(); setTabMenu(tabMenu === win.id ? null : win.id); }}
                 style={{
-                  padding: '4px 10px', border: `1px solid ${isActive ? 'var(--accent)' : '#333'}`,
-                  borderRadius: 3, background: isActive ? 'rgba(var(--accent-rgb),0.15)' : 'transparent',
-                  color: isActive ? 'var(--accent)' : win.minimized ? '#444' : '#888',
+                  height: 40, padding: '0 12px', border: 'none',
+                  borderRadius: 8, background: isActive ? 'rgba(var(--accent-rgb), 0.25)' : 'rgba(255,255,255,0.05)',
+                  color: isActive ? 'var(--accent)' : win.minimized ? '#666' : '#ccc',
                   cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11,
-                  whiteSpace: 'nowrap', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  maxWidth: 160, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                   transition: 'all 0.15s',
+                  boxShadow: isActive ? 'inset 0 0 8px rgba(var(--accent-rgb),0.3), 0 2px 8px rgba(0,0,0,0.4)' : 'none',
                 }}
               >
-                {win.title}
+                <span>{win.title}</span>
               </button>
               {tabMenu === win.id && (
                 <div style={{
-                  position: 'absolute', bottom: '100%', left: 0, background: '#0a0a0a',
-                  border: '1px solid var(--accent)', borderRadius: 4, zIndex: 2000,
-                  minWidth: 140, overflow: 'hidden',
+                  position: 'absolute', bottom: '115%', left: '50%', transform: 'translateX(-50%)',
+                  background: 'rgba(15, 17, 23, 0.95)', border: '1px solid var(--accent)', borderRadius: 8,
+                  zIndex: 2000, minWidth: 130, overflow: 'hidden', backdropFilter: 'blur(12px)',
                 }}>
                   {[
                     ['Restore', () => focusWindow(win.id as WinId)],
@@ -106,9 +86,9 @@ export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => 
                     <button key={label as string}
                       onClick={() => { (action as () => void)(); setTabMenu(null); }}
                       style={{
-                        display: 'block', width: '100%', padding: '7px 12px',
-                        background: 'none', border: 'none', color: '#aaa',
-                        cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 12, textAlign: 'left',
+                        display: 'block', width: '100%', padding: '8px 12px',
+                        background: 'none', border: 'none', color: '#ccc',
+                        cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, textAlign: 'left',
                       }}
                     >{label as string}</button>
                   ))}
@@ -119,21 +99,17 @@ export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => 
         })}
       </div>
 
-      <div style={{ width: 1, height: 28, background: '#333', margin: '0 4px' }} />
-
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0, fontSize: 11, fontFamily: 'var(--font-mono)' }}>
-        <span style={{ color: battery < 20 ? '#FF4444' : '#aaa', cursor: 'default' }}>
-          🔋 {battery.toFixed(0)}%
-        </span>
-        <span style={{ color: '#aaa', cursor: 'default' }}>
-          📶 SUDHI_NET
-        </span>
-        <span title={formatDate(now)} style={{ color: 'var(--accent)', fontFamily: 'var(--font-title)', fontSize: 12, letterSpacing: 1 }}>
-          {formatTime(now)}
-        </span>
-        <span style={{ color: '#666', cursor: 'default' }}>
-          👁 {visitorCount}
-        </span>
+      {/* Windows 11 Right System Tray */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', fontSize: 11, fontFamily: 'var(--font-mono)', marginLeft: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)' }}>
+          <span title="Wi-Fi Connected">📶</span>
+          <span title="Audio Volume">🔊</span>
+          <span title="Battery Status">🔋 {battery}%</span>
+        </div>
+        <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', cursor: 'default' }}>
+          <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 11 }}>{formatTime(now)}</span>
+          <span style={{ color: '#888', fontSize: 9 }}>{formatDate(now)}</span>
+        </div>
       </div>
     </div>
   );
