@@ -214,80 +214,90 @@ export const WindowFrame = memo(({
         <div
           onMouseDown={handleTitleMouseDown}
           style={{
-            background: isActive ? 'rgba(20, 24, 34, 0.95)' : 'rgba(15, 17, 24, 0.9)',
-            borderBottom: `1px solid ${isActive ? 'rgba(var(--accent-rgb),0.3)' : 'rgba(255,255,255,0.06)'}`,
-            padding: '6px 12px',
+            background: isActive ? 'rgba(18, 22, 34, 0.98)' : 'rgba(13, 15, 22, 0.92)',
+            borderBottom: `1px solid ${isActive ? 'rgba(var(--accent-rgb),0.35)' : 'rgba(255,255,255,0.06)'}`,
+            padding: '0 6px 0 12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             cursor: win.maximized ? 'default' : 'move',
             userSelect: 'none',
             flexShrink: 0,
-            height: 38,
+            height: 34,
+            minHeight: 34,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, overflow: 'hidden' }}>
-            <span style={{ color: isActive ? 'var(--accent)' : '#888', fontSize: 13, fontFamily: 'var(--font-mono)' }}>🪟</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: isActive ? '#fff' : '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500 }}>
-              {win.title}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, overflow: 'hidden', minWidth: 0 }}>
+            <span style={{ fontSize: 13 }}>{win.title.split(' ')[0]}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: isActive ? '#fff' : '#777', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500, flex: 1, minWidth: 0 }}>
+              {win.title.includes(' ') ? win.title.slice(win.title.indexOf(' ') + 1) : win.title}
             </span>
           </div>
 
-          {/* Action Controls: Always on Top Pin, Minimize, Maximize, Close */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Window Controls: macOS-inspired + Windows style */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+            {/* Always on Top Pin */}
             <button
               onClick={(e) => { e.stopPropagation(); setIsAlwaysOnTop(v => !v); }}
-              title={isAlwaysOnTop ? "Unpin Always on Top" : "Always on Top"}
+              title={isAlwaysOnTop ? 'Unpin Always on Top' : 'Always on Top'}
               style={{
-                width: 30, height: 26, border: 'none', background: isAlwaysOnTop ? 'rgba(var(--accent-rgb),0.3)' : 'transparent',
-                color: isAlwaysOnTop ? 'var(--accent)' : '#aaa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: 4, transition: 'background 0.15s'
+                width: 24, height: 24, border: 'none',
+                background: isAlwaysOnTop ? 'rgba(var(--accent-rgb),0.25)' : 'transparent',
+                color: isAlwaysOnTop ? 'var(--accent)' : '#555',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                borderRadius: 4, transition: 'all 0.15s', marginRight: 4,
               }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = isAlwaysOnTop ? 'var(--accent)' : '#555'; }}
             >
-              <Pin size={12} style={{ transform: isAlwaysOnTop ? 'rotate(45deg)' : 'none' }} />
+              <Pin size={11} style={{ transform: isAlwaysOnTop ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }} />
             </button>
 
+            {/* Minimize — yellow dot */}
             <button
               onClick={(e) => { e.stopPropagation(); onMinimize(); }}
-              title="Minimize"
+              title="Minimize (–)"
               style={{
-                width: 34, height: 28, border: 'none', background: 'transparent',
-                color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: 4, transition: 'background 0.15s'
+                width: 13, height: 13, border: 'none',
+                background: '#FFB300', color: 'transparent',
+                cursor: 'pointer', borderRadius: '50%',
+                transition: 'filter 0.15s', flexShrink: 0,
+                boxShadow: '0 0 4px rgba(255,179,0,0.4)',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              <Minus size={14} />
-            </button>
+              onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = '–'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '10px'; e.currentTarget.style.fontWeight = 'bold'; }}
+              onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
+            />
 
+            {/* Maximize — green dot */}
             <button
               onClick={(e) => { e.stopPropagation(); onMaximize(); }}
-              title={win.maximized ? "Restore" : "Maximize"}
+              title={win.maximized ? 'Restore' : 'Maximize (⛶)'}
               style={{
-                width: 34, height: 28, border: 'none', background: 'transparent',
-                color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: 4, transition: 'background 0.15s'
+                width: 13, height: 13, border: 'none',
+                background: '#00C853', color: 'transparent',
+                cursor: 'pointer', borderRadius: '50%',
+                transition: 'filter 0.15s', flexShrink: 0,
+                boxShadow: '0 0 4px rgba(0,200,83,0.4)',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              {win.maximized ? <Copy size={12} /> : <Square size={12} />}
-            </button>
+              onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = win.maximized ? '⊡' : '⛶'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '9px'; }}
+              onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
+            />
 
+            {/* Close — red dot */}
             <button
               onClick={(e) => { e.stopPropagation(); onClose(); }}
-              title="Close"
+              title="Close (×)"
               style={{
-                width: 34, height: 28, border: 'none', background: 'transparent',
-                color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: 4, transition: 'background 0.15s, color 0.15s'
+                width: 13, height: 13, border: 'none',
+                background: '#FF3B30', color: 'transparent',
+                cursor: 'pointer', borderRadius: '50%',
+                transition: 'filter 0.15s', flexShrink: 0,
+                boxShadow: '0 0 4px rgba(255,59,48,0.4)',
+                marginLeft: 2,
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#E81123'; e.currentTarget.style.color = '#fff'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ccc'; }}
-            >
-              <X size={15} />
-            </button>
+              onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = '×'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '12px'; e.currentTarget.style.fontWeight = 'bold'; }}
+              onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
+            />
           </div>
         </div>
 

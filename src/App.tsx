@@ -56,11 +56,20 @@ function DesktopContent() {
 
   const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>(() => {
     const positions: Record<string, { x: number; y: number }> = {};
-    const itemsPerCol = 6;
+    // Layout: 8 icons per column, 78px wide step, 80px tall step
+    // Keep icons on LEFT side only — right side has desktop widgets
+    const ITEMS_PER_COL = 8;
+    const COL_W = 82;   // horizontal step between columns
+    const ROW_H = 82;   // vertical step between rows
+    const START_X = 10; // left margin
+    const START_Y = 10; // top margin
     DESKTOP_ICONS.forEach((icon, index) => {
-      const col = Math.floor(index / itemsPerCol);
-      const row = index % itemsPerCol;
-      positions[icon.id] = { x: 12 + col * 94, y: 12 + row * 92 };
+      const col = Math.floor(index / ITEMS_PER_COL);
+      const row = index % ITEMS_PER_COL;
+      positions[icon.id] = {
+        x: START_X + col * COL_W,
+        y: START_Y + row * ROW_H,
+      };
     });
     return positions;
   });

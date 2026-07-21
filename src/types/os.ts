@@ -2,7 +2,12 @@ import { ProjectData, AboutData, TerminalData } from '../data';
 
 export type ThemeKey = 'green' | 'blue' | 'amber' | 'purple';
 export type PowerState = 'booting' | 'running' | 'sleeping' | 'shutdown';
-export type WinId = 'terminal' | 'about' | 'skills' | 'projects' | 'contact' | 'settings' | string;
+export type WinId =
+  | 'terminal' | 'about' | 'skills' | 'projects' | 'contact' | 'settings'
+  | 'youtube' | 'browser' | 'games' | 'gallery' | 'videoplayer' | 'notepad'
+  | 'file-explorer' | 'music-player' | 'paint' | 'calendar' | 'map'
+  | 'weather' | 'crypto' | 'space' | 'countries' | 'email' | 'matrix'
+  | string;
 
 export interface WinState {
   id: WinId;

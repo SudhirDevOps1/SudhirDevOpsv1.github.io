@@ -60,16 +60,66 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     setWindows(prev => {
       const existing = prev.find(w => w.id === id);
       if (existing) {
-        return prev.map(w => w.id === id ? { ...w, minimized: false, zIndex: Math.max(...prev.map(x => x.zIndex), 10) + 1 } : w);
+        return prev.map(w => w.id === id
+          ? { ...w, minimized: false, zIndex: Math.max(...prev.map(x => x.zIndex), 10) + 1 }
+          : w
+        );
       }
+
+      // App-specific default sizes
+      const APP_SIZES: Partial<Record<WinId, { w: number; h: number }>> = {
+        terminal:     { w: 720, h: 480 },
+        about:        { w: 660, h: 520 },
+        skills:       { w: 700, h: 540 },
+        projects:     { w: 860, h: 580 },
+        youtube:      { w: 940, h: 580 },
+        browser:      { w: 980, h: 640 },
+        gallery:      { w: 820, h: 560 },
+        videoplayer:  { w: 900, h: 560 },
+        'music-player': { w: 480, h: 580 },
+        games:        { w: 680, h: 520 },
+        'file-explorer': { w: 800, h: 540 },
+        paint:        { w: 840, h: 580 },
+        notepad:      { w: 700, h: 520 },
+        calendar:     { w: 820, h: 580 },
+        map:          { w: 900, h: 580 },
+        weather:      { w: 480, h: 580 },
+        crypto:       { w: 820, h: 580 },
+        space:        { w: 800, h: 580 },
+        countries:    { w: 900, h: 580 },
+        email:        { w: 720, h: 520 },
+        contact:      { w: 600, h: 480 },
+        settings:     { w: 680, h: 520 },
+      };
+
+      const size = APP_SIZES[id] || { w: 760, h: 520 };
+
+      // Center on screen with cascade offset based on open window count
+      const cascade = prev.length * 28;
+      const vw = typeof window !== 'undefined' ? window.innerWidth : 1280;
+      const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+      const x = Math.max(10, Math.round((vw - size.w) / 2) + cascade) ;
+      const y = Math.max(10, Math.round((vh - size.h) / 4) + cascade);
+
+      // Pretty window title
+      const TITLES: Partial<Record<WinId, string>> = {
+        terminal: '> TERMINAL.cmd', about: '👤 ABOUT.exe', skills: '⚡ SKILLS.sh',
+        projects: '📁 PROJECTS', youtube: '▶ YouTube', browser: '🌍 Browser',
+        gallery: '🖼️ Gallery', videoplayer: '🎬 Video Player', 'music-player': '🎵 Music Player',
+        games: '🎮 Games', 'file-explorer': '📂 File Explorer', paint: '🎨 Paint',
+        notepad: '📋 Notepad', calendar: '📅 Calendar', map: '🗺️ Maps',
+        weather: '⛅ Weather', crypto: '₿ Crypto', space: '🚀 Space', countries: '🌐 Globe',
+        email: '📧 Email', contact: '✉ Contact', settings: '⚙ Settings',
+      };
+
       return [...prev, {
         id,
-        title: id,
+        title: TITLES[id] || id,
         minimized: false,
         maximized: false,
-        position: { x: 100, y: 80 },
-        size: { w: 700, h: 500 },
-        zIndex: Math.max(...prev.map(x => x.zIndex), 10) + 1
+        position: { x, y },
+        size,
+        zIndex: Math.max(...prev.map(x => x.zIndex), 10) + 1,
       }];
     });
   }, []);
