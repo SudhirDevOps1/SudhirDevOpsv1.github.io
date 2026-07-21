@@ -41,31 +41,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-    <!-- PrismAnalytics Tracking Script (Dual-Mode: sendBeacon + fetch fallback) -->
+    <!-- PrismAnalytics Tracking Script (Quad-Fallback: sendBeacon -> fetch -> Image Pixel Beacon) -->
     <script>
     (function(){
       var id='pa_e57eb3b7a6da470b8574', url='https://prismanalytics.sudhirdevops1.workers.dev/api/track';
-      var sid=sessionStorage.getItem('pa_sid')||crypto.randomUUID();
-      sessionStorage.setItem('pa_sid',sid);
+      var sid=sessionStorage.getItem('pa_sid')||(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).substring(2));
+      try { sessionStorage.setItem('pa_sid',sid); } catch(e){}
       function t(e,d){
         try {
           var q=new URLSearchParams(location.search);
-          var payload=JSON.stringify({
+          var dataObj = {
             site_id:id,pathname:location.pathname,referrer:document.referrer,
             screen_size:screen.width+'x'+screen.height,session_id:sid,
             event_name:e||'pageview',event_data:d,
             utm_source:q.get('utm_source'),utm_medium:q.get('utm_medium'),utm_campaign:q.get('utm_campaign')
-          });
-          var sent=navigator.sendBeacon && navigator.sendBeacon(url,payload);
+          };
+          var payload=JSON.stringify(dataObj);
+          
+          var sent = false;
+          if (navigator.sendBeacon) {
+            try { sent = navigator.sendBeacon(url, payload); } catch(sbErr){}
+          }
           if(!sent && window.fetch){
-            fetch(url,{method:'POST',body:payload,headers:{'Content-Type':'application/json'},keepalive:true}).catch(function(){});
+            fetch(url,{method:'POST',body:payload,headers:{'Content-Type':'application/json'},mode:'no-cors',keepalive:true}).catch(function(){});
           }
         } catch(err){}
       }
       window.prism=t;
       t();
       var p=location.pathname;
-      setInterval(function(){if(p!=location.pathname){p=location.pathname;t();}},500);
+      setInterval(function(){if(p!=location.pathname){p=location.pathname;t();}},1000);
     })();
     </script>
   </head>
