@@ -45,7 +45,9 @@ Every application is **fully interactive and functional in client memory** with 
 | 🗺️ | **MAPS.exe** | **OpenStreetMap Application** with search, GPS location detector, saved locations, and road/satellite layers. |
 | 📅 | **CALENDAR.app** | **Event Calendar** with monthly grid view, event creator, time pickers, color tags, and local storage. |
 | 📂 | **EXPLORER.exe** | **Virtual File System (VFS)** with live media players & preview drawers for **local & online PDF documents** (`/public/resume/resume.pdf`), **Images** (`/public/image/personal.png`, `logo.png`, `logo.svg`), **Videos** (`demo_presentation.mp4`, `earth_from_space.mp4`), and file creation/deletion. |
-| 🎮 | **GAMES.exe** | **4 Arcade Games**: Retro Snake, Tic-Tac-Toe AI, Reaction Speed Test, and Speed Typing Test. |
+| 🧮 | **CALC.exe** | **Scientific Calculator** — Windows 11 styled calculator with backspace, percentage %, sign toggle ±, decimal, and math execution. |
+| ✨ | **WISDOM.api** | **Daily Advice & Dev Wisdom Generator** powered by free public **AdviceSlip API** with 1-click clipboard copy. |
+| 🎮 | **GAMES.exe** | **5 Real Arcade Games**: Retro Snake, Tic-Tac-Toe Minimax AI, **🎴 Memory Card Emoji Match**, Reaction Speed Test, and Speed Typing Test. |
 | 🌍 | **BROWSER.net** | **Smart Web Browser** with Wikipedia homepage, bookmarks, DuckDuckGo search, and X-Frame-Options embedding detector. |
 | ▶️ | **YOUTUBE.app** | **Real YouTube Player** with 14 curated category videos, custom YouTube URL loader, and Open on YouTube link. |
 | 🎨 | **PAINT.art** | **Canvas Drawing Art Studio** with pencil, eraser, stroke width, color palette, fill bucket, and PNG export. |
