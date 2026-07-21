@@ -13,11 +13,11 @@ interface VideoItem {
 }
 
 const VIDEO_LIBRARY: VideoItem[] = [
-  // Lofi / Music
+  // Lofi / Music (Working VODs & Streams)
   { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio 📚 - beats to relax/study to', channel: 'Lofi Girl', views: '20K watching', duration: 'LIVE', category: 'Lofi', thumbnail: 'https://img.youtube.com/vi/jfKfPfyJRdk/hqdefault.jpg', description: '24/7 lofi hip hop radio to relax and study to.' },
-  { id: '5qap5aO4i9A', title: 'Chillhop Essentials - Lofi Beats', channel: 'Chillhop Music', views: '8.4K watching', duration: 'LIVE', category: 'Lofi', thumbnail: 'https://img.youtube.com/vi/5qap5aO4i9A/hqdefault.jpg', description: 'Chill beats to study and relax to.' },
+  { id: 'TURbeWK609U', title: 'Lofi Hip Hop Mix 2026 - Beats to Relax / Study', channel: 'Lofi Records', views: '4.8M', duration: '1:30:15', category: 'Lofi', thumbnail: 'https://img.youtube.com/vi/TURbeWK609U/hqdefault.jpg', description: 'Relaxing lofi beats for study and work.' },
   { id: 'DWcJFNfaw9c', title: 'Cyberpunk Synthwave Mix 2026 🌆', channel: 'Retro Electro', views: '1.2M', duration: '1:02:44', category: 'Music', thumbnail: 'https://img.youtube.com/vi/DWcJFNfaw9c/hqdefault.jpg', description: 'Best cyberpunk synthwave music mix 2026.' },
-  { id: 'dQw4w9WgXcQ', title: 'Rick Astley - Never Gonna Give You Up (Official)', channel: 'Rick Astley', views: '1.5B', duration: '3:32', category: 'Music', thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', description: 'The classic.' },
+  { id: 'dQw4w9WgXcQ', title: 'Rick Astley - Never Gonna Give You Up (Official Video)', channel: 'Rick Astley', views: '1.5B', duration: '3:32', category: 'Music', thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg', description: 'The classic.' },
   // Coding / Tech
   { id: 'rfscVS0vtbw', title: 'Learn Python - Full Course for Beginners', channel: 'freeCodeCamp', views: '45M', duration: '4:26:52', category: 'Coding', thumbnail: 'https://img.youtube.com/vi/rfscVS0vtbw/hqdefault.jpg', description: 'Full Python programming tutorial for beginners.' },
   { id: 'PkZNo7MFNFg', title: 'Learn JavaScript - Full Course for Beginners', channel: 'freeCodeCamp', views: '15M', duration: '3:26:42', category: 'Coding', thumbnail: 'https://img.youtube.com/vi/PkZNo7MFNFg/hqdefault.jpg', description: 'Complete JavaScript tutorial.' },
@@ -25,14 +25,11 @@ const VIDEO_LIBRARY: VideoItem[] = [
   { id: 'zJSY8tbf_ys', title: 'TypeScript Full Course for Beginners', channel: 'Dave Gray', views: '1.1M', duration: '5:38:16', category: 'Coding', thumbnail: 'https://img.youtube.com/vi/zJSY8tbf_ys/hqdefault.jpg', description: 'Complete TypeScript course.' },
   // Gaming / Fun
   { id: 'gsNaR6FRuO0', title: 'Minecraft in 100 Seconds', channel: 'Fireship', views: '4.2M', duration: '1:40', category: 'Gaming', thumbnail: 'https://img.youtube.com/vi/gsNaR6FRuO0/hqdefault.jpg', description: 'Minecraft explained in 100 seconds.' },
-  { id: 'ysEN5RaKOlA', title: 'GTA 6 Official Trailer', channel: 'Rockstar Games', views: '189M', duration: '1:30', category: 'Gaming', thumbnail: 'https://img.youtube.com/vi/ysEN5RaKOlA/hqdefault.jpg', description: 'GTA 6 official trailer.' },
-  // India / Motivation
-  { id: 'ZVnjOPwW4ZA', title: 'APJ Abdul Kalam Speech - Wings of Fire', channel: 'Motivational India', views: '10M', duration: '12:30', category: 'Motivation', thumbnail: 'https://img.youtube.com/vi/ZVnjOPwW4ZA/hqdefault.jpg', description: 'Inspiring speech by Dr. APJ Abdul Kalam.' },
-  { id: 'vQFnWhHm7u8', title: 'React OS Portfolio Build - Full Stack Dev', channel: 'SudhirDevOps1', views: '1.2K', duration: '45:00', category: 'Coding', thumbnail: 'https://img.youtube.com/vi/vQFnWhHm7u8/hqdefault.jpg', description: 'Building a full OS portfolio in React.' },
-  // Nature / Space
-  { id: 'Bey4XXJAqS8', title: 'James Webb Space Telescope - Universe Revealed', channel: 'NASA', views: '5.4M', duration: '52:14', category: 'Space', thumbnail: 'https://img.youtube.com/vi/Bey4XXJAqS8/hqdefault.jpg', description: 'James Webb telescope reveals the universe.' },
-  { id: 'Go3muowFYS8', title: 'Earth from Space - 4K', channel: 'NASA Goddard', views: '12M', duration: '3:00', category: 'Space', thumbnail: 'https://img.youtube.com/vi/Go3muowFYS8/hqdefault.jpg', description: '4K footage of Earth from the International Space Station.' },
+  { id: 'VQL3aeWqWE8', title: 'GTA 6 Official Trailer', channel: 'Rockstar Games', views: '189M', duration: '1:30', category: 'Gaming', thumbnail: 'https://img.youtube.com/vi/VQL3aeWqWE8/hqdefault.jpg', description: 'GTA 6 official trailer.' },
+  // Space
+  { id: 'Go3muowFYS8', title: 'Earth from Space - 4K ISS Live Stream', channel: 'NASA Goddard', views: '12M', duration: '3:00', category: 'Space', thumbnail: 'https://img.youtube.com/vi/Go3muowFYS8/hqdefault.jpg', description: '4K footage of Earth from the International Space Station.' },
 ];
+
 
 const CATEGORIES = ['All', 'Lofi', 'Music', 'Coding', 'Gaming', 'Space', 'Motivation'];
 
