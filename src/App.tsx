@@ -83,13 +83,16 @@ function DesktopContent() {
 
   const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>(() => {
     const positions: Record<string, { x: number; y: number }> = {};
-    // Layout: 8 icons per column, 78px wide step, 80px tall step
-    // Keep icons on LEFT side only — right side has desktop widgets
-    const ITEMS_PER_COL = 8;
-    const COL_W = 82;   // horizontal step between columns
-    const ROW_H = 82;   // vertical step between rows
-    const START_X = 10; // left margin
-    const START_Y = 10; // top margin
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const availableHeight = vh - 60; // 60px taskbar + padding margin
+    const ROW_H = 76;   // vertical step between rows
+    const COL_W = 84;   // horizontal step between columns
+    const START_X = 12; // left margin
+    const START_Y = 12; // top margin
+
+    // Dynamically calculate how many icons can fit vertically on THIS screen height!
+    const ITEMS_PER_COL = Math.max(3, Math.floor(availableHeight / ROW_H));
+
     DESKTOP_ICONS.forEach((icon, index) => {
       const col = Math.floor(index / ITEMS_PER_COL);
       const row = index % ITEMS_PER_COL;
@@ -100,6 +103,37 @@ function DesktopContent() {
     });
     return positions;
   });
+
+  // Re-calculate layout on window resize so icons never hide when browser is resized
+  useEffect(() => {
+    const handleResize = () => {
+      const vh = window.innerHeight;
+      const availableHeight = vh - 60;
+      const ROW_H = 76;
+      const COL_W = 84;
+      const START_X = 12;
+      const START_Y = 12;
+      const ITEMS_PER_COL = Math.max(3, Math.floor(availableHeight / ROW_H));
+
+      setIconPositions(prev => {
+        const next = { ...prev };
+        DESKTOP_ICONS.forEach((icon, index) => {
+          const col = Math.floor(index / ITEMS_PER_COL);
+          const row = index % ITEMS_PER_COL;
+          // Only auto-layout if position was default left-side column grid
+          next[icon.id] = {
+            x: START_X + col * COL_W,
+            y: START_Y + row * ROW_H,
+          };
+        });
+        return next;
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   // ─── Keyboard Shortcuts: Alt+Tab & Ctrl+P Command Palette ──────────────────
   useEffect(() => {
