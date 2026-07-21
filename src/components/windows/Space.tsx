@@ -168,8 +168,9 @@ export const SpaceWindow = memo(() => {
           {launches.map(launch => (
             <div key={launch.id} style={{ padding: '12px 16px', borderBottom: '1px solid #0a0c14', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
               <div style={{ width: 40, height: 40, background: 'rgba(var(--accent-rgb),0.1)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 20 }}>
-                {launch.links.patch.small ? <img src={launch.links.patch.small} alt="" style={{ width: 36, height: 36, objectFit: 'contain' }} /> : '🚀'}
+                {launch?.links?.patch?.small ? <img src={launch.links.patch.small} alt="" style={{ width: 36, height: 36, objectFit: 'contain' }} /> : '🚀'}
               </div>
+
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 13, fontWeight: 'bold', color: '#ddd', marginBottom: 3 }}>{launch.name}</div>
                 <div style={{ fontSize: 10, color: '#555', display: 'flex', alignItems: 'center', gap: 6 }}>
