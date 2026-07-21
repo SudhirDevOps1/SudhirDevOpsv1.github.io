@@ -37,6 +37,7 @@ const CountriesWindow = lazy(() => import('./components/windows/Countries'));
 const SystemInfoWindow = lazy(() => import('./components/windows/SystemInfo'));
 const AIAssistantWindow = lazy(() => import('./components/windows/AIAssistant'));
 const DevOpsMonitorWindow = lazy(() => import('./components/windows/DevOpsMonitor'));
+const WorkspacesWindow = lazy(() => import('./components/windows/Workspaces'));
 
 import { DesktopWidgets } from './components/common/DesktopWidgets';
 
@@ -229,6 +230,7 @@ function DesktopContent() {
             case 'sysinfo': return <SystemInfoWindow />;
             case 'ai-assistant': return <AIAssistantWindow />;
             case 'devops-monitor': return <DevOpsMonitorWindow />;
+            case 'workspaces': return <WorkspacesWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}

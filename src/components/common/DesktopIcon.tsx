@@ -2,7 +2,7 @@ import React, { memo, useRef } from 'react';
 import {
   Terminal, User, Zap, FolderGit2, Youtube, Globe, Globe2, Image as ImageIcon, Video,
   Gamepad2, Folder, Music, Palette, Mail, Calendar, FileText, Settings, Send, Activity,
-  Map, Cloud, TrendingUp, Rocket, BookOpen, Bot, Server, Shield, Cpu
+  Map, Cloud, TrendingUp, Rocket, BookOpen, Bot, Server, Shield, Cpu, Layout
 } from 'lucide-react';
 
 import { DESKTOP_ICONS } from '../../data';
