@@ -8,6 +8,7 @@ import { Taskbar } from './components/common/Taskbar';
 import { StartMenu } from './components/common/StartMenu';
 import { DesktopIcon } from './components/common/DesktopIcon';
 import { ContextMenu, SleepScreen, ShutdownScreen } from './components/common/Screens';
+import { LockScreen } from './components/common/LockScreen';
 import { DESKTOP_ICONS, THEMES } from './data';
 import { ThemeKey, WinId } from './types/os';
 
@@ -33,6 +34,7 @@ const WeatherWindow = lazy(() => import('./components/windows/Weather'));
 const CryptoWindow = lazy(() => import('./components/windows/Crypto'));
 const SpaceWindow = lazy(() => import('./components/windows/Space'));
 const CountriesWindow = lazy(() => import('./components/windows/Countries'));
+const SystemInfoWindow = lazy(() => import('./components/windows/SystemInfo'));
 
 import { DesktopWidgets } from './components/common/DesktopWidgets';
 
@@ -47,6 +49,30 @@ function DesktopContent() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [logoClickCount, setLogoClickCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginMode, setLoginMode] = useState<'user' | 'guest'>('guest');
+
+  // Send a desktop notification helper
+  const sendNotification = useCallback((title: string, body: string, icon?: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: icon || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23080a10'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='28' font-weight='bold' fill='%2300FF88' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E" });
+    }
+  }, []);
+
+  const handleLogin = useCallback((mode: 'user' | 'guest') => {
+    setLoginMode(mode);
+    setIsLoggedIn(true);
+    // Send welcome notification
+    setTimeout(() => {
+      sendNotification('🖥️ SUDHI OS Ready!', `Welcome ${mode === 'user' ? 'Sudhir' : 'Guest'}! ${DESKTOP_ICONS.length} apps loaded.`);
+    }, 1500);
+    setTimeout(() => {
+      sendNotification('📧 3 New Messages', 'You have unread messages in Email.');
+    }, 4000);
+    setTimeout(() => {
+      sendNotification('⛅ Weather Update', 'Bihar: 32°C, Partly Cloudy. Open Weather app for details.');
+    }, 7000);
+  }, [sendNotification]);
 
   // ─── Alt+Tab & Command Palette Overlay States ─────────────────────────────
   const [showAltTab, setShowAltTab] = useState(false);
@@ -89,6 +115,12 @@ function DesktopContent() {
           setShowAltTab(true);
           setAltTabIndex(prev => (prev + 1) % windows.length);
         }
+      }
+
+      // Win+L = Lock screen
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        setIsLoggedIn(false);
       }
     };
 
@@ -157,6 +189,7 @@ function DesktopContent() {
             case 'crypto': return <CryptoWindow />;
             case 'space': return <SpaceWindow />;
             case 'countries': return <CountriesWindow />;
+            case 'sysinfo': return <SystemInfoWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}
@@ -166,6 +199,11 @@ function DesktopContent() {
 
   if (powerState === 'shutdown') {
     return <ShutdownScreen onWake={() => setPowerState('booting')} />;
+  }
+
+  // Show Lock Screen before desktop
+  if (!isLoggedIn) {
+    return <LockScreen onLogin={handleLogin} />;
   }
 
   return (

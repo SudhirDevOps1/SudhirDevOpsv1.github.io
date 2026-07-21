@@ -100,14 +100,24 @@ export const Taskbar = memo(({ onStartClick }: { onStartClick: () => void }) => 
       </div>
 
       {/* Windows 11 Right System Tray */}
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', fontSize: 11, fontFamily: 'var(--font-mono)', marginLeft: 'auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', borderRadius: 6, background: 'rgba(255,255,255,0.05)' }}>
-          <span title="Wi-Fi Connected">📶</span>
-          <span title="Audio Volume">🔊</span>
-          <span title="Battery Status">🔋 {battery}%</span>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11, fontFamily: 'var(--font-mono)', marginLeft: 'auto' }}>
+        {/* Quick action icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', cursor: 'default' }}>
+          <span title="Wi-Fi Connected" style={{ cursor: 'pointer' }}>📶</span>
+          <span title="Audio Volume" style={{ cursor: 'pointer' }}>🔊</span>
+          <span title="Battery: 92%" style={{ cursor: 'pointer' }}>🔋 {battery}%</span>
+          <span
+            title="Lock Screen (Ctrl+L)"
+            style={{ cursor: 'pointer', opacity: 0.6, fontSize: 14 }}
+            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'l', ctrlKey: true, bubbles: true }))}
+          >🔒</span>
         </div>
-        <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', cursor: 'default' }}>
-          <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 11 }}>{formatTime(now)}</span>
+        {/* Clock */}
+        <div
+          style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', cursor: 'default', padding: '2px 6px', minWidth: 68 }}
+          title={now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+        >
+          <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 12 }}>{formatTime(now)}</span>
           <span style={{ color: '#888', fontSize: 9 }}>{formatDate(now)}</span>
         </div>
       </div>
