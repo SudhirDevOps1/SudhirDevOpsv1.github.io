@@ -25,8 +25,10 @@ export const SettingsWindow = memo(() => {
 
   // Customization Settings State (persisted in localStorage)
   const [soundEffects, setSoundEffects] = useState<boolean>(() => localStorage.getItem('sudhi_sound') !== 'false');
-  const [crtScanlines, setCrtScanlines] = useState<boolean>(() => localStorage.getItem('sudhi_crt') !== 'false');
+  const [crtScanlines, setCrtScanlines] = useState<boolean>(() => localStorage.getItem('sudhi_crt') === 'true'); // Default to clean FALSE so no annoying lines by default!
   const [glassBlur, setGlassBlur] = useState<boolean>(() => localStorage.getItem('sudhi_blur') !== 'false');
+  const [bgGridLines, setBgGridLines] = useState<boolean>(() => localStorage.getItem('sudhi_grid') === 'true'); // Default to clean OFF lines!
+  const [wallpaperOpacity, setWallpaperOpacity] = useState<number>(() => Number(localStorage.getItem('sudhi_wp_op') || 90)); // Default 90% high clarity
   const [customWallpaperInput, setCustomWallpaperInput] = useState('');
   const [accentBrightness, setAccentBrightness] = useState<number>(() => Number(localStorage.getItem('sudhi_brightness') || 100));
 
@@ -41,6 +43,18 @@ export const SettingsWindow = memo(() => {
   }, [crtScanlines]);
 
   useEffect(() => {
+    localStorage.setItem('sudhi_grid', String(bgGridLines));
+    const gridEl = document.querySelector('.bg-grid') as HTMLElement;
+    if (gridEl) gridEl.style.display = bgGridLines ? 'block' : 'none';
+  }, [bgGridLines]);
+
+  useEffect(() => {
+    localStorage.setItem('sudhi_wp_op', String(wallpaperOpacity));
+    const wpEl = document.querySelector('.desktop-wp-layer') as HTMLElement;
+    if (wpEl) wpEl.style.opacity = (wallpaperOpacity / 100).toString();
+  }, [wallpaperOpacity]);
+
+  useEffect(() => {
     localStorage.setItem('sudhi_blur', String(glassBlur));
     document.documentElement.style.setProperty('--glass-blur', glassBlur ? '16px' : '0px');
   }, [glassBlur]);
@@ -49,6 +63,7 @@ export const SettingsWindow = memo(() => {
     localStorage.setItem('sudhi_brightness', String(accentBrightness));
     document.documentElement.style.filter = `brightness(${accentBrightness}%)`;
   }, [accentBrightness]);
+
 
   const setCustomWallpaper = () => {
     if (!customWallpaperInput.trim()) return;
@@ -228,13 +243,13 @@ export const SettingsWindow = memo(() => {
                 </button>
               </div>
 
-              {/* CRT Scanlines */}
+              {/* CRT Scanlines Overlay Toggle */}
               <div style={{ padding: 14, border: '1px solid #1a1e2e', borderRadius: 8, background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>CRT Scanlines Overlay</div>
-                  <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Retro cyberpunk monitor line scan effect</div>
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>CRT Scanlines Overlay (Horizonal Lines)</div>
+                  <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Turn OFF to completely remove horizontal screen lines</div>
                 </div>
-                <button onClick={() => { setCrtScanlines(v => !v); addToast(`CRT Scanlines: ${!crtScanlines ? 'ON' : 'OFF'}`, 'info'); }}
+                <button onClick={() => { setCrtScanlines(v => !v); addToast(`CRT Lines: ${!crtScanlines ? 'ON' : 'OFF'}`, 'info'); }}
                   style={{
                     padding: '6px 18px', border: `1px solid ${crtScanlines ? 'var(--accent)' : '#333'}`,
                     background: crtScanlines ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
@@ -242,9 +257,46 @@ export const SettingsWindow = memo(() => {
                     fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
                   }}
                 >
-                  {crtScanlines ? '🟢 ENABLED' : '🔴 DISABLED'}
+                  {crtScanlines ? '🟢 ENABLED' : '🔴 DISABLED (CLEAN)'}
                 </button>
               </div>
+
+              {/* Background Cyber Grid Lines Toggle */}
+              <div style={{ padding: 14, border: '1px solid #1a1e2e', borderRadius: 8, background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>Background Grid Lines</div>
+                  <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Turn OFF to remove cyber background grid pattern for clear wallpaper</div>
+                </div>
+                <button onClick={() => { setBgGridLines(v => !v); addToast(`Background Grid: ${!bgGridLines ? 'ON' : 'OFF'}`, 'info'); }}
+                  style={{
+                    padding: '6px 18px', border: `1px solid ${bgGridLines ? 'var(--accent)' : '#333'}`,
+                    background: bgGridLines ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
+                    color: bgGridLines ? 'var(--accent)' : '#666', borderRadius: 20, cursor: 'pointer',
+                    fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
+                  }}
+                >
+                  {bgGridLines ? '🟢 ENABLED' : '🔴 DISABLED (CLEAN)'}
+                </button>
+              </div>
+
+              {/* Wallpaper Opacity Slider */}
+              <div style={{ padding: 14, border: '1px solid #1a1e2e', borderRadius: 8, background: 'rgba(255,255,255,0.02)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>Wallpaper Clarity & Visibility Opacity</span>
+                  <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 'bold' }}>{wallpaperOpacity}%</span>
+                </div>
+                <input
+                  type="range" min="30" max="100" value={wallpaperOpacity}
+                  onChange={e => setWallpaperOpacity(Number(e.target.value))}
+                  style={{ width: '100%', accentColor: 'var(--accent)', cursor: 'pointer' }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#555', marginTop: 4 }}>
+                  <span>30% (Subtle)</span>
+                  <span>70% (Balanced)</span>
+                  <span>100% (Vibrant Ultra HD)</span>
+                </div>
+              </div>
+
 
               {/* Glassmorphism Blur */}
               <div style={{ padding: 14, border: '1px solid #1a1e2e', borderRadius: 8, background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

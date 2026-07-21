@@ -258,11 +258,12 @@ function DesktopContent() {
       <MatrixRain active={matrixOn} accent={THEMES[theme].accent} />
 
       {activeWallpaper && (
-        <div style={{ position: 'fixed', inset: 0, backgroundImage: `url(${activeWallpaper})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 1, pointerEvents: 'none', transition: 'background-image 0.5s' }} />
+        <div className="desktop-wp-layer" style={{ position: 'fixed', inset: 0, backgroundImage: `url(${activeWallpaper})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: (Number(localStorage.getItem('sudhi_wp_op') || 90) / 100), zIndex: 1, pointerEvents: 'none', transition: 'background-image 0.5s, opacity 0.2s' }} />
       )}
 
-      <div className="bg-grid" />
-      <div className="crt-overlay" />
+      <div className="bg-grid" style={{ display: localStorage.getItem('sudhi_grid') === 'true' ? 'block' : 'none' }} />
+      <div className="crt-overlay" style={{ display: localStorage.getItem('sudhi_crt') === 'true' ? 'block' : 'none' }} />
+
 
       {/* Live Desktop Widgets (top-right) */}
       <DesktopWidgets />
