@@ -114,7 +114,9 @@ export const BOOT_MESSAGES = [
 
 export const DESKTOP_ICONS = [
   { id: 'terminal',     label: 'TERMINAL.cmd',  icon: '>_', emoji: null,  lucide: 'Terminal' },
+  { id: 'ai-assistant', label: 'AI_BOT.exe',    icon: null, emoji: '🤖',  lucide: 'Bot' },
   { id: 'about',        label: 'ABOUT.exe',     icon: null, emoji: '👤',  lucide: 'User' },
+
   { id: 'skills',       label: 'SKILLS.sh',     icon: null, emoji: '⚡',  lucide: 'Zap' },
   { id: 'projects',     label: 'PROJECTS/',     icon: null, emoji: '📁',  lucide: 'FolderGit2' },
   { id: 'youtube',      label: 'YOUTUBE.app',   icon: null, emoji: '▶',   lucide: 'Youtube' },

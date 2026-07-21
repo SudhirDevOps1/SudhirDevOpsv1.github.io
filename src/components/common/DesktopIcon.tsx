@@ -78,6 +78,7 @@ export const DesktopIcon = memo(({ icon, selected, onSingleClick, onDoubleClick,
       case 'Settings':    return <Settings size={s} color="#aaa" />;
       case 'Send':        return <Send size={s} color="#00B0FF" />;
       case 'Activity':    return <Activity size={s} color="#00FF88" />;
+      case 'Bot':         return <Bot size={s} color="#00FF88" />;
       case 'Map':         return <Map size={s} color="#00E676" />;
       case 'Cloud':       return <Cloud size={s} color="#87CEEB" />;
       case 'TrendingUp':  return <TrendingUp size={s} color="#FFB300" />;

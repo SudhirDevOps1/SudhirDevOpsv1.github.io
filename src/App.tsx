@@ -35,6 +35,7 @@ const CryptoWindow = lazy(() => import('./components/windows/Crypto'));
 const SpaceWindow = lazy(() => import('./components/windows/Space'));
 const CountriesWindow = lazy(() => import('./components/windows/Countries'));
 const SystemInfoWindow = lazy(() => import('./components/windows/SystemInfo'));
+const AIAssistantWindow = lazy(() => import('./components/windows/AIAssistant'));
 
 import { DesktopWidgets } from './components/common/DesktopWidgets';
 
@@ -190,6 +191,7 @@ function DesktopContent() {
             case 'space': return <SpaceWindow />;
             case 'countries': return <CountriesWindow />;
             case 'sysinfo': return <SystemInfoWindow />;
+            case 'ai-assistant': return <AIAssistantWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}
