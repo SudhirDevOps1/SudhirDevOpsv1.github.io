@@ -35,7 +35,7 @@ export const SpaceWindow = memo(() => {
   const [countdown, setCountdown] = useState('');
   const [nextLaunch, setNextLaunch] = useState<SpaceXLaunch | null>(null);
 
-  const fetchSpaceX = useCallback(async () => {
+  const fetchSpaceX = useCallback(() => {
     setLoading(true);
     const mockLaunches: SpaceXLaunch[] = [
       { id: '1', name: 'Starship Orbital Test 5', date_utc: new Date(Date.now() + 864000000).toISOString(), flight_number: 120, details: 'Full Starship and Super Heavy booster integration orbital launch test from Starbase, Texas.', rocket: 'Starship', success: true },
@@ -47,24 +47,9 @@ export const SpaceWindow = memo(() => {
 
     setLaunches(mockLaunches);
     setNextLaunch(mockLaunches[0]);
-
-    // Silently attempt API fetch without throwing browser console CORS errors
-    fetch('https://api.spacexdata.com/v4/launches/upcoming')
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          const sorted = data.sort((a, b) => new Date(a.date_utc).getTime() - new Date(b.date_utc).getTime());
-          setLaunches(sorted.slice(0, 10));
-          setNextLaunch(sorted[0]);
-        }
-      })
-      .catch(() => {
-        // Silently keep mock dataset - zero console errors or blank screen
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    setLoading(false);
   }, []);
+
 
 
 
