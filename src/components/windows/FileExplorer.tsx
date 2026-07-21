@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Folder, FileText, Image as ImageIcon, Video, File, ChevronRight, HardDrive, Download, Eye, Plus, Trash2 } from 'lucide-react';
+import { Folder, FileText, Image as ImageIcon, Video, File, ChevronRight, HardDrive, Download, Eye, Plus, Trash2, ExternalLink } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
 
 interface FileNode {
@@ -15,8 +15,8 @@ interface FileNode {
 
 export const FileExplorerWindow = memo(() => {
   const { openWindow, addToast } = useOS();
-  
-  // Real Virtual File System representation including public folder contents
+
+  // Real Virtual File System representation including local and online files
   const [vfs, setVfs] = useState<FileNode[]>([
     {
       id: 'root-public',
@@ -30,7 +30,7 @@ export const FileExplorerWindow = memo(() => {
           type: 'folder',
           path: '/public/resume',
           children: [
-            { id: 'resume-pdf', name: 'resume.pdf', type: 'file', path: '/resume/resume.pdf', size: '142 KB', fileType: 'pdf', url: '/resume/resume.pdf' }
+            { id: 'resume-pdf', name: 'resume.pdf', type: 'file', path: '/public/resume/resume.pdf', size: '142 KB', fileType: 'pdf', url: '/resume/resume.pdf' }
           ]
         },
         {
@@ -39,9 +39,9 @@ export const FileExplorerWindow = memo(() => {
           type: 'folder',
           path: '/public/image',
           children: [
-            { id: 'img-personal', name: 'personal.png', type: 'file', path: '/image/personal.png', size: '420 KB', fileType: 'image', url: '/image/personal.png' },
-            { id: 'img-logo-png', name: 'logo.png', type: 'file', path: '/image/logo.png', size: '280 KB', fileType: 'image', url: '/image/logo.png' },
-            { id: 'img-logo-svg', name: 'logo.svg', type: 'file', path: '/image/logo.svg', size: '12 KB', fileType: 'image', url: '/image/logo.svg' }
+            { id: 'img-personal', name: 'personal.png', type: 'file', path: '/public/image/personal.png', size: '420 KB', fileType: 'image', url: '/image/personal.png' },
+            { id: 'img-logo-png', name: 'logo.png', type: 'file', path: '/public/image/logo.png', size: '280 KB', fileType: 'image', url: '/image/logo.png' },
+            { id: 'img-logo-svg', name: 'logo.svg', type: 'file', path: '/public/image/logo.svg', size: '12 KB', fileType: 'image', url: '/image/logo.svg' }
           ]
         },
         {
@@ -50,7 +50,7 @@ export const FileExplorerWindow = memo(() => {
           type: 'folder',
           path: '/public/wallpaper',
           children: [
-            { id: 'wp-win11', name: 'win11_bloom.png', type: 'file', path: '/wallpaper/win11_bloom.png', size: '850 KB', fileType: 'image', url: '/wallpaper/win11_bloom.png' }
+            { id: 'wp-win11', name: 'win11_bloom.png', type: 'file', path: '/public/wallpaper/win11_bloom.png', size: '850 KB', fileType: 'image', url: '/wallpaper/win11_bloom.png' }
           ]
         },
         {
@@ -59,7 +59,8 @@ export const FileExplorerWindow = memo(() => {
           type: 'folder',
           path: '/public/video',
           children: [
-            { id: 'vid-sample', name: 'demo_presentation.mp4', type: 'file', path: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', size: '12.4 MB', fileType: 'video', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+            { id: 'vid-sample', name: 'demo_presentation.mp4', type: 'file', path: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', size: '12.4 MB', fileType: 'video', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+            { id: 'vid-nature', name: 'earth_from_space.mp4', type: 'file', path: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', size: '18.1 MB', fileType: 'video', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' }
           ]
         }
       ]
@@ -87,6 +88,7 @@ export const FileExplorerWindow = memo(() => {
   const [currentFolder, setCurrentFolder] = useState<FileNode>(vfs[0]); // Start in /public
   const [selectedNode, setSelectedNode] = useState<FileNode | null>(null);
   const [newFileName, setNewFileName] = useState('');
+  const [previewModalFile, setPreviewModalFile] = useState<FileNode | null>(null);
 
   const handleOpenFolder = (folder: FileNode) => {
     setCurrentFolder(folder);
@@ -95,8 +97,8 @@ export const FileExplorerWindow = memo(() => {
 
   const handleOpenFile = (file: FileNode) => {
     setSelectedNode(file);
+    setPreviewModalFile(file);
     if (file.fileType === 'pdf') {
-      window.open(file.url || '/resume/resume.pdf', '_blank');
       addToast(`Opened PDF document: ${file.name}`, 'info');
     } else if (file.fileType === 'image') {
       openWindow('gallery');
@@ -112,13 +114,18 @@ export const FileExplorerWindow = memo(() => {
 
   const createNewFile = () => {
     if (!newFileName.trim()) return;
+    const isPdf = newFileName.endsWith('.pdf');
+    const isImg = newFileName.endsWith('.png') || newFileName.endsWith('.jpg') || newFileName.endsWith('.svg');
+    const isVid = newFileName.endsWith('.mp4') || newFileName.endsWith('.webm');
+    
     const newFile: FileNode = {
       id: `file-${Date.now()}`,
       name: newFileName,
       type: 'file',
       path: `${currentFolder.path}/${newFileName}`,
       size: '1 KB',
-      fileType: 'text'
+      fileType: isPdf ? 'pdf' : isImg ? 'image' : isVid ? 'video' : 'text',
+      url: newFileName.startsWith('http') ? newFileName : undefined,
     };
 
     const updatedChildren = [...(currentFolder.children || []), newFile];
@@ -132,11 +139,12 @@ export const FileExplorerWindow = memo(() => {
     const updatedChildren = (currentFolder.children || []).filter(c => c.id !== selectedNode.id);
     setCurrentFolder({ ...currentFolder, children: updatedChildren });
     setSelectedNode(null);
+    setPreviewModalFile(null);
     addToast(`Deleted: ${selectedNode.name}`, 'info');
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-mono)', background: '#0a0d14' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-mono)', background: '#0a0d14', color: '#fff' }}>
       {/* Navigation Bar */}
       <div style={{ padding: '8px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: 10, background: '#101420' }}>
         <button
@@ -156,7 +164,7 @@ export const FileExplorerWindow = memo(() => {
             type="text"
             value={newFileName}
             onChange={e => setNewFileName(e.target.value)}
-            placeholder="New file name..."
+            placeholder="New file name (e.g. doc.pdf)..."
             style={{ padding: '4px 8px', background: '#000', border: '1px solid #333', borderRadius: 4, color: '#fff', fontSize: 11, fontFamily: 'var(--font-mono)' }}
           />
           <button onClick={createNewFile} title="Create New File" style={{ padding: '4px 8px', border: '1px solid var(--accent)', background: 'rgba(var(--accent-rgb),0.15)', color: 'var(--accent)', borderRadius: 4, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 11 }}>
@@ -232,25 +240,50 @@ export const FileExplorerWindow = memo(() => {
 
         {/* Selected File Preview Drawer */}
         {selectedNode && selectedNode.type === 'file' && (
-          <div style={{ width: 220, borderLeft: '1px solid rgba(255,255,255,0.08)', padding: 14, background: '#0d1017', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 10, color: '#666', fontWeight: 'bold', marginBottom: 10 }}>FILE DETAILS</div>
-            
+          <div style={{ width: 260, borderLeft: '1px solid rgba(255,255,255,0.08)', padding: 14, background: '#0d1017', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+            <div style={{ fontSize: 10, color: '#666', fontWeight: 'bold', marginBottom: 10 }}>FILE PREVIEW</div>
+
+            {/* Live Media Embed Preview */}
             {selectedNode.fileType === 'image' && selectedNode.url && (
-              <img src={selectedNode.url} alt={selectedNode.name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 6, marginBottom: 12, border: '1px solid #222' }} />
+              <img src={selectedNode.url} alt={selectedNode.name} style={{ width: '100%', maxHeight: 150, objectFit: 'contain', borderRadius: 6, marginBottom: 12, border: '1px solid #222', background: '#000' }} />
+            )}
+
+            {selectedNode.fileType === 'video' && selectedNode.url && (
+              <video src={selectedNode.url} controls style={{ width: '100%', maxHeight: 150, borderRadius: 6, marginBottom: 12, border: '1px solid #222', background: '#000' }} />
+            )}
+
+            {selectedNode.fileType === 'pdf' && (
+              <div style={{ padding: 16, background: '#180a0a', border: '1px solid #FF444444', borderRadius: 6, textAlign: 'center', marginBottom: 12 }}>
+                <FileText size={40} color="#FF5555" />
+                <div style={{ fontSize: 11, color: '#FF8888', marginTop: 6, fontWeight: 'bold' }}>PDF Document</div>
+                <div style={{ fontSize: 9, color: '#888', marginTop: 2 }}>{selectedNode.name}</div>
+              </div>
             )}
 
             <div style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 'bold', marginBottom: 6, wordBreak: 'break-all' }}>
               {selectedNode.name}
             </div>
-            <div style={{ color: '#aaa', fontSize: 11, marginBottom: 4 }}>Path: {selectedNode.path}</div>
-            <div style={{ color: '#aaa', fontSize: 11, marginBottom: 14 }}>Size: {selectedNode.size || 'Unknown'}</div>
+            <div style={{ color: '#aaa', fontSize: 10, marginBottom: 4 }}>Path: {selectedNode.path}</div>
+            <div style={{ color: '#aaa', fontSize: 10, marginBottom: 14 }}>Size: {selectedNode.size || 'Unknown'}</div>
 
-            <button
-              onClick={() => handleOpenFile(selectedNode)}
-              style={{ padding: '8px 14px', border: '1px solid var(--accent)', background: 'rgba(var(--accent-rgb),0.2)', color: 'var(--accent)', borderRadius: 6, cursor: 'pointer', fontSize: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 'auto' }}
-            >
-              <Eye size={14} /> Open / Preview
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 'auto' }}>
+              <button
+                onClick={() => handleOpenFile(selectedNode)}
+                style={{ padding: '8px 14px', border: '1px solid var(--accent)', background: 'rgba(var(--accent-rgb),0.2)', color: 'var(--accent)', borderRadius: 6, cursor: 'pointer', fontSize: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+              >
+                <Eye size={14} /> Open / Play App
+              </button>
+              {selectedNode.url && (
+                <a
+                  href={selectedNode.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ padding: '8px 14px', border: '1px solid #333', background: '#121520', color: '#ccc', borderRadius: 6, cursor: 'pointer', fontSize: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}
+                >
+                  <ExternalLink size={14} /> Open Direct Link
+                </a>
+              )}
+            </div>
           </div>
         )}
       </div>
