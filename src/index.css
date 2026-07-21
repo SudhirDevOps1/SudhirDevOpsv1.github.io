@@ -222,17 +222,8 @@ html, body, #root {
   line-height: 1.6;
 }
 
-/* Mobile fallback */
-@media (max-width: 767px) {
-  .desktop-only {
-    display: none !important;
-  }
-  .mobile-only {
-    display: flex !important;
-  }
+/* Responsive support for all screen sizes */
+.desktop-only {
+  display: block;
 }
-@media (min-width: 768px) {
-  .mobile-only {
-    display: none !important;
-  }
-}
+
