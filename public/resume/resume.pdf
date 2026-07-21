@@ -1,0 +1,49 @@
+%PDF-1.4
+1 0 obj
+<< /Title (Sudhir Singh Resume) /Author (SudhirDevOps1) /Subject (Full Stack & DevOps Resume) >>
+endobj
+2 0 obj
+<< /Type /Catalog /Pages 3 0 R >>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 6 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 280 >>
+stream
+BT
+/F1 20 Tf
+50 720 Td
+(Sudhir Singh - Full Stack & DevOps Engineer) Tj
+/F1 12 Tf
+0 -30 Td
+(Email: sudhirdevops1@gmail.com | GitHub: github.com/SudhirDevOps1) Tj
+0 -20 Td
+(Education: BCA Student | Location: Bihar, India) Tj
+0 -30 Td
+(Skills: Python, JavaScript, React, Node.js, DevOps, Linux, Git, CyberSecurity) Tj
+0 -30 Td
+(Projects: Over 87+ Public Repositories built with modern Web & DevOps Tech.) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00090 n 
+0000000101 00048 n 
+0000000158 00059 n 
+0000000226 00129 n 
+0000000364 00333 n 
+0000000706 00067 n 
+trailer
+<< /Size 7 /Root 2 0 R >>
+startxref
+782
+%%EOF

@@ -1,5 +1,6 @@
 import React, { memo, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { Minus, Square, X, Copy } from 'lucide-react';
 import { WinState } from '../../types/os';
 
 interface WindowFrameProps {
@@ -78,21 +79,21 @@ export const WindowFrame = memo(({
 
       switch (resizeRef.current.direction) {
         case 'se':
-          newW = Math.max(320, resizeRef.current.origW + dx);
+          newW = Math.max(340, resizeRef.current.origW + dx);
           newH = Math.max(240, resizeRef.current.origH + dy);
           break;
         case 'sw':
-          newW = Math.max(320, resizeRef.current.origW - dx);
+          newW = Math.max(340, resizeRef.current.origW - dx);
           newH = Math.max(240, resizeRef.current.origH + dy);
           newX = resizeRef.current.origX + dx;
           break;
         case 'ne':
-          newW = Math.max(320, resizeRef.current.origW + dx);
+          newW = Math.max(340, resizeRef.current.origW + dx);
           newH = Math.max(240, resizeRef.current.origH - dy);
           newY = resizeRef.current.origY + dy;
           break;
         case 'nw':
-          newW = Math.max(320, resizeRef.current.origW - dx);
+          newW = Math.max(340, resizeRef.current.origW - dx);
           newH = Math.max(240, resizeRef.current.origH - dy);
           newX = resizeRef.current.origX + dx;
           newY = resizeRef.current.origY + dy;
@@ -105,10 +106,10 @@ export const WindowFrame = memo(({
           newH = Math.max(240, resizeRef.current.origH + dy);
           break;
         case 'e':
-          newW = Math.max(320, resizeRef.current.origW + dx);
+          newW = Math.max(340, resizeRef.current.origW + dx);
           break;
         case 'w':
-          newW = Math.max(320, resizeRef.current.origW - dx);
+          newW = Math.max(340, resizeRef.current.origW - dx);
           newX = resizeRef.current.origX + dx;
           break;
       }
@@ -130,7 +131,7 @@ export const WindowFrame = memo(({
   }, [win.position, win.size, onFocus, onMove, onResize]);
 
   const style: React.CSSProperties = win.maximized
-    ? { position: 'fixed', inset: 0, bottom: 48, width: '100vw', height: 'calc(100vh - 48px)', zIndex: win.zIndex }
+    ? { position: 'fixed', inset: 0, bottom: 48, width: '100vw', height: 'calc(100vh - 48px)', zIndex: win.zIndex, borderRadius: 0 }
     : {
       position: 'fixed',
       left: win.position.x,
@@ -138,57 +139,97 @@ export const WindowFrame = memo(({
       width: win.size.w,
       height: win.size.h,
       zIndex: win.zIndex,
+      borderRadius: 10,
     };
 
   return (
     <motion.div
-      initial={{ scale: 0.85, opacity: 0 }}
+      initial={{ scale: 0.88, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.85, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+      exit={{ scale: 0.88, opacity: 0 }}
+      transition={{ duration: 0.18, ease: 'easeOut' }}
       style={{
         ...style,
-        background: '#050505',
-        border: `1px solid ${isActive ? 'var(--accent)' : '#333'}`,
-        borderRadius: 6,
+        background: 'rgba(12, 14, 20, 0.95)',
+        border: `1px solid ${isActive ? 'rgba(var(--accent-rgb),0.8)' : 'rgba(255,255,255,0.1)'}`,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         boxShadow: isActive
-          ? '0 0 20px var(--accent), 0 0 40px rgba(var(--accent-rgb),0.3)'
-          : '0 4px 20px rgba(0,0,0,0.8)',
+          ? '0 12px 40px rgba(0,0,0,0.8), 0 0 25px rgba(var(--accent-rgb),0.35)'
+          : '0 8px 30px rgba(0,0,0,0.6)',
+        backdropFilter: 'blur(16px)',
         transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
       onMouseDown={onFocus}
     >
+      {/* Windows 11 Title Bar */}
       <div
         onMouseDown={handleTitleMouseDown}
         style={{
-          background: '#0a0a0a',
-          borderBottom: `1px solid ${isActive ? 'var(--accent)' : '#222'}`,
-          padding: '8px 12px',
+          background: isActive ? 'rgba(20, 24, 34, 0.95)' : 'rgba(15, 17, 24, 0.9)',
+          borderBottom: `1px solid ${isActive ? 'rgba(var(--accent-rgb),0.3)' : 'rgba(255,255,255,0.06)'}`,
+          padding: '6px 12px',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          justify: 'space-between',
           cursor: win.maximized ? 'default' : 'move',
           userSelect: 'none',
           flexShrink: 0,
+          height: 38,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          <button onClick={(e) => { e.stopPropagation(); onClose(); }} style={{ width: 14, height: 14, borderRadius: '50%', background: '#FF5F57', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Close">
-            <span style={{ color: '#000', fontSize: 8, fontWeight: 'bold', lineHeight: 1 }}>×</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, overflow: 'hidden' }}>
+          <span style={{ color: isActive ? 'var(--accent)' : '#888', fontSize: 13, fontFamily: 'var(--font-mono)' }}>🪟</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: isActive ? '#fff' : '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500 }}>
+            {win.title}
+          </span>
+        </div>
+
+        {/* Windows 11 Right Action Controls: Minimize, Maximize, Close */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <button
+            onClick={(e) => { e.stopPropagation(); onMinimize(); }}
+            title="Minimize"
+            style={{
+              width: 34, height: 28, border: 'none', background: 'transparent',
+              color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 4, transition: 'background 0.15s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <Minus size={14} />
           </button>
-          <button onClick={(e) => { e.stopPropagation(); onMinimize(); }} style={{ width: 14, height: 14, borderRadius: '50%', background: '#FEBC2E', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Minimize">
-            <span style={{ color: '#000', fontSize: 8, fontWeight: 'bold', lineHeight: 1 }}>−</span>
+
+          <button
+            onClick={(e) => { e.stopPropagation(); onMaximize(); }}
+            title={win.maximized ? "Restore" : "Maximize"}
+            style={{
+              width: 34, height: 28, border: 'none', background: 'transparent',
+              color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 4, transition: 'background 0.15s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            {win.maximized ? <Copy size={12} /> : <Square size={12} />}
           </button>
-          <button onClick={(e) => { e.stopPropagation(); onMaximize(); }} style={{ width: 14, height: 14, borderRadius: '50%', background: '#28C840', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Maximize">
-            <span style={{ color: '#000', fontSize: 8, fontWeight: 'bold', lineHeight: 1 }}>□</span>
+
+          <button
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+            title="Close"
+            style={{
+              width: 34, height: 28, border: 'none', background: 'transparent',
+              color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 4, transition: 'background 0.15s, color 0.15s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#E81123'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ccc'; }}
+          >
+            <X size={15} />
           </button>
         </div>
-        <span style={{ flex: 1, textAlign: 'center', fontFamily: 'var(--font-title)', fontSize: 11, color: isActive ? 'var(--accent)' : '#666', letterSpacing: 2, textTransform: 'uppercase', marginRight: 36 }}>
-          {win.title}
-        </span>
       </div>
 
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>

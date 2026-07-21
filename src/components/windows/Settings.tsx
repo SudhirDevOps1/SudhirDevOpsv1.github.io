@@ -4,6 +4,7 @@ import { THEMES } from '../../data';
 import { ThemeKey } from '../../types/os';
 
 export const WALLPAPERS = [
+  { id: 'win11-bloom', name: 'Windows 11 Bloom (Local Asset)', url: '/wallpaper/win11_bloom.png' },
   { id: 'default', name: 'Cyber Matrix Grid', url: '' },
   { id: 'cyberpunk-city', name: 'Cyberpunk Neon City', url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&auto=format&fit=crop' },
   { id: 'neon-code', name: 'Neon Matrix Code', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&auto=format&fit=crop' },
@@ -25,7 +26,7 @@ export const SettingsWindow = memo(() => {
       <div style={{ color: 'var(--accent)', marginBottom: 16, fontFamily: 'var(--font-title)', fontSize: 12, letterSpacing: 2 }}>SYSTEM SETTINGS</div>
 
       <div style={{ marginBottom: 20 }}>
-        <div style={{ color: 'var(--accent)', borderBottom: '1px solid rgba(var(--accent-rgb),0.3)', paddingBottom: 4, marginBottom: 12, fontSize: 11, letterSpacing: 2 }}>DESKTOP WALLPAPERS (12 SELECTIONS)</div>
+        <div style={{ color: 'var(--accent)', borderBottom: '1px solid rgba(var(--accent-rgb),0.3)', paddingBottom: 4, marginBottom: 12, fontSize: 11, letterSpacing: 2 }}>DESKTOP WALLPAPERS (LOCAL & REMOTE)</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
           {WALLPAPERS.map(w => (
             <div
