@@ -27,6 +27,8 @@ const NotepadWindow = lazy(() => import('./components/windows/Notepad'));
 const FileExplorerWindow = lazy(() => import('./components/windows/FileExplorer'));
 const MusicPlayerWindow = lazy(() => import('./components/windows/MusicPlayer'));
 const PaintWindow = lazy(() => import('./components/windows/Paint'));
+const CalendarWindow = lazy(() => import('./components/windows/Calendar'));
+const MapWindow = lazy(() => import('./components/windows/Map'));
 
 function DesktopContent() {
   const {
@@ -134,6 +136,8 @@ function DesktopContent() {
             case 'file-explorer': return <FileExplorerWindow />;
             case 'music-player': return <MusicPlayerWindow />;
             case 'paint': return <PaintWindow />;
+            case 'calendar': return <CalendarWindow />;
+            case 'map': return <MapWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}
