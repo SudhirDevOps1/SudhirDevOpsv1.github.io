@@ -2,6 +2,11 @@ import React, {
   useState, useEffect, useRef, useCallback, useMemo, createContext, useContext, memo
 } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Terminal, User, Zap, FolderGit2, Youtube, Globe, Image as ImageIcon, Video, Gamepad2,
+  Folder, Music, Palette, Mail, Calendar, FileText, Settings, Send, Activity, Play, Pause,
+  SkipForward, SkipBack, RefreshCw, ExternalLink, Search, Download, Star, Monitor, Sparkles
+} from 'lucide-react';
 import { 
   THEMES, SKILLS, PROJECTS, BOOT_MESSAGES, DESKTOP_ICONS, ASCII_LOGO,
   loadAllData, ProjectData, AboutData, TerminalData
@@ -37,6 +42,8 @@ interface LoadedJsonData {
 interface OSContextType {
   theme: ThemeKey;
   setTheme: (t: ThemeKey) => void;
+  activeWallpaper: string;
+  setWallpaper: (w: string) => void;
   matrixOn: boolean;
   toggleMatrix: () => void;
   windows: WinState[];
@@ -66,14 +73,17 @@ const WIN_DEFAULTS: Record<string, { title: string; position: { x: number; y: nu
   skills:   { title: '⚡ SKILLS.sh',    position: { x: 300, y: 100 }, size: { w: 600, h: 520 } },
   projects: { title: '📁 PROJECTS/',    position: { x: 80, y: 40 },   size: { w: 720, h: 540 } },
   contact:  { title: '✉ CONTACT.mail', position: { x: 400, y: 120 }, size: { w: 560, h: 480 } },
-  settings: { title: '⚙ SETTINGS.cfg', position: { x: 250, y: 150 }, size: { w: 420, h: 380 } },
+  settings: { title: '⚙ SETTINGS.cfg', position: { x: 250, y: 150 }, size: { w: 580, h: 520 } },
   'file-explorer': { title: '📂 EXPLORER.exe', position: { x: 100, y: 80 }, size: { w: 800, h: 600 } },
   'music-player': { title: '🎵 MUSIC.mp3', position: { x: 200, y: 100 }, size: { w: 600, h: 500 } },
-  browser: { title: '🌍 BROWSER.net', position: { x: 150, y: 60 }, size: { w: 900, h: 650 } },
+  browser: { title: '🌍 BROWSER.net', position: { x: 140, y: 50 }, size: { w: 920, h: 650 } },
+  youtube: { title: '▶ YOUTUBE.app', position: { x: 160, y: 60 }, size: { w: 900, h: 620 } },
+  gallery: { title: '🖼️ GALLERY.photos', position: { x: 130, y: 70 }, size: { w: 860, h: 600 } },
+  videoplayer: { title: '🎬 MEDIA.video', position: { x: 170, y: 80 }, size: { w: 840, h: 580 } },
   paint: { title: '🎨 PAINT.art', position: { x: 120, y: 90 }, size: { w: 850, h: 600 } },
   email: { title: '📧 EMAIL.inbox', position: { x: 180, y: 70 }, size: { w: 750, h: 550 } },
   calendar: { title: '📅 CALENDAR.app', position: { x: 220, y: 110 }, size: { w: 700, h: 600 } },
-  games: { title: '🎮 GAMES.exe', position: { x: 240, y: 90 }, size: { w: 600, h: 650 } },
+  games: { title: '🎮 GAMES.exe', position: { x: 240, y: 90 }, size: { w: 680, h: 660 } },
   notepad: { title: '📋 NOTEPAD.txt', position: { x: 160, y: 100 }, size: { w: 550, h: 450 } },
 };
 
@@ -1521,12 +1531,54 @@ const ContactWindow = memo(() => {
   );
 });
 
+// ─── Wallpapers List ──────────────────────────────────────────────────────────
+export const WALLPAPERS = [
+  { id: 'default', name: 'Cyber Matrix Grid', url: '' },
+  { id: 'cyberpunk-city', name: 'Cyberpunk Neon City', url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&auto=format&fit=crop' },
+  { id: 'neon-code', name: 'Neon Matrix Code', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&auto=format&fit=crop' },
+  { id: 'synthwave-sun', name: 'Retro Synthwave Sun', url: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=1600&auto=format&fit=crop' },
+  { id: 'deep-space', name: 'Deep Space Galaxy', url: 'https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?w=1600&auto=format&fit=crop' },
+  { id: 'dark-mountains', name: 'Dark Mountain Dusk', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&auto=format&fit=crop' },
+  { id: 'abstract-lines', name: 'Abstract Blue Glow', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1600&auto=format&fit=crop' },
+  { id: 'cyber-circuit', name: 'Cyber Circuit Board', url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&auto=format&fit=crop' },
+  { id: 'tokyo-night', name: 'Tokyo Neon Lights', url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1600&auto=format&fit=crop' },
+  { id: 'minimal-dark', name: 'Minimal Dark Mesh', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop' },
+  { id: 'sunset-grid', name: '80s Grid Horizon', url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1600&auto=format&fit=crop' },
+  { id: 'code-editor', name: 'Dark Code IDE', url: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1600&auto=format&fit=crop' },
+];
+
 // ─── Settings Window ──────────────────────────────────────────────────────────
 const SettingsWindow = memo(() => {
-  const { theme, setTheme, matrixOn, toggleMatrix, addToast } = useOS();
+  const { theme, setTheme, matrixOn, toggleMatrix, activeWallpaper, setWallpaper, addToast } = useOS();
   return (
     <div style={{ padding: 20, overflowY: 'auto', height: '100%', fontFamily: 'var(--font-mono)', fontSize: 13 }}>
       <div style={{ color: 'var(--accent)', marginBottom: 16, fontFamily: 'var(--font-title)', fontSize: 12, letterSpacing: 2 }}>SYSTEM SETTINGS</div>
+
+      {/* Wallpaper Picker */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ color: 'var(--accent)', borderBottom: '1px solid rgba(var(--accent-rgb),0.3)', paddingBottom: 4, marginBottom: 12, fontSize: 11, letterSpacing: 2 }}>DESKTOP WALLPAPERS (12 SELECTIONS)</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+          {WALLPAPERS.map(w => (
+            <div
+              key={w.id}
+              onClick={() => { setWallpaper(w.url); addToast(`Wallpaper set: ${w.name}`, 'success'); }}
+              style={{
+                border: activeWallpaper === w.url ? '2px solid var(--accent)' : '1px solid #222',
+                borderRadius: 6, cursor: 'pointer', overflow: 'hidden', background: '#0a0a0a',
+                boxShadow: activeWallpaper === w.url ? '0 0 10px rgba(var(--accent-rgb),0.3)' : 'none',
+                transition: 'all 0.15s'
+              }}
+            >
+              <div style={{ height: 60, background: w.url ? `url(${w.url}) center/cover no-repeat` : 'linear-gradient(135deg, #05150c, #000)', position: 'relative' }}>
+                {!w.url && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', fontSize: 10 }}>DEFAULT GRID</div>}
+              </div>
+              <div style={{ padding: '6px 8px', fontSize: 10, color: activeWallpaper === w.url ? 'var(--accent)' : '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {w.name}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Theme */}
       <div style={{ marginBottom: 20 }}>
@@ -1683,50 +1735,93 @@ const MusicPlayerWindow = memo(() => {
 
 // ─── Browser Window ───────────────────────────────────────────────────────────
 const BrowserWindow = memo(() => {
-  const [url, setUrl] = useState('https://github.com');
-  const [currentUrl, setCurrentUrl] = useState('https://github.com');
-  const [bookmarks] = useState([
-    { id: 1, title: 'GitHub', url: 'https://github.com', icon: '🐙' },
-    { id: 2, title: 'Stack Overflow', url: 'https://stackoverflow.com', icon: '📚' },
-    { id: 3, title: 'MDN Web Docs', url: 'https://developer.mozilla.org', icon: '📖' },
-    { id: 4, title: 'React', url: 'https://react.dev', icon: '⚛️' },
-    { id: 5, title: 'LinkedIn', url: 'https://linkedin.com', icon: '💼' },
-  ]);
+  const [urlInput, setUrlInput] = useState('https://wikipedia.org');
+  const [activeUrl, setActiveUrl] = useState('https://wikipedia.org');
+  const [history, setHistory] = useState<string[]>(['https://wikipedia.org']);
+  const [historyIdx, setHistoryIdx] = useState(0);
 
-  const navigate = () => {
-    setCurrentUrl(url);
+  const bookmarks = [
+    { id: 1, title: 'Wikipedia', url: 'https://wikipedia.org', icon: '🌐' },
+    { id: 2, title: 'Bing Search', url: 'https://www.bing.com', icon: '🔍' },
+    { id: 3, title: 'HackerNews', url: 'https://news.ycombinator.com', icon: '📰' },
+    { id: 4, title: 'HTML5 Games', url: 'https://html5games.com', icon: '🎮' },
+    { id: 5, title: 'GitHub', url: 'https://github.com', icon: '🐙' },
+  ];
+
+  const navigateTo = (target: string) => {
+    let finalUrl = target.trim();
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      if (finalUrl.includes('.')) {
+        finalUrl = 'https://' + finalUrl;
+      } else {
+        finalUrl = `https://www.bing.com/search?q=${encodeURIComponent(finalUrl)}`;
+      }
+    }
+    setUrlInput(finalUrl);
+    setActiveUrl(finalUrl);
+    const newHist = history.slice(0, historyIdx + 1);
+    newHist.push(finalUrl);
+    setHistory(newHist);
+    setHistoryIdx(newHist.length - 1);
+  };
+
+  const goBack = () => {
+    if (historyIdx > 0) {
+      const prev = historyIdx - 1;
+      setHistoryIdx(prev);
+      setUrlInput(history[prev]);
+      setActiveUrl(history[prev]);
+    }
+  };
+
+  const goForward = () => {
+    if (historyIdx < history.length - 1) {
+      const next = historyIdx + 1;
+      setHistoryIdx(next);
+      setUrlInput(history[next]);
+      setActiveUrl(history[next]);
+    }
   };
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-mono)' }}>
       {/* Navigation Bar */}
-      <div style={{ padding: 12, borderBottom: '1px solid #222', display: 'flex', gap: 8, alignItems: 'center', background: '#050505' }}>
-        <button style={{ padding: '4px 12px', border: '1px solid #333', background: '#0a0a0a', color: '#666', borderRadius: 4, cursor: 'pointer' }}>←</button>
-        <button style={{ padding: '4px 12px', border: '1px solid #333', background: '#0a0a0a', color: '#666', borderRadius: 4, cursor: 'pointer' }}>→</button>
-        <button style={{ padding: '4px 12px', border: '1px solid #333', background: '#0a0a0a', color: '#666', borderRadius: 4, cursor: 'pointer' }}>⟳</button>
-        <input type="text" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === 'Enter' && navigate()} style={{ flex: 1, padding: '6px 12px', background: '#0a0a0a', border: '1px solid #333', color: '#aaa', borderRadius: 4, fontSize: 12, fontFamily: 'var(--font-mono)' }} />
-        <button onClick={navigate} style={{ padding: '6px 16px', border: '1px solid var(--accent)', background: 'rgba(var(--accent-rgb),0.1)', color: 'var(--accent)', borderRadius: 4, cursor: 'pointer' }}>GO</button>
+      <div style={{ padding: '8px 12px', borderBottom: '1px solid #222', display: 'flex', gap: 8, alignItems: 'center', background: '#050505' }}>
+        <button onClick={goBack} disabled={historyIdx === 0} style={{ padding: '6px 12px', border: '1px solid #333', background: '#0a0a0a', color: historyIdx === 0 ? '#444' : '#aaa', borderRadius: 4, cursor: historyIdx === 0 ? 'default' : 'pointer' }}>←</button>
+        <button onClick={goForward} disabled={historyIdx === history.length - 1} style={{ padding: '6px 12px', border: '1px solid #333', background: '#0a0a0a', color: historyIdx === history.length - 1 ? '#444' : '#aaa', borderRadius: 4, cursor: historyIdx === history.length - 1 ? 'default' : 'pointer' }}>→</button>
+        <button onClick={() => navigateTo(activeUrl)} style={{ padding: '6px 12px', border: '1px solid #333', background: '#0a0a0a', color: '#aaa', borderRadius: 4, cursor: 'pointer' }}>⟳</button>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#0a0a0a', border: '1px solid #333', borderRadius: 4, padding: '0 8px' }}>
+          <Search size={14} color="#666" style={{ marginRight: 6 }} />
+          <input
+            type="text"
+            value={urlInput}
+            onChange={e => setUrlInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && navigateTo(urlInput)}
+            placeholder="Type URL or search query..."
+            style={{ flex: 1, padding: '6px 0', background: 'transparent', border: 'none', color: '#fff', outline: 'none', fontSize: 12, fontFamily: 'var(--font-mono)' }}
+          />
+        </div>
+        <button onClick={() => navigateTo(urlInput)} style={{ padding: '6px 16px', border: '1px solid var(--accent)', background: 'rgba(var(--accent-rgb),0.15)', color: 'var(--accent)', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}>GO</button>
       </div>
 
       {/* Bookmarks Bar */}
-      <div style={{ padding: 8, borderBottom: '1px solid #222', display: 'flex', gap: 8, overflowX: 'auto', background: '#080808' }}>
+      <div style={{ padding: '6px 12px', borderBottom: '1px solid #222', display: 'flex', gap: 8, overflowX: 'auto', background: '#080808' }}>
         {bookmarks.map(b => (
-          <div key={b.id} onClick={() => { setUrl(b.url); setCurrentUrl(b.url); }} style={{ padding: '4px 12px', border: '1px solid #222', borderRadius: 4, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', fontSize: 11, color: '#999', background: currentUrl === b.url ? 'rgba(var(--accent-rgb),0.1)' : 'transparent' }}>
+          <div key={b.id} onClick={() => navigateTo(b.url)} style={{ padding: '4px 10px', border: '1px solid #222', borderRadius: 4, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', fontSize: 11, color: activeUrl === b.url ? 'var(--accent)' : '#999', background: activeUrl === b.url ? 'rgba(var(--accent-rgb),0.1)' : 'transparent' }}>
             <span>{b.icon}</span>
             <span>{b.title}</span>
           </div>
         ))}
       </div>
 
-      {/* Content Area */}
-      <div style={{ flex: 1, padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, fontSize: 14, color: '#666', textAlign: 'center' }}>
-        <div style={{ fontSize: 64 }}>🌐</div>
-        <div style={{ color: 'var(--accent)', fontSize: 16 }}>Browser Simulation</div>
-        <div style={{ maxWidth: 400 }}>This is a simulated browser window. In a real portfolio, you could embed an iframe or display web content here.</div>
-        <div style={{ marginTop: 20, padding: 12, border: '1px solid #222', borderRadius: 4, background: '#0a0a0a', color: '#999', fontSize: 12 }}>
-          <div>Current URL:</div>
-          <div style={{ color: 'var(--accent)', marginTop: 4 }}>{currentUrl}</div>
-        </div>
+      {/* Iframe web content area */}
+      <div style={{ flex: 1, position: 'relative', background: '#fff' }}>
+        <iframe
+          src={activeUrl}
+          title="Web Browser"
+          style={{ width: '100%', height: '100%', border: 'none' }}
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        />
       </div>
     </div>
   );
@@ -1934,27 +2029,243 @@ const CalendarWindow = memo(() => {
   );
 });
 
-// ─── Games Window ─────────────────────────────────────────────────────────────
-const GamesWindow = memo(() => {
-  const [selectedGame, setSelectedGame] = useState<'snake' | 'minesweeper' | null>(null);
-  const [score] = useState(0);
-
-  const games = [
-    { id: 'snake' as const, name: 'Snake', icon: '🐍', description: 'Classic snake game' },
-    { id: 'minesweeper' as const, name: 'Minesweeper', icon: '💣', description: 'Clear the mines' },
+// ─── YouTube Window ────────────────────────────────────────────────────────────
+const YoutubeWindow = memo(() => {
+  const [query, setQuery] = useState('coding music 24/7 lofi');
+  const [activeVideoId, setActiveVideoId] = useState('jfKfPfyJRdk'); // Lofi Girl live
+  const videos = [
+    { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio 📚 - beats to relax/study to', channel: 'Lofi Girl', views: '20K watching', thumbnail: 'https://img.youtube.com/vi/jfKfPfyJRdk/hqdefault.jpg' },
+    { id: '5qap5aO4i9A', title: 'Lofi Hip Hop Radio 🎧 - Beats to Relax/Study to', channel: 'Chillhop Music', views: '8.4K watching', thumbnail: 'https://img.youtube.com/vi/5qap5aO4i9A/hqdefault.jpg' },
+    { id: 'DWcJFNfaw9c', title: 'Cyberpunk Synthwave Mix 2026', channel: 'Retro Electro', views: '1.2M views', thumbnail: 'https://img.youtube.com/vi/DWcJFNfaw9c/hqdefault.jpg' },
+    { id: 'dQw4w9WgXcQ', title: 'Rick Astley - Never Gonna Give You Up (Official Music Video)', channel: 'Rick Astley', views: '1.5B views', thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg' },
   ];
 
-  if (selectedGame) {
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-mono)', background: '#0a0a0a' }}>
+      {/* YouTube Top Bar */}
+      <div style={{ padding: '10px 16px', background: '#0f0f0f', borderBottom: '1px solid #222', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#FF0000', fontWeight: 'bold', fontSize: 14 }}>
+          <Youtube size={22} color="#FF0000" />
+          <span style={{ color: '#fff', letterSpacing: -0.5 }}>YouTube</span>
+        </div>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#121212', border: '1px solid #333', borderRadius: 20, padding: '4px 14px', maxWidth: 500, margin: '0 auto' }}>
+          <input
+            type="text"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search YouTube..."
+            style={{ flex: 1, background: 'transparent', border: 'none', color: '#fff', outline: 'none', fontSize: 12, fontFamily: 'var(--font-mono)' }}
+          />
+          <Search size={14} color="#888" style={{ cursor: 'pointer' }} />
+        </div>
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Main Player */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#000' }}>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <iframe
+              src={`https://www.youtube.com/embed/${activeVideoId}?autoplay=1`}
+              title="YouTube Player"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
+        {/* Sidebar Recommended List */}
+        <div style={{ width: 260, borderLeft: '1px solid #222', padding: 12, overflowY: 'auto', background: '#0f0f0f' }}>
+          <div style={{ color: '#aaa', fontSize: 11, fontWeight: 'bold', marginBottom: 10 }}>RECOMMENDED VIDEOS</div>
+          {videos.map(v => (
+            <div key={v.id} onClick={() => setActiveVideoId(v.id)} style={{ marginBottom: 12, cursor: 'pointer', opacity: activeVideoId === v.id ? 1 : 0.7, border: activeVideoId === v.id ? '1px solid var(--accent)' : '1px solid transparent', borderRadius: 6, padding: 4, transition: 'all 0.15s' }}>
+              <div style={{ position: 'relative', width: '100%', height: 110, background: '#222', borderRadius: 4, overflow: 'hidden', marginBottom: 6 }}>
+                <img src={v.thumbnail} alt={v.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)' }}>
+                  <Play size={24} color="#fff" />
+                </div>
+              </div>
+              <div style={{ color: '#fff', fontSize: 11, fontWeight: 600, lineHeight: 1.2, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.title}</div>
+              <div style={{ color: '#888', fontSize: 10 }}>{v.channel} • {v.views}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// ─── Gallery Window ────────────────────────────────────────────────────────────
+const GalleryWindow = memo(() => {
+  const localPhotos = [
+    { id: 1, title: 'Cyberpunk City', url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&auto=format&fit=crop', category: 'City' },
+    { id: 2, title: 'Neon Matrix', url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop', category: 'Abstract' },
+    { id: 3, title: 'Retro Synthwave', url: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&auto=format&fit=crop', category: 'Space' },
+    { id: 4, title: 'Deep Ocean Blue', url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop', category: 'Nature' },
+    { id: 5, title: 'Dark Aurora', url: 'https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?w=800&auto=format&fit=crop', category: 'Space' },
+    { id: 6, title: 'Code Screen', url: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop', category: 'Tech' },
+  ];
+
+  const [selectedPhoto, setSelectedPhoto] = useState(localPhotos[0]);
+  const [filter, setFilter] = useState('All');
+
+  const categories = ['All', 'City', 'Abstract', 'Space', 'Nature', 'Tech'];
+  const filtered = filter === 'All' ? localPhotos : localPhotos.filter(p => p.category === filter);
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-mono)', background: '#080808' }}>
+      {/* Filter Header */}
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid #222', display: 'flex', gap: 8, overflowX: 'auto', background: '#0c0c0c' }}>
+        {categories.map(c => (
+          <button key={c} onClick={() => setFilter(c)} style={{ padding: '4px 12px', border: `1px solid ${filter === c ? 'var(--accent)' : '#333'}`, background: filter === c ? 'rgba(var(--accent-rgb),0.15)' : '#111', color: filter === c ? 'var(--accent)' : '#aaa', borderRadius: 14, cursor: 'pointer', fontSize: 11 }}>{c}</button>
+        ))}
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Main Photo View */}
+        <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', position: 'relative' }}>
+          <img src={selectedPhoto.url} alt={selectedPhoto.title} style={{ maxWidth: '100%', maxHeight: '80%', borderRadius: 8, boxShadow: '0 4px 20px rgba(0,0,0,0.8)', objectFit: 'contain' }} />
+          <div style={{ marginTop: 12, color: 'var(--accent)', fontSize: 14, fontWeight: 'bold' }}>{selectedPhoto.title} ({selectedPhoto.category})</div>
+        </div>
+
+        {/* Thumbnail sidebar */}
+        <div style={{ width: 220, borderLeft: '1px solid #222', padding: 12, overflowY: 'auto', background: '#0a0a0a' }}>
+          <div style={{ color: '#666', fontSize: 10, marginBottom: 10, letterSpacing: 1 }}>PHOTO GALLERY</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+            {filtered.map(p => (
+              <div key={p.id} onClick={() => setSelectedPhoto(p)} style={{ border: selectedPhoto.id === p.id ? '2px solid var(--accent)' : '1px solid #222', borderRadius: 4, overflow: 'hidden', cursor: 'pointer', height: 70 }}>
+                <img src={p.url} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// ─── Video Player Window ───────────────────────────────────────────────────────
+const VideoPlayerWindow = memo(() => {
+  const sampleVideos = [
+    { id: 1, title: 'Big Buck Bunny (Trailer)', src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+    { id: 2, title: 'Elephant Dream', src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+    { id: 3, title: 'For Bigger Blazes', src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }
+  ];
+
+  const [activeVid, setActiveVid] = useState(sampleVideos[0]);
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-mono)', background: '#050505' }}>
+      <div style={{ flex: 1, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <video key={activeVid.src} controls autoPlay style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: 4 }}>
+          <source src={activeVid.src} type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+
+      <div style={{ padding: 12, borderTop: '1px solid #222', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 'bold' }}>🎬 {activeVid.title}</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {sampleVideos.map(v => (
+            <button key={v.id} onClick={() => setActiveVid(v)} style={{ padding: '4px 10px', border: `1px solid ${activeVid.id === v.id ? 'var(--accent)' : '#333'}`, background: activeVid.id === v.id ? 'rgba(var(--accent-rgb),0.2)' : '#111', color: activeVid.id === v.id ? 'var(--accent)' : '#aaa', borderRadius: 4, cursor: 'pointer', fontSize: 11 }}>
+              Video {v.id}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// ─── Games Window ─────────────────────────────────────────────────────────────
+const GamesWindow = memo(() => {
+  const [selectedGame, setSelectedGame] = useState<'snake' | 'minesweeper' | null>('snake');
+  const [score, setScore] = useState(0);
+  const [snake, setSnake] = useState<{ x: number; y: number }[]>([{ x: 10, y: 10 }]);
+  const [food, setFood] = useState<{ x: number; y: number }>({ x: 5, y: 5 });
+  const [dir, setDir] = useState<'UP' | 'DOWN' | 'LEFT' | 'RIGHT'>('RIGHT');
+  const [gameOver, setGameOver] = useState(false);
+
+  // Snake game logic loop
+  useEffect(() => {
+    if (selectedGame !== 'snake' || gameOver) return;
+    const timer = setInterval(() => {
+      setSnake(prev => {
+        const head = { ...prev[0] };
+        if (dir === 'UP') head.y -= 1;
+        if (dir === 'DOWN') head.y += 1;
+        if (dir === 'LEFT') head.x -= 1;
+        if (dir === 'RIGHT') head.x += 1;
+
+        if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 || prev.some(segment => segment.x === head.x && segment.y === head.y)) {
+          setGameOver(true);
+          return prev;
+        }
+
+        const newSnake = [head, ...prev];
+        if (head.x === food.x && head.y === food.y) {
+          setScore(s => s + 10);
+          setFood({ Math: Math.floor(Math.random() * 20), x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20) });
+        } else {
+          newSnake.pop();
+        }
+        return newSnake;
+      });
+    }, 150);
+    return () => clearInterval(timer);
+  }, [dir, food, gameOver, selectedGame]);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' && dir !== 'DOWN') setDir('UP');
+      if (e.key === 'ArrowDown' && dir !== 'UP') setDir('DOWN');
+      if (e.key === 'ArrowLeft' && dir !== 'RIGHT') setDir('LEFT');
+      if (e.key === 'ArrowRight' && dir !== 'LEFT') setDir('RIGHT');
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [dir]);
+
+  const restartSnake = () => {
+    setSnake([{ x: 10, y: 10 }]);
+    setDir('RIGHT');
+    setScore(0);
+    setGameOver(false);
+  };
+
+  const games = [
+    { id: 'snake' as const, name: 'Retro Snake', icon: '🐍', description: 'Real playable Snake Arcade' },
+    { id: 'minesweeper' as const, name: 'Minesweeper', icon: '💣', description: 'Bomb Sweeper game' },
+  ];
+
+  if (selectedGame === 'snake') {
     return (
-      <div style={{ padding: 20, fontFamily: 'var(--font-mono)', fontSize: 13, height: '100%', display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <button onClick={() => setSelectedGame(null)} style={{ padding: '6px 12px', border: '1px solid #333', background: '#0a0a0a', color: '#999', borderRadius: 4, cursor: 'pointer' }}>← Back</button>
-          <div style={{ color: 'var(--accent)' }}>Score: {score}</div>
+      <div style={{ padding: 16, fontFamily: 'var(--font-mono)', fontSize: 13, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#0a0a0a' }}>
+        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <button onClick={() => setSelectedGame(null)} style={{ padding: '4px 10px', border: '1px solid #333', background: '#111', color: '#999', borderRadius: 4, cursor: 'pointer' }}>← Games Menu</button>
+          <div style={{ color: 'var(--accent)', fontWeight: 'bold' }}>SCORE: {score}</div>
+          <button onClick={restartSnake} style={{ padding: '4px 10px', border: '1px solid var(--accent)', background: 'rgba(var(--accent-rgb),0.15)', color: 'var(--accent)', borderRadius: 4, cursor: 'pointer' }}>Restart</button>
         </div>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #222', borderRadius: 4, fontSize: 64 }}>
-          {selectedGame === 'snake' ? '🐍' : '💣'}
+
+        {/* Board */}
+        <div style={{ position: 'relative', width: 340, height: 340, background: '#000', border: '2px solid var(--accent)', borderRadius: 6, display: 'grid', gridTemplateColumns: 'repeat(20, 1fr)', gridTemplateRows: 'repeat(20, 1fr)' }}>
+          {Array.from({ length: 400 }).map((_, i) => {
+            const x = i % 20;
+            const y = Math.floor(i / 20);
+            const isSnake = snake.some(s => s.x === x && s.y === y);
+            const isFood = food.x === x && food.y === y;
+            return (
+              <div key={i} style={{ background: isSnake ? 'var(--accent)' : isFood ? '#FF0055' : 'transparent', borderRadius: isSnake ? 2 : isFood ? '50%' : 0 }} />
+            );
+          })}
+          {gameOver && (
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#FF4444', gap: 12 }}>
+              <div style={{ fontSize: 24, fontWeight: 'bold' }}>GAME OVER</div>
+              <button onClick={restartSnake} style={{ padding: '6px 16px', border: '1px solid var(--accent)', background: 'var(--accent)', color: '#000', fontWeight: 'bold', borderRadius: 4, cursor: 'pointer' }}>PLAY AGAIN</button>
+            </div>
+          )}
         </div>
-        <div style={{ color: '#666', textAlign: 'center' }}>Game simulation - Click to play!</div>
+        <div style={{ color: '#666', fontSize: 11, marginTop: 12 }}>Use Arrow Keys ↑ ↓ ← → to control</div>
       </div>
     );
   }
@@ -2128,6 +2439,30 @@ const DesktopIcon = memo(({ icon, selected, onSingleClick, onDoubleClick, positi
     document.addEventListener('mouseup', handleMouseUp);
   };
 
+  const getLucideIcon = (name?: string) => {
+    switch (name) {
+      case 'Terminal': return <Terminal size={24} />;
+      case 'User': return <User size={24} />;
+      case 'Zap': return <Zap size={24} />;
+      case 'FolderGit2': return <FolderGit2 size={24} />;
+      case 'Youtube': return <Youtube size={24} color="#FF0000" />;
+      case 'Globe': return <Globe size={24} color="#00BFFF" />;
+      case 'Image': return <ImageIcon size={24} color="#FFB300" />;
+      case 'Video': return <Video size={24} color="#BF00FF" />;
+      case 'Gamepad2': return <Gamepad2 size={24} color="#00FF88" />;
+      case 'Folder': return <Folder size={24} color="#FFD700" />;
+      case 'Music': return <Music size={24} color="#FF69B4" />;
+      case 'Palette': return <Palette size={24} color="#FF4500" />;
+      case 'Mail': return <Mail size={24} color="#00E5FF" />;
+      case 'Calendar': return <Calendar size={24} color="#7C4DFF" />;
+      case 'FileText': return <FileText size={24} color="#9E9E9E" />;
+      case 'Settings': return <Settings size={24} color="#00E676" />;
+      case 'Send': return <Send size={24} color="#00B0FF" />;
+      case 'Activity': return <Activity size={24} color="#00FF88" />;
+      default: return null;
+    }
+  };
+
   return (
     <div
       onClick={handleClick}
@@ -2138,26 +2473,29 @@ const DesktopIcon = memo(({ icon, selected, onSingleClick, onDoubleClick, positi
         left: position.x,
         top: position.y,
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-        padding: 8, cursor: 'move', borderRadius: 6, userSelect: 'none',
-        border: selected ? '1px solid var(--accent)' : '1px solid transparent',
-        background: selected ? 'rgba(var(--accent-rgb),0.1)' : 'rgba(0,0,0,0.3)',
-        width: 76, transition: 'all 0.15s',
+        padding: 8, cursor: 'move', borderRadius: 8, userSelect: 'none',
+        border: selected ? '1px solid var(--accent)' : '1px solid rgba(255,255,255,0.05)',
+        background: selected ? 'rgba(var(--accent-rgb),0.2)' : 'rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(4px)',
+        width: 80, transition: 'transform 0.1s, box-shadow 0.15s',
+        boxShadow: selected ? '0 0 12px rgba(var(--accent-rgb),0.4)' : '0 2px 8px rgba(0,0,0,0.4)',
         zIndex: 3,
       }}
     >
       <div style={{
-        width: 48, height: 48, borderRadius: 6,
-        border: '1px solid rgba(var(--accent-rgb),0.4)',
+        width: 48, height: 48, borderRadius: 10,
+        border: '1px solid rgba(var(--accent-rgb),0.3)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'rgba(0,0,0,0.6)',
+        background: 'linear-gradient(145deg, rgba(255,255,255,0.07), rgba(0,0,0,0.7))',
         fontSize: icon.emoji ? 22 : 18,
         color: 'var(--accent)',
         fontFamily: 'var(--font-mono)',
         fontWeight: 700,
+        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1)'
       }}>
-        {icon.emoji ?? icon.icon}
+        {(icon as any).lucide ? getLucideIcon((icon as any).lucide) : (icon.emoji ?? icon.icon)}
       </div>
-      <span style={{ color: '#ccc', fontSize: 9, fontFamily: 'var(--font-mono)', textAlign: 'center', wordBreak: 'break-all', lineHeight: 1.3 }}>
+      <span style={{ color: '#eee', fontSize: 10, fontFamily: 'var(--font-mono)', textAlign: 'center', wordBreak: 'break-all', lineHeight: 1.2, textShadow: '0 1px 2px #000' }}>
         {icon.label}
       </span>
     </div>
@@ -2364,10 +2702,18 @@ const StartMenu = memo(({ open, onClose, logoClickCount, onLogoClick }: StartMen
             </div>
 
             {/* Applications */}
-            <div style={{ borderBottom: '1px solid #1a1a1a' }}>
+            <div style={{ borderBottom: '1px solid #1a1a1a', maxHeight: 220, overflowY: 'auto' }}>
               <div style={{ padding: '6px 16px 2px', color: '#444', fontSize: 10, letterSpacing: 2 }}>APPLICATIONS</div>
               {[
+                { id: 'youtube' as WinId, label: '▶ YOUTUBE.app' },
+                { id: 'browser' as WinId, label: '🌍 BROWSER.net' },
+                { id: 'gallery' as WinId, label: '🖼️ GALLERY.photos' },
+                { id: 'videoplayer' as WinId, label: '🎬 MEDIA.video' },
+                { id: 'games' as WinId, label: '🎮 GAMES.exe' },
                 { id: 'terminal' as WinId, label: '>_ TERMINAL.cmd' },
+                { id: 'file-explorer' as WinId, label: '📂 EXPLORER.exe' },
+                { id: 'music-player' as WinId, label: '🎵 MUSIC.mp3' },
+                { id: 'paint' as WinId, label: '🎨 PAINT.art' },
                 { id: 'about' as WinId, label: '👤 ABOUT.exe' },
                 { id: 'skills' as WinId, label: '⚡ SKILLS.sh' },
                 { id: 'projects' as WinId, label: '📁 PROJECTS/' },
@@ -2693,6 +3039,7 @@ const MobileView = memo(() => {
 // ─── Main OS Provider / App ───────────────────────────────────────────────────
 export default function App() {
   const [theme, setThemeState] = useState<ThemeKey>('green');
+  const [activeWallpaper, setActiveWallpaper] = useState<string>('');
   const [matrixOn, setMatrixOn] = useState(true);
   const [windows, setWindows] = useState<WinState[]>([]);
   const [powerState, setPowerStateRaw] = useState<PowerState>('booting');
@@ -2702,8 +3049,11 @@ export default function App() {
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [iconPositions, setIconPositions] = useState<Record<string, { x: number; y: number }>>(() => {
     const positions: Record<string, { x: number; y: number }> = {};
+    const itemsPerCol = 6;
     DESKTOP_ICONS.forEach((icon, index) => {
-      positions[icon.id] = { x: 8, y: 8 + index * 90 };
+      const col = Math.floor(index / itemsPerCol);
+      const row = index % itemsPerCol;
+      positions[icon.id] = { x: 12 + col * 94, y: 12 + row * 92 };
     });
     return positions;
   });
@@ -2711,6 +3061,10 @@ export default function App() {
   const [secretWindowOpen, setSecretWindowOpen] = useState(false);
   const startupTime = useRef(Date.now());
   const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const setWallpaper = useCallback((w: string) => {
+    setActiveWallpaper(w);
+  }, []);
   
   // JSON Data State - loaded from public/data/*.json files
   const [jsonData, setJsonData] = useState<LoadedJsonData>({
@@ -2869,14 +3223,14 @@ export default function App() {
   }, []);
 
   const osValue = useMemo<OSContextType>(() => ({
-    theme, setTheme, matrixOn, toggleMatrix,
+    theme, setTheme, activeWallpaper, setWallpaper, matrixOn, toggleMatrix,
     windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow,
     updateWindowPos, updateWindowSize,
     powerState, setPowerState,
     addToast, startupTime: startupTime.current,
     visitorCount: 0, konamiActive: false,
     jsonData,
-  }), [theme, setTheme, matrixOn, toggleMatrix, windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow, updateWindowPos, updateWindowSize, powerState, setPowerState, addToast, jsonData]);
+  }), [theme, setTheme, activeWallpaper, setWallpaper, matrixOn, toggleMatrix, windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow, updateWindowPos, updateWindowSize, powerState, setPowerState, addToast, jsonData]);
 
   const renderWindowContent = (id: WinId) => {
     switch (id) {
@@ -2889,6 +3243,9 @@ export default function App() {
       case 'file-explorer': return <FileExplorerWindow />;
       case 'music-player': return <MusicPlayerWindow />;
       case 'browser': return <BrowserWindow />;
+      case 'youtube': return <YoutubeWindow />;
+      case 'gallery': return <GalleryWindow />;
+      case 'videoplayer': return <VideoPlayerWindow />;
       case 'paint': return <PaintWindow />;
       case 'email': return <EmailWindow />;
       case 'calendar': return <CalendarWindow />;
@@ -2925,6 +3282,11 @@ export default function App() {
       <div className="desktop-only" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
         {/* Matrix canvas */}
         <MatrixRain active={matrixOn} accent={THEMES[theme].accent} />
+
+        {/* Background Wallpaper */}
+        {activeWallpaper && (
+          <div style={{ position: 'fixed', inset: 0, backgroundImage: `url(${activeWallpaper})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 1, pointerEvents: 'none', transition: 'background-image 0.5s' }} />
+        )}
 
         {/* Background grid */}
         <div className="bg-grid" />
