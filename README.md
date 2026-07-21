@@ -28,11 +28,10 @@ Every application is **fully interactive and functional in client memory** with 
 ## ✨ 2026 Functional Applications (27 Total)
 
 | Icon | App Name | Description & Key Features |
-|------|----------|----------------------------|
+|---|---|---|
 | 🤖 | **AI_BOT.exe** | **SUDHI AI Chatbot Assistant** trained on Sudhir Singh's portfolio dataset. Features 6 quick preset prompts & voice/text OS command launcher (*"open terminal"*, *"open weather"*). |
 | 🌌 | **SPACES.layout** | **Project Spaces & Workspaces Launcher** — 1-click multi-window app grouping & workspace automation (*DevOps Suite*, *Portfolio Hub*, *Media Center*, *Live Telemetry*, *AI Suite*). |
 | ⚡ | **DEVOPS.cloud** | **DevOps Cloud & CI/CD Telemetry Monitor** with live CPU/RAM/Bandwidth metrics, Docker container manager, Kubernetes status, and GitHub Actions pipeline feeds. |
-
 | 💻 | **SPECS.info** | **Hardware Diagnostic Tool** detecting user's actual device specs (CPU Cores, RAM Memory, Screen Res, Battery level, Network speed, Touch vs Mouse). |
 | ⛅ | **WEATHER.live** | **Open-Meteo Weather App** with 8 city presets, 24-hour bar chart, wind speed, humidity, and °C/°F toggle. |
 | ₿ | **CRYPTO.live** | **CoinGecko Crypto Tracker** streaming 10 top crypto prices live in USD/INR with 24h ▲▼ changes and favorite star pinning. |
