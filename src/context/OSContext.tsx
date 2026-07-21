@@ -61,10 +61,11 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       const existing = prev.find(w => w.id === id);
       if (existing) {
         return prev.map(w => w.id === id
-          ? { ...w, minimized: false, zIndex: Math.max(...prev.map(x => x.zIndex), 10) + 1 }
+          ? { ...w, minimized: false, zIndex: Math.max(...prev.map(x => x.zIndex), 1000) + 1 }
           : w
         );
       }
+
 
       // App-specific default sizes
       const APP_SIZES: Partial<Record<WinId, { w: number; h: number }>> = {
@@ -119,10 +120,11 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         maximized: false,
         position: { x, y },
         size,
-        zIndex: Math.max(...prev.map(x => x.zIndex), 10) + 1,
+        zIndex: Math.max(...prev.map(x => x.zIndex), 1000) + 1,
       }];
     });
   }, []);
+
 
   const closeWindow = useCallback((id: WinId) => {
     setWindows(prev => prev.filter(w => w.id !== id));
