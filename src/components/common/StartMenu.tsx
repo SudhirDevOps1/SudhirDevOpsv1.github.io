@@ -45,9 +45,12 @@ export const StartMenu = memo(({ open, onClose, logoClickCount, onLogoClick }: S
               style={{ background: 'rgba(var(--accent-rgb),0.12)', padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
               onClick={onLogoClick}
             >
-              <div>
-                <div style={{ fontFamily: 'var(--font-title)', color: 'var(--accent)', fontSize: 15, letterSpacing: 2, fontWeight: 'bold' }}>🪟 WINDOWS 11 PRO</div>
-                <div style={{ color: '#888', fontSize: 11, marginTop: 2 }}>sudhi@developer-os</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <img src="/image/logo.png" alt="SUDHI OS Logo" style={{ width: 32, height: 32, borderRadius: 6, border: '1px solid var(--accent)' }} />
+                <div>
+                  <div style={{ fontFamily: 'var(--font-title)', color: 'var(--accent)', fontSize: 15, letterSpacing: 2, fontWeight: 'bold' }}>SUDHI OS PRO</div>
+                  <div style={{ color: '#888', fontSize: 11, marginTop: 2 }}>SudhirDevOps1</div>
+                </div>
               </div>
               {logoClickCount >= 3 && <div style={{ color: '#FFB300', fontSize: 10 }}>{5 - logoClickCount} clicks secret</div>}
             </div>
