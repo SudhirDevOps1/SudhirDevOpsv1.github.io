@@ -50,8 +50,9 @@ function DesktopContent() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [logoClickCount, setLogoClickCount] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [loginMode, setLoginMode] = useState<'user' | 'guest'>('guest');
+
 
   // Send a desktop notification helper
   const sendNotification = useCallback((title: string, body: string, icon?: string) => {
