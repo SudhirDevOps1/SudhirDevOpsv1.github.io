@@ -135,8 +135,10 @@ export const DESKTOP_ICONS = [
   { id: 'space',        label: 'SPACE.track',   icon: null, emoji: '🚀',  lucide: 'Rocket' },
   { id: 'countries',    label: 'GLOBE.explore', icon: null, emoji: '🌐',  lucide: 'Globe2' },
   { id: 'sysinfo',      label: 'SPECS.info',    icon: null, emoji: '💻',  lucide: 'Cpu' },
-  { id: 'email',        label: 'EMAIL.inbox',   icon: null, emoji: '📧',  lucide: 'Mail' },
-  { id: 'settings',     label: 'SETTINGS.cfg',  icon: null, emoji: '⚙',  lucide: 'Settings' },
+  { id: 'devops-monitor', label: 'DEVOPS.cloud', icon: null, emoji: '⚡',  lucide: 'Server' },
+  { id: 'email',          label: 'EMAIL.inbox',   icon: null, emoji: '📧',  lucide: 'Mail' },
+  { id: 'settings',       label: 'SETTINGS.cfg',  icon: null, emoji: '⚙',  lucide: 'Settings' },
+
 
   { id: 'contact',      label: 'CONTACT.mail',  icon: null, emoji: '✉',   lucide: 'Send' },
   { id: 'matrix',       label: 'MATRIX.toggle', icon: null, emoji: '🌐',  lucide: 'Activity' },

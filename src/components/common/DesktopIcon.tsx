@@ -2,7 +2,7 @@ import React, { memo, useRef } from 'react';
 import {
   Terminal, User, Zap, FolderGit2, Youtube, Globe, Globe2, Image as ImageIcon, Video,
   Gamepad2, Folder, Music, Palette, Mail, Calendar, FileText, Settings, Send, Activity,
-  Map, Cloud, TrendingUp, Rocket, BookOpen, Bot
+  Map, Cloud, TrendingUp, Rocket, BookOpen, Bot, Server
 } from 'lucide-react';
 
 import { DESKTOP_ICONS } from '../../data';
@@ -80,6 +80,7 @@ export const DesktopIcon = memo(({ icon, selected, onSingleClick, onDoubleClick,
       case 'Send':        return <Send size={s} color="#00B0FF" />;
       case 'Activity':    return <Activity size={s} color="#00FF88" />;
       case 'Bot':         return <Bot size={s} color="#00FF88" />;
+      case 'Server':      return <Server size={s} color="#00FF88" />;
       case 'Map':         return <Map size={s} color="#00E676" />;
       case 'Cloud':       return <Cloud size={s} color="#87CEEB" />;
       case 'TrendingUp':  return <TrendingUp size={s} color="#FFB300" />;
