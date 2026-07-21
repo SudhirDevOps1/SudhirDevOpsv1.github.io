@@ -31,15 +31,48 @@ export const CountriesWindow = memo(() => {
   const [quizTotal, setQuizTotal] = useState(0);
   const [quizFeedback, setQuizFeedback] = useState('');
 
+  const FALLBACK_COUNTRIES: Country[] = [
+    { name: { common: 'India', official: 'Republic of India' }, flags: { png: 'https://flagcdn.com/w320/in.png', svg: 'https://flagcdn.com/in.svg', alt: 'Flag of India' }, population: 1408044253, region: 'Asia', subregion: 'Southern Asia', capital: ['New Delhi'], languages: { hin: 'Hindi', eng: 'English' }, currencies: { INR: { name: 'Indian Rupee', symbol: '₹' } }, area: 3287263, cca2: 'IN', borders: ['PAK', 'CHN', 'NPL'] },
+    { name: { common: 'United States', official: 'United States of America' }, flags: { png: 'https://flagcdn.com/w320/us.png', svg: 'https://flagcdn.com/us.svg', alt: 'Flag of US' }, population: 331893745, region: 'Americas', subregion: 'North America', capital: ['Washington, D.C.'], languages: { eng: 'English' }, currencies: { USD: { name: 'United States Dollar', symbol: '$' } }, area: 9372610, cca2: 'US', borders: ['CAN', 'MEX'] },
+    { name: { common: 'Japan', official: 'Japan' }, flags: { png: 'https://flagcdn.com/w320/jp.png', svg: 'https://flagcdn.com/jp.svg', alt: 'Flag of Japan' }, population: 125584838, region: 'Asia', subregion: 'Eastern Asia', capital: ['Tokyo'], languages: { jpn: 'Japanese' }, currencies: { JPY: { name: 'Japanese Yen', symbol: '¥' } }, area: 377975, cca2: 'JP', borders: [] },
+    { name: { common: 'Germany', official: 'Federal Republic of Germany' }, flags: { png: 'https://flagcdn.com/w320/de.png', svg: 'https://flagcdn.com/de.svg', alt: 'Flag of Germany' }, population: 83240525, region: 'Europe', subregion: 'Western Europe', capital: ['Berlin'], languages: { deu: 'German' }, currencies: { EUR: { name: 'Euro', symbol: '€' } }, area: 357114, cca2: 'DE', borders: ['FRA', 'POL'] },
+    { name: { common: 'United Kingdom', official: 'United Kingdom of Great Britain and Northern Ireland' }, flags: { png: 'https://flagcdn.com/w320/gb.png', svg: 'https://flagcdn.com/gb.svg', alt: 'Flag of UK' }, population: 67326569, region: 'Europe', subregion: 'Northern Europe', capital: ['London'], languages: { eng: 'English' }, currencies: { GBP: { name: 'British Pound', symbol: '£' } }, area: 242900, cca2: 'GB', borders: ['IRL'] },
+    { name: { common: 'France', official: 'French Republic' }, flags: { png: 'https://flagcdn.com/w320/fr.png', svg: 'https://flagcdn.com/fr.svg', alt: 'Flag of France' }, population: 67391582, region: 'Europe', subregion: 'Western Europe', capital: ['Paris'], languages: { fra: 'French' }, currencies: { EUR: { name: 'Euro', symbol: '€' } }, area: 551695, cca2: 'FR', borders: ['DEU', 'ESP'] },
+    { name: { common: 'Brazil', official: 'Federative Republic of Brazil' }, flags: { png: 'https://flagcdn.com/w320/br.png', svg: 'https://flagcdn.com/br.svg', alt: 'Flag of Brazil' }, population: 212559417, region: 'Americas', subregion: 'South America', capital: ['Brasília'], languages: { por: 'Portuguese' }, currencies: { BRL: { name: 'Brazilian Real', symbol: 'R$' } }, area: 8515767, cca2: 'BR', borders: ['ARG', 'COL'] },
+    { name: { common: 'Australia', official: 'Commonwealth of Australia' }, flags: { png: 'https://flagcdn.com/w320/au.png', svg: 'https://flagcdn.com/au.svg', alt: 'Flag of Australia' }, population: 25687041, region: 'Oceania', subregion: 'Australia and New Zealand', capital: ['Canberra'], languages: { eng: 'English' }, currencies: { AUD: { name: 'Australian Dollar', symbol: '$' } }, area: 7692024, cca2: 'AU', borders: [] },
+  ];
+
   const fetchCountries = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch('https://restcountries.com/v3.1/all?fields=name,flags,population,region,subregion,capital,languages,currencies,area,cca2,borders');
+      if (!res.ok) throw new Error('REST Countries API error');
       const data: Country[] = await res.json();
-      setCountries(data.sort((a, b) => b.population - a.population));
-    } catch {}
+      if (!Array.isArray(data) || data.length === 0) throw new Error('Invalid data');
+      const sorted = data.sort((a, b) => b.population - a.population);
+      setCountries(sorted);
+      setSelected(sorted[0] || null);
+    } catch {
+      // Fallback via CORS proxy if REST countries endpoint fails or CORS blocks
+      try {
+        const proxyRes = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://restcountries.com/v3.1/all?fields=name,flags,population,region,subregion,capital,languages,currencies,area,cca2,borders'));
+        const proxyData: Country[] = await proxyRes.json();
+        if (Array.isArray(proxyData) && proxyData.length > 0) {
+          const sorted = proxyData.sort((a, b) => b.population - a.population);
+          setCountries(sorted);
+          setSelected(sorted[0] || null);
+        } else {
+          setCountries(FALLBACK_COUNTRIES);
+          setSelected(FALLBACK_COUNTRIES[0]);
+        }
+      } catch {
+        setCountries(FALLBACK_COUNTRIES);
+        setSelected(FALLBACK_COUNTRIES[0]);
+      }
+    }
     setLoading(false);
   }, []);
+
 
   useEffect(() => { fetchCountries(); }, [fetchCountries]);
 
