@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Search, Layers, Command } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { OSProvider, useOS } from './context/OSContext';
 import { MatrixRain } from './components/common/MatrixRain';
 import { WindowFrame } from './components/common/WindowFrame';
@@ -24,6 +24,9 @@ const GamesWindow = lazy(() => import('./components/windows/Games'));
 const GalleryWindow = lazy(() => import('./components/windows/Gallery'));
 const VideoPlayerWindow = lazy(() => import('./components/windows/VideoPlayer'));
 const NotepadWindow = lazy(() => import('./components/windows/Notepad'));
+const FileExplorerWindow = lazy(() => import('./components/windows/FileExplorer'));
+const MusicPlayerWindow = lazy(() => import('./components/windows/MusicPlayer'));
+const PaintWindow = lazy(() => import('./components/windows/Paint'));
 
 function DesktopContent() {
   const {
@@ -57,14 +60,12 @@ function DesktopContent() {
   // ─── Keyboard Shortcuts: Alt+Tab & Ctrl+P Command Palette ──────────────────
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl+P or / for Command Palette
       if ((e.ctrlKey && e.key.toLowerCase() === 'p') || (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')) {
         e.preventDefault();
         setShowCmdPalette(v => !v);
         setCmdSearch('');
       }
 
-      // Alt+Tab window switcher
       if (e.altKey && e.key === 'Tab') {
         e.preventDefault();
         if (windows.length > 0) {
@@ -130,6 +131,9 @@ function DesktopContent() {
             case 'gallery': return <GalleryWindow />;
             case 'videoplayer': return <VideoPlayerWindow />;
             case 'notepad': return <NotepadWindow />;
+            case 'file-explorer': return <FileExplorerWindow />;
+            case 'music-player': return <MusicPlayerWindow />;
+            case 'paint': return <PaintWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}
@@ -202,7 +206,6 @@ function DesktopContent() {
         ))}
       </AnimatePresence>
 
-      {/* ─── Alt + Tab Switcher Overlay ─────────────────────────────────────── */}
       <AnimatePresence>
         {showAltTab && windows.length > 0 && (
           <motion.div
@@ -233,7 +236,6 @@ function DesktopContent() {
         )}
       </AnimatePresence>
 
-      {/* ─── Ctrl+P / / Command Palette ────────────────────────────────────── */}
       <AnimatePresence>
         {showCmdPalette && (
           <motion.div
@@ -257,7 +259,7 @@ function DesktopContent() {
                   type="text"
                   value={cmdSearch}
                   onChange={e => setCmdSearch(e.target.value)}
-                  placeholder="Type to search apps or commands... (e.g. YouTube, Terminal)"
+                  placeholder="Type to search apps or commands... (e.g. Explorer, Music, Paint)"
                   autoFocus
                   style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: 14, fontFamily: 'var(--font-mono)' }}
                 />
