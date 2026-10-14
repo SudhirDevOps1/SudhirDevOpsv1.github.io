@@ -1,6 +1,6 @@
 import { ProjectData, AboutData, TerminalData } from '../data';
 
-export type ThemeKey = 'green' | 'blue' | 'amber' | 'purple';
+export type ThemeKey = 'green' | 'blue' | 'amber' | 'purple' | 'crimson' | 'cyan' | 'mono';
 export type PowerState = 'booting' | 'running' | 'sleeping' | 'shutdown';
 export type WinId =
   | 'terminal' | 'about' | 'skills' | 'projects' | 'contact' | 'settings'
@@ -23,6 +23,14 @@ export interface Toast {
   id: string;
   message: string;
   type: 'success' | 'error' | 'info';
+}
+
+export interface OSNotification {
+  id: string;
+  title: string;
+  body: string;
+  icon?: string;
+  time: number;
 }
 
 export interface LoadedJsonData {
@@ -53,4 +61,11 @@ export interface OSContextType {
   visitorCount: number;
   konamiActive: boolean;
   jsonData: LoadedJsonData;
+  notifications: OSNotification[];
+  pushNotification: (title: string, body: string, icon?: string) => void;
+  clearNotifications: () => void;
+  dnd: boolean;
+  setDnd: (v: boolean) => void;
+  toasts: Toast[];
+  removeToast: (id: string) => void;
 }

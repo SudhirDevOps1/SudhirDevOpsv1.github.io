@@ -1,8 +1,11 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import { useOS } from '../../context/OSContext';
-import { THEMES } from '../../data';
+import { THEMES, WALLPAPERS as GRADIENT_WALLPAPERS } from '../../data';
 import { ThemeKey } from '../../types/os';
-import { Image, Palette, Eye, Bell, Sliders, Volume2, Sparkles, Monitor, RotateCcw, Check } from 'lucide-react';
+import { useSystemSettings } from '../../hooks/useSystemSettings';
+import { setSystemSetting } from '../../lib/sysSettings';
+import { sfx } from '../../lib/sfx';
+import { Image, Palette, Sliders, Volume2, Sparkles, Monitor, RotateCcw } from 'lucide-react';
 
 export const WALLPAPERS = [
   { id: 'win11-bloom', name: 'Windows 11 Bloom (Local)', url: '/wallpaper/win11_bloom.png' },
@@ -20,21 +23,20 @@ export const WALLPAPERS = [
 ];
 
 export const SettingsWindow = memo(() => {
-  const { theme, setTheme, matrixOn, toggleMatrix, activeWallpaper, setWallpaper, addToast } = useOS();
+  const { theme, setTheme, matrixOn, toggleMatrix, activeWallpaper, setWallpaper, addToast, dnd, setDnd } = useOS();
+  const sys = useSystemSettings();
   const [activeTab, setActiveTab] = useState<'wallpaper' | 'themes' | 'effects' | 'sound' | 'display'>('wallpaper');
 
   // Customization Settings State (persisted in localStorage)
-  const [soundEffects, setSoundEffects] = useState<boolean>(() => localStorage.getItem('sudhi_sound') !== 'false');
   const [crtScanlines, setCrtScanlines] = useState<boolean>(() => localStorage.getItem('sudhi_crt') === 'true'); // Default to clean FALSE so no annoying lines by default!
-  const [glassBlur, setGlassBlur] = useState<boolean>(() => localStorage.getItem('sudhi_blur') !== 'false');
   const [bgGridLines, setBgGridLines] = useState<boolean>(() => localStorage.getItem('sudhi_grid') === 'true'); // Default to clean OFF lines!
   const [wallpaperOpacity, setWallpaperOpacity] = useState<number>(() => Number(localStorage.getItem('sudhi_wp_op') || 90)); // Default 90% high clarity
   const [customWallpaperInput, setCustomWallpaperInput] = useState('');
-  const [accentBrightness, setAccentBrightness] = useState<number>(() => Number(localStorage.getItem('sudhi_brightness') || 100));
 
   useEffect(() => {
-    localStorage.setItem('sudhi_sound', String(soundEffects));
-  }, [soundEffects]);
+    setCrtScanlines(localStorage.getItem('sudhi_crt') === 'true');
+    setBgGridLines(localStorage.getItem('sudhi_grid') === 'true');
+  }, [activeTab]);
 
   useEffect(() => {
     localStorage.setItem('sudhi_crt', String(crtScanlines));
@@ -54,16 +56,6 @@ export const SettingsWindow = memo(() => {
     if (wpEl) wpEl.style.opacity = (wallpaperOpacity / 100).toString();
   }, [wallpaperOpacity]);
 
-  useEffect(() => {
-    localStorage.setItem('sudhi_blur', String(glassBlur));
-    document.documentElement.style.setProperty('--glass-blur', glassBlur ? '16px' : '0px');
-  }, [glassBlur]);
-
-  useEffect(() => {
-    localStorage.setItem('sudhi_brightness', String(accentBrightness));
-    document.documentElement.style.filter = `brightness(${accentBrightness}%)`;
-  }, [accentBrightness]);
-
 
   const setCustomWallpaper = () => {
     if (!customWallpaperInput.trim()) return;
@@ -75,12 +67,21 @@ export const SettingsWindow = memo(() => {
   const resetAllSettings = () => {
     setTheme('green');
     setWallpaper('/wallpaper/win11_bloom.png');
-    setSoundEffects(true);
+    setSystemSetting('sounds', true);
+    setSystemSetting('glassBlur', true);
+    setSystemSetting('brightness', 100);
+    setSystemSetting('volume', 60);
+    setSystemSetting('aurora', true);
+    setSystemSetting('nightLight', false);
     setCrtScanlines(true);
-    setGlassBlur(true);
-    setAccentBrightness(100);
+    setAccentBrightnessLegacy(100);
     if (!matrixOn) toggleMatrix();
     addToast('All settings reset to default', 'info');
+  };
+
+  // Legacy brightness filter cleanup (older builds wrote a root CSS filter)
+  const setAccentBrightnessLegacy = (v: number) => {
+    document.documentElement.style.filter = v >= 100 ? '' : `brightness(${v}%)`;
   };
 
   const tabs = [
@@ -152,7 +153,47 @@ export const SettingsWindow = memo(() => {
               </button>
             </div>
 
+            {/* Gradient wallpaper presets (v4 — pure CSS, zero assets, instant load) */}
+            <div style={{ fontSize: 12, fontWeight: 'bold', color: 'var(--accent)', marginBottom: 8, marginTop: 4 }}>
+              ⚡ GRADIENT PRESETS <span style={{ color: '#555', fontSize: 10, fontWeight: 'normal' }}>— zero-bandwidth premium backdrops</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10, marginBottom: 20 }}>
+              {GRADIENT_WALLPAPERS.map(w => {
+                const isSel = activeWallpaper === w.css;
+                return (
+                  <div
+                    key={w.id}
+                    onClick={() => { setWallpaper(w.css); addToast(`Wallpaper set: ${w.name}`, 'success'); }}
+                    style={{
+                      border: isSel ? '2px solid var(--accent)' : '1px solid #1a1e2e',
+                      borderRadius: 8, cursor: 'pointer', overflow: 'hidden', background: '#05070d',
+                      boxShadow: isSel ? '0 0 16px rgba(var(--accent-rgb),0.35)' : 'none',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <div style={{
+                      height: 56,
+                      background: w.css || 'radial-gradient(ellipse at 30% 30%, rgba(var(--accent-rgb),0.25), transparent 60%), #03050a',
+                      position: 'relative',
+                    }}>
+                      {isSel && (
+                        <div style={{ position: 'absolute', top: 5, right: 5, width: 18, height: 18, borderRadius: '50%', background: 'var(--accent)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 11 }}>
+                          ✓
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ padding: '6px 8px', fontSize: 9.5, color: isSel ? 'var(--accent)' : '#aaa', fontWeight: isSel ? 'bold' : 'normal' }}>
+                      {w.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Wallpaper Grid */}
+            <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff', marginBottom: 8 }}>
+              📸 PHOTO WALLPAPERS
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 12 }}>
               {WALLPAPERS.map(w => (
                 <div
@@ -304,15 +345,51 @@ export const SettingsWindow = memo(() => {
                   <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>Glassmorphism Backdrop Blur</div>
                   <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Translucent window glass blur filter (16px)</div>
                 </div>
-                <button onClick={() => { setGlassBlur(v => !v); addToast(`Glass Blur: ${!glassBlur ? 'ON' : 'OFF'}`, 'info'); }}
+                <button onClick={() => { setSystemSetting('glassBlur', !sys.glassBlur); addToast(`Glass Blur: ${!sys.glassBlur ? 'ON' : 'OFF'}`, 'info'); }}
                   style={{
-                    padding: '6px 18px', border: `1px solid ${glassBlur ? 'var(--accent)' : '#333'}`,
-                    background: glassBlur ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
-                    color: glassBlur ? 'var(--accent)' : '#666', borderRadius: 20, cursor: 'pointer',
+                    padding: '6px 18px', border: `1px solid ${sys.glassBlur ? 'var(--accent)' : '#333'}`,
+                    background: sys.glassBlur ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
+                    color: sys.glassBlur ? 'var(--accent)' : '#666', borderRadius: 20, cursor: 'pointer',
                     fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
                   }}
                 >
-                  {glassBlur ? '🟢 ENABLED' : '🔴 DISABLED'}
+                  {sys.glassBlur ? '🟢 ENABLED' : '🔴 DISABLED'}
+                </button>
+              </div>
+
+              {/* Aurora Backdrop (v4) */}
+              <div style={{ padding: 14, border: '1px solid rgba(var(--accent-rgb),0.35)', borderRadius: 8, background: 'rgba(var(--accent-rgb),0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>✨ Aurora Animated Backdrop <span style={{ color: 'var(--accent)', fontSize: 9 }}>NEW</span></div>
+                  <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Slow-drifting neon glow blobs behind the desktop (zero assets, GPU friendly)</div>
+                </div>
+                <button onClick={() => { setSystemSetting('aurora', !sys.aurora); addToast(`Aurora backdrop: ${!sys.aurora ? 'ON' : 'OFF'}`, 'info'); }}
+                  style={{
+                    padding: '6px 18px', border: `1px solid ${sys.aurora ? 'var(--accent)' : '#333'}`,
+                    background: sys.aurora ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
+                    color: sys.aurora ? 'var(--accent)' : '#666', borderRadius: 20, cursor: 'pointer',
+                    fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
+                  }}
+                >
+                  {sys.aurora ? '🟢 ENABLED' : '🔴 DISABLED'}
+                </button>
+              </div>
+
+              {/* Night Light (v4) */}
+              <div style={{ padding: 14, border: '1px solid #1a1e2e', borderRadius: 8, background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>🌙 Night Light (warm tint)</div>
+                  <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Amber overlay to reduce blue light for late-night coding sessions</div>
+                </div>
+                <button onClick={() => { setSystemSetting('nightLight', !sys.nightLight); addToast(`Night Light: ${!sys.nightLight ? 'ON' : 'OFF'}`, 'info'); }}
+                  style={{
+                    padding: '6px 18px', border: `1px solid ${sys.nightLight ? '#FFB300' : '#333'}`,
+                    background: sys.nightLight ? 'rgba(255,179,0,0.18)' : 'transparent',
+                    color: sys.nightLight ? '#FFB300' : '#666', borderRadius: 20, cursor: 'pointer',
+                    fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
+                  }}
+                >
+                  {sys.nightLight ? '🟠 ENABLED' : '🔴 DISABLED'}
                 </button>
               </div>
             </div>
@@ -327,19 +404,20 @@ export const SettingsWindow = memo(() => {
 
             <div style={{ padding: 16, border: '1px solid #1a1e2e', borderRadius: 10, background: 'rgba(255,255,255,0.02)', marginBottom: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-                <span style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>Display Brightness Filter</span>
-                <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 'bold' }}>{accentBrightness}%</span>
+                <span style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>Screen Brightness (dimmer overlay)</span>
+                <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 'bold' }}>{sys.brightness}%</span>
               </div>
               <input
-                type="range" min="40" max="130" value={accentBrightness}
-                onChange={e => setAccentBrightness(Number(e.target.value))}
+                type="range" min="40" max="100" value={sys.brightness}
+                onChange={e => setSystemSetting('brightness', Number(e.target.value))}
                 style={{ width: '100%', accentColor: 'var(--accent)', cursor: 'pointer' }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#555', marginTop: 6 }}>
                 <span>40% (Dim)</span>
-                <span>100% (Normal)</span>
-                <span>130% (High Brightness)</span>
+                <span>70% (Balanced)</span>
+                <span>100% (Full)</span>
               </div>
+              <div style={{ fontSize: 10, color: '#444', marginTop: 8 }}>💡 Same slider lives in the Quick Settings tray panel (Ctrl+Alt+Q) — both stay in sync.</div>
             </div>
           </div>
         )}
@@ -355,15 +433,56 @@ export const SettingsWindow = memo(() => {
                 <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>System Audio Effects & Beeps</div>
                 <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Enable UI clicks, window open sounds, and audio feedback</div>
               </div>
-              <button onClick={() => { setSoundEffects(v => !v); addToast(`Sound: ${!soundEffects ? 'ON' : 'OFF'}`, 'info'); }}
+              <button onClick={() => { setSystemSetting('sounds', !sys.sounds); addToast(`Sound: ${!sys.sounds ? 'ON' : 'OFF'}`, 'info'); }}
                 style={{
-                  padding: '6px 18px', border: `1px solid ${soundEffects ? 'var(--accent)' : '#333'}`,
-                  background: soundEffects ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
-                  color: soundEffects ? 'var(--accent)' : '#666', borderRadius: 20, cursor: 'pointer',
+                  padding: '6px 18px', border: `1px solid ${sys.sounds ? 'var(--accent)' : '#333'}`,
+                  background: sys.sounds ? 'rgba(var(--accent-rgb),0.2)' : 'transparent',
+                  color: sys.sounds ? 'var(--accent)' : '#666', borderRadius: 20, cursor: 'pointer',
                   fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
                 }}
               >
-                {soundEffects ? '🔊 ENABLED' : '🔇 MUTED'}
+                {sys.sounds ? '🔊 ENABLED' : '🔇 MUTED'}
+              </button>
+            </div>
+
+            {/* Master volume (v4) */}
+            <div style={{ padding: 14, border: '1px solid rgba(var(--accent-rgb),0.35)', borderRadius: 8, background: 'rgba(var(--accent-rgb),0.05)', marginBottom: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>🎚️ Master UI Volume <span style={{ color: 'var(--accent)', fontSize: 9 }}>NEW</span></span>
+                <span style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 'bold' }}>{sys.volume}%</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input
+                  type="range" min="0" max="100" value={sys.volume}
+                  onChange={e => setSystemSetting('volume', Number(e.target.value))}
+                  style={{ flex: 1, accentColor: 'var(--accent)', cursor: 'pointer' }}
+                />
+                <button onClick={() => sfx.play('notify')}
+                  style={{
+                    padding: '6px 12px', border: '1px solid rgba(var(--accent-rgb),0.45)', borderRadius: 6,
+                    background: 'rgba(var(--accent-rgb),0.12)', color: 'var(--accent)', cursor: 'pointer',
+                    fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 'bold', whiteSpace: 'nowrap',
+                  }}
+                >🔔 TEST</button>
+              </div>
+              <div style={{ fontSize: 10, color: '#555', marginTop: 8 }}>Powers the WebAudio sound engine: clicks, window open/close, snaps, notifications & boot chime.</div>
+            </div>
+
+            {/* Focus mode (v4) */}
+            <div style={{ padding: 14, border: '1px solid #1a1e2e', borderRadius: 8, background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 'bold', color: '#fff' }}>🔕 Focus Mode (Do Not Disturb)</div>
+                <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Pause all incoming system notifications</div>
+              </div>
+              <button onClick={() => { setDnd(!dnd); addToast(`Focus mode: ${!dnd ? 'ON' : 'OFF'}`, 'info'); }}
+                style={{
+                  padding: '6px 18px', border: `1px solid ${dnd ? '#BF00FF' : '#333'}`,
+                  background: dnd ? 'rgba(191,0,255,0.18)' : 'transparent',
+                  color: dnd ? '#BF00FF' : '#666', borderRadius: 20, cursor: 'pointer',
+                  fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 'bold',
+                }}
+              >
+                {dnd ? '🌙 ACTIVE' : '🔔 ALERTS ON'}
               </button>
             </div>
           </div>

@@ -227,3 +227,144 @@ html, body, #root {
   display: block;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   SUDHI OS v4 — PREMIUM LOOK LAYER (additive)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Animated aurora backdrop (behind wallpaper, above pure black) */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #03050a;
+}
+.aurora-bg::before,
+.aurora-bg::after {
+  content: '';
+  position: absolute;
+  width: 55vmax;
+  height: 55vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.aurora-bg::before {
+  top: -18vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.34), transparent 65%);
+  animation: auroraDrift 26s ease-in-out infinite alternate;
+}
+.aurora-bg::after {
+  bottom: -22vmax;
+  right: -14vmax;
+  background: radial-gradient(circle, rgba(120, 60, 255, 0.28), transparent 65%);
+  animation: auroraDrift 34s ease-in-out infinite alternate-reverse;
+}
+@keyframes auroraDrift {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(9vmax, 5vmax) scale(1.18); }
+  100% { transform: translate(-6vmax, 10vmax) scale(0.92); }
+}
+
+/* Konami party mode — full-hue celebration */
+@keyframes partyHue {
+  0%   { filter: hue-rotate(0deg) saturate(1.4); }
+  100% { filter: hue-rotate(360deg) saturate(1.4); }
+}
+.konami-party {
+  animation: partyHue 4s linear infinite;
+}
+@keyframes partyBorder {
+  0%, 100% { box-shadow: inset 0 0 60px rgba(255, 0, 128, 0.25); }
+  33%      { box-shadow: inset 0 0 60px rgba(0, 255, 200, 0.25); }
+  66%      { box-shadow: inset 0 0 60px rgba(120, 80, 255, 0.3); }
+}
+.konami-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  pointer-events: none;
+  animation: partyBorder 2s linear infinite;
+}
+
+/* Glass panel helper (used by shell overlays) */
+.glass-panel {
+  background: rgba(13, 15, 22, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.75);
+}
+
+/* Glass blur master kill-switch (Settings → Effects) */
+.no-blur *, .no-blur *::before, .no-blur *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Premium focus rings */
+:focus-visible {
+  outline: 2px solid rgba(var(--accent-rgb), 0.75);
+  outline-offset: 2px;
+}
+button:focus:not(:focus-visible) { outline: none; }
+
+/* Selection */
+::selection {
+  background: rgba(var(--accent-rgb), 0.35);
+  color: #fff;
+}
+
+/* Range input (Quick Settings sliders) */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  height: 4px;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.7);
+  transition: transform 0.15s;
+}
+input[type='range']::-webkit-slider-thumb:hover { transform: scale(1.25); }
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.7);
+}
+
+/* Shimmer skeleton loader (News app, dashboards) */
+@keyframes shimmerSweep {
+  0%   { background-position: -300px 0; }
+  100% { background-position: 300px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(var(--accent-rgb),0.10) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 600px 100%;
+  animation: shimmerSweep 1.4s linear infinite;
+  border-radius: 8px;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

@@ -1,7 +1,8 @@
-import React, { memo, useRef, useCallback, useState } from 'react';
+import { memo, useRef, useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Minus, Square, X, Copy, Pin, Sparkles } from 'lucide-react';
+import { Pin } from 'lucide-react';
 import { WinState } from '../../types/os';
+import { sfx } from '../../lib/sfx';
 
 interface WindowFrameProps {
   win: WinState;
@@ -26,8 +27,53 @@ export const WindowFrame = memo(({
     direction: string;
   } | null>(null);
 
-  const [snapPreview, setSnapPreview] = useState<'left' | 'right' | 'top' | null>(null);
+  const [snapPreview, setSnapPreview] = useState<'left' | 'right' | 'top' | 'tl' | 'tr' | 'bl' | 'br' | null>(null);
+  const snapRef = useRef<'left' | 'right' | 'top' | 'tl' | 'tr' | 'bl' | 'br' | null>(null);
+  const setSnap = useCallback((v: 'left' | 'right' | 'top' | 'tl' | 'tr' | 'bl' | 'br' | null) => {
+    snapRef.current = v;
+    setSnapPreview(v);
+  }, []);
   const [isAlwaysOnTop, setIsAlwaysOnTop] = useState(false);
+  const [showSnapMenu, setShowSnapMenu] = useState(false);
+  const snapHoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ─── Snap Layouts (Windows 11 style flyout on maximize-button hover) ──────
+  const applySnap = useCallback((kind: 'left' | 'right' | 'top' | 'halfBottom' | 'tl' | 'tr' | 'bl' | 'br') => {
+    const W = window.innerWidth;
+    const H = window.innerHeight - 48; // taskbar
+    const hw = Math.floor(W / 2);
+    const hh = Math.floor(H / 2);
+
+    if (win.maximized) onMaximize(); // restore first so snap geometry is visible
+
+    const geo: Record<string, { x: number; y: number; w: number; h: number }> = {
+      left:      { x: 0,          y: 0,   w: hw, h: H },
+      right:     { x: hw,         y: 0,   w: hw, h: H },
+      top:       { x: 0,          y: 0,   w: W,  h: H },
+      halfBottom:{ x: 0,          y: hh,  w: W,  h: hh },
+      tl:        { x: 0,          y: 0,   w: hw, h: hh },
+      tr:        { x: hw,         y: 0,   w: hw, h: hh },
+      bl:        { x: 0,          y: hh,  w: hw, h: hh },
+      br:        { x: hw,         y: hh,  w: hw, h: hh },
+    };
+    const g = geo[kind];
+    onMove({ x: g.x, y: g.y });
+    onResize({ w: g.w, h: g.h });
+    setShowSnapMenu(false);
+    sfx.play('snap');
+    onFocus();
+  }, [win.maximized, onMaximize, onMove, onResize, onFocus]);
+
+  const openSnapMenuDelayed = useCallback(() => {
+    if (snapHoverTimer.current) clearTimeout(snapHoverTimer.current);
+    snapHoverTimer.current = setTimeout(() => setShowSnapMenu(true), 320);
+  }, []);
+
+  const cancelSnapMenu = useCallback(() => {
+    if (snapHoverTimer.current) clearTimeout(snapHoverTimer.current);
+    snapHoverTimer.current = null;
+    setShowSnapMenu(false);
+  }, []);
 
   const handleTitleDoubleClick = useCallback(() => {
     onMaximize();
@@ -48,15 +94,25 @@ export const WindowFrame = memo(({
       let x = dragRef.current.origX + ev.clientX - dragRef.current.startX;
       let y = dragRef.current.origY + ev.clientY - dragRef.current.startY;
 
-      // Snap preview calculation (Windows 11 snap zone)
-      if (ev.clientX < 20) {
-        setSnapPreview('left');
-      } else if (ev.clientX > window.innerWidth - 20) {
-        setSnapPreview('right');
+      // Snap preview calculation (Windows 11 snap zone — edges + corners)
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      if (ev.clientX < 24 && ev.clientY < 24) {
+        setSnap('tl');
+      } else if (ev.clientX > W - 24 && ev.clientY < 24) {
+        setSnap('tr');
+      } else if (ev.clientX < 24 && ev.clientY > H - 72) {
+        setSnap('bl');
+      } else if (ev.clientX > W - 24 && ev.clientY > H - 72) {
+        setSnap('br');
+      } else if (ev.clientX < 20) {
+        setSnap('left');
+      } else if (ev.clientX > W - 20) {
+        setSnap('right');
       } else if (ev.clientY < 20) {
-        setSnapPreview('top');
+        setSnap('top');
       } else {
-        setSnapPreview(null);
+        setSnap(null);
       }
 
       onMove({ x: Math.max(0, x), y: Math.max(0, y) });
@@ -64,17 +120,22 @@ export const WindowFrame = memo(({
 
     const up = (ev: MouseEvent) => {
       dragRef.current = null;
-      setSnapPreview(null);
+      const preview = snapRef.current;
+      setSnap(null);
 
-      // Perform Snap action if released on edge
-      if (ev.clientX < 20) {
+      // Quarter-corner snaps take priority
+      if (preview === 'tl' || preview === 'tr' || preview === 'bl' || preview === 'br') {
+        applySnap(preview);
+      } else if (ev.clientX < 20) {
         // Snap Left Half
         onMove({ x: 0, y: 0 });
         onResize({ w: Math.floor(window.innerWidth / 2), h: window.innerHeight - 48 });
+        sfx.play('snap');
       } else if (ev.clientX > window.innerWidth - 20) {
         // Snap Right Half
         onMove({ x: Math.floor(window.innerWidth / 2), y: 0 });
         onResize({ w: Math.floor(window.innerWidth / 2), h: window.innerHeight - 48 });
+        sfx.play('snap');
       } else if (ev.clientY < 20) {
         // Snap Full Maximize
         onMaximize();
@@ -86,7 +147,7 @@ export const WindowFrame = memo(({
 
     window.addEventListener('mousemove', move);
     window.addEventListener('mouseup', up);
-  }, [win.maximized, win.size, onFocus, onMove, onResize, onMaximize, handleTitleDoubleClick]);
+  }, [win.maximized, win.size, onFocus, onMove, onResize, onMaximize, handleTitleDoubleClick, applySnap, setSnap]);
 
   const handleResizeMouseDown = useCallback((e: React.MouseEvent, direction: string) => {
     e.preventDefault();
@@ -189,6 +250,18 @@ export const WindowFrame = memo(({
       {snapPreview === 'top' && (
         <div style={{ position: 'fixed', left: 0, top: 0, width: '100vw', height: 'calc(100vh - 48px)', background: 'rgba(var(--accent-rgb), 0.15)', border: '2px dashed var(--accent)', zIndex: 9998, backdropFilter: 'blur(4px)' }} />
       )}
+      {snapPreview === 'tl' && (
+        <div style={{ position: 'fixed', left: 0, top: 0, width: '50vw', height: 'calc((100vh - 48px) / 2)', background: 'rgba(var(--accent-rgb), 0.18)', border: '2px dashed var(--accent)', zIndex: 9998, borderRadius: '0 0 12px 0', backdropFilter: 'blur(4px)' }} />
+      )}
+      {snapPreview === 'tr' && (
+        <div style={{ position: 'fixed', right: 0, top: 0, width: '50vw', height: 'calc((100vh - 48px) / 2)', background: 'rgba(var(--accent-rgb), 0.18)', border: '2px dashed var(--accent)', zIndex: 9998, borderRadius: '0 0 0 12px', backdropFilter: 'blur(4px)' }} />
+      )}
+      {snapPreview === 'bl' && (
+        <div style={{ position: 'fixed', left: 0, bottom: 48, width: '50vw', height: 'calc((100vh - 48px) / 2)', background: 'rgba(var(--accent-rgb), 0.18)', border: '2px dashed var(--accent)', zIndex: 9998, borderRadius: '0 12px 0 0', backdropFilter: 'blur(4px)' }} />
+      )}
+      {snapPreview === 'br' && (
+        <div style={{ position: 'fixed', right: 0, bottom: 48, width: '50vw', height: 'calc((100vh - 48px) / 2)', background: 'rgba(var(--accent-rgb), 0.18)', border: '2px dashed var(--accent)', zIndex: 9998, borderRadius: '12px 0 0 0', backdropFilter: 'blur(4px)' }} />
+      )}
 
       <motion.div
         initial={{ scale: 0.88, opacity: 0 }}
@@ -268,20 +341,95 @@ export const WindowFrame = memo(({
               onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
             />
 
-            {/* Maximize — green dot */}
-            <button
-              onClick={(e) => { e.stopPropagation(); onMaximize(); }}
-              title={win.maximized ? 'Restore' : 'Maximize (⛶)'}
-              style={{
-                width: 13, height: 13, border: 'none',
-                background: '#00C853', color: 'transparent',
-                cursor: 'pointer', borderRadius: '50%',
-                transition: 'filter 0.15s', flexShrink: 0,
-                boxShadow: '0 0 4px rgba(0,200,83,0.4)',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = win.maximized ? '⊡' : '⛶'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '9px'; }}
-              onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
-            />
+            {/* Maximize — green dot + Snap Layouts flyout */}
+            <div
+              style={{ position: 'relative' }}
+              onMouseEnter={openSnapMenuDelayed}
+              onMouseLeave={cancelSnapMenu}
+            >
+              <button
+                onClick={(e) => { e.stopPropagation(); onMaximize(); sfx.play(win.maximized ? 'minimize' : 'maximize'); }}
+                title={win.maximized ? 'Restore' : 'Maximize (⛶) — hover for Snap Layouts'}
+                style={{
+                  width: 13, height: 13, border: 'none',
+                  background: '#00C853', color: 'transparent',
+                  cursor: 'pointer', borderRadius: '50%',
+                  transition: 'filter 0.15s', flexShrink: 0,
+                  boxShadow: '0 0 4px rgba(0,200,83,0.4)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = win.maximized ? '⊡' : '⛶'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '9px'; }}
+                onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
+              />
+
+              {/* Windows 11 Snap Layouts menu */}
+              {showSnapMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.14 }}
+                  onClick={e => e.stopPropagation()}
+                  onMouseDown={e => e.stopPropagation()}
+                  style={{
+                    position: 'absolute', bottom: '150%', right: -8, zIndex: 3000,
+                    background: 'rgba(13,15,22,0.97)', border: '1px solid rgba(var(--accent-rgb),0.45)',
+                    borderRadius: 10, padding: 10, width: 196,
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.8), 0 0 20px rgba(var(--accent-rgb),0.25)',
+                    backdropFilter: 'blur(20px)', fontFamily: 'var(--font-mono)',
+                  }}
+                >
+                  <div style={{ fontSize: 8.5, color: '#666', letterSpacing: 1.5, marginBottom: 8 }}>SNAP LAYOUTS</div>
+                  {([
+                    [
+                      { kind: 'left', cells: [{ w: '50%', h: '100%' }] },
+                      { kind: 'right', cells: [{ w: '50%', h: '100%' }] },
+                      { kind: 'top', cells: [{ w: '100%', h: '100%' }] },
+                      { kind: 'halfBottom', cells: [{ w: '100%', h: '100%' }] },
+                    ],
+                    [
+                      { kind: 'tl', cells: [{ w: '50%', h: '50%' }] },
+                      { kind: 'tr', cells: [{ w: '50%', h: '50%' }] },
+                      { kind: 'bl', cells: [{ w: '50%', h: '50%' }] },
+                      { kind: 'br', cells: [{ w: '50%', h: '50%' }] },
+                    ],
+                  ] as { kind: 'left' | 'right' | 'top' | 'halfBottom' | 'tl' | 'tr' | 'bl' | 'br'; cells: { w: string; h: string }[] }[][]).map((row, ri) => (
+                    <div key={ri} style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, marginBottom: ri === 0 ? 6 : 0 }}>
+                      {row.map(tile => {
+                        const RECT: Record<string, { left: number; top: number; width: number; height: number }> = {
+                          left:       { left: 2,  top: 2,  width: 16, height: 22 },
+                          right:      { left: 21, top: 2,  width: 16, height: 22 },
+                          top:        { left: 2,  top: 2,  width: 35, height: 10 },
+                          halfBottom: { left: 2,  top: 15, width: 35, height: 10 },
+                          tl:         { left: 2,  top: 2,  width: 16, height: 10 },
+                          tr:         { left: 21, top: 2,  width: 16, height: 10 },
+                          bl:         { left: 2,  top: 15, width: 16, height: 10 },
+                          br:         { left: 21, top: 15, width: 16, height: 10 },
+                        };
+                        return (
+                          <button
+                            key={tile.kind}
+                            onClick={() => applySnap(tile.kind)}
+                            title={`Snap ${tile.kind.toUpperCase()}`}
+                            style={{
+                              position: 'relative', width: 40, height: 28, padding: 0, cursor: 'pointer',
+                              border: '1px solid rgba(255,255,255,0.15)', borderRadius: 4,
+                              background: 'rgba(255,255,255,0.03)', transition: 'all 0.15s',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.15)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                          >
+                            <span style={{
+                              position: 'absolute', ...RECT[tile.kind],
+                              background: 'var(--accent)', borderRadius: 2, opacity: 0.85, pointerEvents: 'none',
+                            }} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 8, color: '#444', marginTop: 8, textAlign: 'center' }}>or drag window to any edge / corner</div>
+                </motion.div>
+              )}
+            </div>
 
             {/* Close — red dot */}
             <button

@@ -5,7 +5,22 @@ export const THEMES = {
   blue:   { name: 'Neon Blue',    accent: '#00BFFF', rgb: '0, 191, 255' },
   amber:  { name: 'Amber',        accent: '#FFB300', rgb: '255, 179, 0' },
   purple: { name: 'Purple',       accent: '#BF00FF', rgb: '191, 0, 255' },
+  crimson:{ name: 'Crimson',      accent: '#FF3B5C', rgb: '255, 59, 92' },
+  cyan:   { name: 'Ice Cyan',     accent: '#00E5FF', rgb: '0, 229, 255' },
+  mono:   { name: 'Mono White',   accent: '#E8EAF6', rgb: '232, 234, 246' },
 };
+
+// ─── Premium gradient wallpaper presets (pure CSS, zero assets) ──────────────
+export const WALLPAPERS: { id: string; name: string; css: string }[] = [
+  { id: 'none',    name: 'Void',      css: '' },
+  { id: 'aurora',  name: 'Aurora',    css: 'radial-gradient(ellipse at 20% 20%, rgba(0,255,136,0.22), transparent 55%), radial-gradient(ellipse at 80% 30%, rgba(0,191,255,0.20), transparent 55%), radial-gradient(ellipse at 50% 90%, rgba(191,0,255,0.18), transparent 60%), #05070d' },
+  { id: 'nebula',  name: 'Nebula',    css: 'radial-gradient(ellipse at 70% 20%, rgba(191,0,255,0.28), transparent 55%), radial-gradient(ellipse at 20% 70%, rgba(0,191,255,0.20), transparent 55%), #0a0512' },
+  { id: 'sunset',  name: 'Sunset',    css: 'linear-gradient(160deg, #1a0510 0%, #3d0f24 45%, #7a2d1f 78%, #ff8c42 130%)' },
+  { id: 'ocean',   name: 'Deep Ocean',css: 'linear-gradient(180deg, #020617 0%, #062a4a 55%, #0a4d68 100%)' },
+  { id: 'matrix',  name: 'Green Code',css: 'radial-gradient(ellipse at 50% 0%, rgba(0,255,136,0.16), transparent 60%), linear-gradient(180deg, #000000 0%, #02120a 100%)' },
+  { id: 'golden',  name: 'Golden Hour', css: 'linear-gradient(150deg, #120c02 0%, #3a2405 55%, #7a5a12 110%)' },
+  { id: 'frost',   name: 'Frost',     css: 'radial-gradient(ellipse at 30% 20%, rgba(232,234,246,0.14), transparent 55%), radial-gradient(ellipse at 75% 75%, rgba(0,229,255,0.16), transparent 55%), #060a12' },
+];
 
 export const SKILLS = {
   LANGUAGES: [
@@ -143,10 +158,14 @@ export const DESKTOP_ICONS = [
   { id: 'email',          label: 'GMAIL.app',     icon: null, emoji: '📧',  lucide: 'Mail' },
   { id: 'contact',        label: 'CONTACT.form',  icon: null, emoji: '✉️',  lucide: 'Send' },
 
+  { id: 'focus',          label: 'FOCUS.timer',   icon: null, emoji: '⏱️', lucide: 'Timer' },
+  { id: 'typing',         label: 'TYPE.run',      icon: null, emoji: '⌨️', lucide: 'Keyboard' },
+  { id: 'toolbox',        label: 'DEV.tools',     icon: null, emoji: '🧰', lucide: 'Wrench' },
+  { id: 'converter',      label: 'CONVERT.exe',   icon: null, emoji: '📐', lucide: 'ArrowLeftRight' },
+  { id: 'news',           label: 'DEV.wire',      icon: null, emoji: '📰', lucide: 'Newspaper' },
+
   { id: 'settings',       label: 'SETTINGS.cfg',  icon: null, emoji: '⚙',  lucide: 'Settings' },
 
-
-  { id: 'contact',      label: 'CONTACT.mail',  icon: null, emoji: '✉',   lucide: 'Send' },
   { id: 'matrix',       label: 'MATRIX.toggle', icon: null, emoji: '🌐',  lucide: 'Activity' },
 ];
 

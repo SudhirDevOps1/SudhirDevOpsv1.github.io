@@ -11,6 +11,8 @@ export const DesktopWidgets = memo(() => {
   const [nextLaunch, setNextLaunch] = useState<{ name: string; date: string } | null>(null);
   const [countdown, setCountdown] = useState('');
   const [time, setTime] = useState(new Date());
+  const [sticky, setSticky] = useState<string>(() => localStorage.getItem('sudhi_sticky') || '');
+  const [jsHeap, setJsHeap] = useState<number | null>(null);
 
   // Draggable Widget Position State (default top-right)
   const [position, setPosition] = useState<{ x: number; y: number }>(() => {
@@ -105,6 +107,21 @@ export const DesktopWidgets = memo(() => {
   useEffect(() => {
     setNextLaunch({ name: 'Starship IFT-5 Mission', date: new Date(Date.now() + 864000000).toISOString() });
   }, []);
+
+  // JS heap monitor (Chromium only — silent elsewhere)
+  useEffect(() => {
+    const perf = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;
+    if (!perf) return;
+    const sync = () => setJsHeap(Math.round(perf.usedJSHeapSize / 1048576));
+    sync();
+    const t = setInterval(sync, 4000);
+    return () => clearInterval(t);
+  }, []);
+
+  // Persist sticky note
+  useEffect(() => {
+    localStorage.setItem('sudhi_sticky', sticky);
+  }, [sticky]);
 
 
   // Countdown
@@ -219,6 +236,51 @@ export const DesktopWidgets = memo(() => {
           </div>
         </div>
       )}
+
+      {/* System Health Widget (v4) */}
+      <div style={{ ...widgetBase, justifyContent: 'space-between' }} title="Live JS heap usage (browser engine)"
+        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.4)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+      >
+        <span style={{ fontSize: 14 }}>🧠</span>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 'bold', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+            {jsHeap !== null ? `${jsHeap} MB` : '—'}
+          </div>
+          <div style={{ fontSize: 9, color: '#555' }}>JS HEAP</div>
+        </div>
+      </div>
+
+      {/* Sticky Note Widget (v4) */}
+      <div
+        style={{
+          ...widgetBase, flexDirection: 'column', alignItems: 'stretch', gap: 4,
+          background: 'rgba(255, 214, 90, 0.92)', border: '1px solid rgba(255,179,0,0.6)',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.5)', padding: '6px 8px',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 9, fontWeight: 'bold', color: 'rgba(0,0,0,0.55)', fontFamily: 'var(--font-mono)', letterSpacing: 1 }}>📌 STICKY</span>
+          <button
+            onClick={e => { e.stopPropagation(); setSticky(''); }}
+            title="Clear note"
+            style={{ background: 'none', border: 'none', color: 'rgba(0,0,0,0.4)', cursor: 'pointer', fontSize: 10, fontFamily: 'var(--font-mono)' }}
+          >✕</button>
+        </div>
+        <textarea
+          value={sticky}
+          onChange={e => setSticky(e.target.value)}
+          onClick={e => e.stopPropagation()}
+          placeholder="Type a quick note..."
+          rows={3}
+          style={{
+            width: '100%', resize: 'none', border: 'none', outline: 'none', background: 'transparent',
+            color: 'rgba(0,0,0,0.8)', fontSize: 10.5, fontFamily: 'var(--font-mono)', lineHeight: 1.45,
+          }}
+        />
+      </div>
     </div>
   );
 });

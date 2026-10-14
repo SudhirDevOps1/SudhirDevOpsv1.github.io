@@ -10,8 +10,10 @@ export const ContextMenu = memo(({ x, y, onClose, onRefresh, onTheme, onToggleMa
   onTheme: (k: ThemeKey) => void;
   onToggleMatrix: () => void;
 }) => {
-  const { addToast } = useOS();
+  const { addToast, openWindow } = useOS();
   const [themeSub, setThemeSub] = useState(false);
+
+  const menuItem: React.CSSProperties = { display: 'block', width: '100%', padding: '8px 14px', background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', textAlign: 'left', transition: 'all 0.1s', fontFamily: 'var(--font-mono)', fontSize: 12 };
 
   return (
     <>
@@ -20,23 +22,28 @@ export const ContextMenu = memo(({ x, y, onClose, onRefresh, onTheme, onToggleMa
         position: 'fixed', left: x, top: y, zIndex: 801,
         background: '#080808', border: '1px solid var(--accent)', borderRadius: 4,
         minWidth: 180, overflow: 'hidden',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.8), 0 0 16px rgba(var(--accent-rgb),0.25)',
         fontFamily: 'var(--font-mono)', fontSize: 12,
       }}>
         {[
           { label: 'Refresh Desktop', action: () => { onRefresh(); onClose(); } },
           { label: 'Change Theme ▶', action: () => setThemeSub(v => !v) },
           { label: 'Toggle Matrix Rain', action: () => { onToggleMatrix(); onClose(); } },
+          { label: '🎨 Personalize (Settings)', action: () => { openWindow('settings'); onClose(); } },
+          { label: '⌨ Keyboard Shortcuts (F1)', action: () => { window.dispatchEvent(new KeyboardEvent('keydown', { key: 'F1', bubbles: true })); onClose(); } },
+          { label: '🔔 Notification Center', action: () => { window.dispatchEvent(new KeyboardEvent('keydown', { key: 'n', ctrlKey: true, altKey: true, bubbles: true })); onClose(); } },
           { label: 'Toggle Fullscreen', action: () => {
             if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); addToast('Fullscreen Enabled', 'info'); }
             else { document.exitFullscreen(); addToast('Fullscreen Disabled', 'info'); }
             onClose();
           }},
-          { label: 'System Info', action: () => { addToast('SUDHI OS v2.0 | React 19.x', 'info'); onClose(); } },
+          { label: 'System Info', action: () => { addToast('SUDHI OS v4.0 | React 19.x', 'info'); onClose(); } },
         ].map(item => (
           <button key={item.label}
-            style={{ display: 'block', width: '100%', padding: '8px 14px', background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', textAlign: 'left', transition: 'all 0.1s' }}
+            style={menuItem}
             onClick={item.action}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.18)'; e.currentTarget.style.color = 'var(--accent)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#ccc'; }}
           >{item.label}</button>
         ))}
         {themeSub && (

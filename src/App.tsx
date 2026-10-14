@@ -9,6 +9,13 @@ import { StartMenu } from './components/common/StartMenu';
 import { DesktopIcon } from './components/common/DesktopIcon';
 import { ContextMenu, SleepScreen, ShutdownScreen } from './components/common/Screens';
 import { LockScreen } from './components/common/LockScreen';
+import { QuickSettings } from './components/common/QuickSettings';
+import { NotificationCenter } from './components/common/NotificationCenter';
+import { ShortcutsOverlay } from './components/common/ShortcutsOverlay';
+import { ToastStack } from './components/common/ToastStack';
+import { useSystemSettings } from './hooks/useSystemSettings';
+import { setSystemSetting } from './lib/sysSettings';
+import { sfx } from './lib/sfx';
 import { DESKTOP_ICONS, THEMES } from './data';
 import { ThemeKey, WinId } from './types/os';
 
@@ -41,6 +48,11 @@ const WorkspacesWindow = lazy(() => import('./components/windows/Workspaces'));
 const CalculatorWindow = lazy(() => import('./components/windows/Calculator'));
 const QuotesWindow = lazy(() => import('./components/windows/Quotes'));
 const GmailWindow = lazy(() => import('./components/windows/Gmail'));
+const FocusTimerWindow = lazy(() => import('./components/windows/FocusTimer'));
+const TypingTestWindow = lazy(() => import('./components/windows/TypingTest'));
+const ToolboxWindow = lazy(() => import('./components/windows/Toolbox'));
+const ConverterWindow = lazy(() => import('./components/windows/Converter'));
+const NewsWindow = lazy(() => import('./components/windows/News'));
 
 import { DesktopWidgets } from './components/common/DesktopWidgets';
 
@@ -48,15 +60,50 @@ function DesktopContent() {
   const {
     theme, setTheme, activeWallpaper, matrixOn, toggleMatrix,
     windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow,
-    updateWindowPos, updateWindowSize, powerState, setPowerState, addToast
+    updateWindowPos, updateWindowSize, powerState, setPowerState, addToast,
+    pushNotification, konamiActive
   } = useOS();
+  const sys = useSystemSettings();
 
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [logoClickCount, setLogoClickCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [loginMode, setLoginMode] = useState<'user' | 'guest'>('guest');
+  const [showQuickSettings, setShowQuickSettings] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [, forceSettingsRender] = useState(0);
+
+  // Re-render when Quick Settings mutates localStorage-backed toggles (grid/CRT)
+  useEffect(() => {
+    const onChange = () => forceSettingsRender(v => v + 1);
+    window.addEventListener('sudhi-settings-changed', onChange);
+    return () => window.removeEventListener('sudhi-settings-changed', onChange);
+  }, []);
+
+  // Glass blur master switch (Settings → Effects + Quick Settings)
+  useEffect(() => {
+    document.documentElement.classList.toggle('no-blur', !sys.glassBlur);
+  }, [sys.glassBlur]);
+
+  // Window open/close UI sounds (v4)
+  const prevWinCount = React.useRef(windows.length);
+  useEffect(() => {
+    const prev = prevWinCount.current;
+    if (windows.length > prev) sfx.play('open');
+    else if (windows.length < prev) sfx.play('close');
+    prevWinCount.current = windows.length;
+  }, [windows.length]);
+
+  // Konami party mode — cycling themes + frame while active
+  useEffect(() => {
+    if (!konamiActive) return;
+    const keys: ThemeKey[] = ['crimson', 'cyan', 'purple', 'green', 'amber', 'blue', 'mono'];
+    let i = 0;
+    const t = setInterval(() => { setTheme(keys[i % keys.length]); i++; }, 1200);
+    return () => clearInterval(t);
+  }, [konamiActive, setTheme]);
 
 
   // Send a desktop notification helper
@@ -67,19 +114,23 @@ function DesktopContent() {
   }, []);
 
   const handleLogin = useCallback((mode: 'user' | 'guest') => {
-    setLoginMode(mode);
     setIsLoggedIn(true);
+    sfx.play('unlock');
     // Send welcome notification
     setTimeout(() => {
+      sfx.play('boot');
       sendNotification('🖥️ SUDHI OS Ready!', `Welcome ${mode === 'user' ? 'Sudhir' : 'Guest'}! ${DESKTOP_ICONS.length} apps loaded.`);
+      pushNotification('🖥️ Welcome to SUDHI OS v4', `${DESKTOP_ICONS.length} apps loaded • Press F1 for the shortcuts guide`, '🖥️');
     }, 1500);
     setTimeout(() => {
       sendNotification('📧 3 New Messages', 'You have unread messages in Email.');
+      pushNotification('📧 3 New Messages', 'You have unread messages in the Mailbox app.', '📧');
     }, 4000);
     setTimeout(() => {
       sendNotification('⛅ Weather Update', 'Bihar: 32°C, Partly Cloudy. Open Weather app for details.');
+      pushNotification('⚡ Pro tip', 'Hover any maximize button for Snap Layouts, or drag windows to screen corners.', '💡');
     }, 7000);
-  }, [sendNotification]);
+  }, [sendNotification, pushNotification]);
 
   // ─── Alt+Tab & Command Palette Overlay States ─────────────────────────────
   const [showAltTab, setShowAltTab] = useState(false);
@@ -141,7 +192,7 @@ function DesktopContent() {
   }, []);
 
 
-  // ─── Keyboard Shortcuts: Alt+Tab & Ctrl+P Command Palette ──────────────────
+  // ─── Keyboard Shortcuts: Palette, Alt+Tab, Lock, Overlays ─────────────────
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey && e.key.toLowerCase() === 'p') || (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA')) {
@@ -162,6 +213,31 @@ function DesktopContent() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'l') {
         e.preventDefault();
         setIsLoggedIn(false);
+      }
+
+      // F1 = Shortcuts & gestures overlay
+      if (e.key === 'F1') {
+        e.preventDefault();
+        setShowShortcuts(v => !v);
+      }
+
+      // Ctrl+Alt+Q = Quick Settings • Ctrl+Alt+N = Notification Center
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'q') {
+        e.preventDefault();
+        setShowQuickSettings(v => !v);
+        setShowNotifications(false);
+      }
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        setShowNotifications(v => !v);
+        setShowQuickSettings(false);
+      }
+
+      // Escape closes overlays
+      if (e.key === 'Escape') {
+        setShowShortcuts(false);
+        setShowQuickSettings(false);
+        setShowNotifications(false);
       }
     };
 
@@ -204,6 +280,28 @@ function DesktopContent() {
     i.label.toLowerCase().includes(cmdSearch.toLowerCase()) || i.id.toLowerCase().includes(cmdSearch.toLowerCase())
   );
 
+  // Command palette v4 — inline math engine
+  const cmdQuery = cmdSearch.trim();
+  const mathResult: number | null = (() => {
+    if (!/^[-+*/().\d\s%^]+$/.test(cmdQuery) || !/\d/.test(cmdQuery) || !/[-+*/%^]/.test(cmdQuery)) return null;
+    try {
+      // eslint-disable-next-line no-new-func
+      const r = Function(`"use strict";return (${cmdQuery.replace(/%/g, '/100')})`)();
+      return typeof r === 'number' && Number.isFinite(r) ? r : null;
+    } catch { return null; }
+  })();
+
+  // Command palette v4 — system commands
+  const SYSTEM_CMDS: { id: string; label: string; desc: string; action: () => void }[] = [
+    { id: 'lock',    label: '🔒 Lock screen',        desc: 'Ctrl+L',              action: () => setIsLoggedIn(false) },
+    { id: 'sleep',   label: '💤 Sleep',              desc: 'Dim system',          action: () => setPowerState('sleeping') },
+    { id: 'restart', label: '🔄 Restart',            desc: 'Reboot SUDHI OS',     action: () => setPowerState('booting') },
+    { id: 'shutdown',label: '⏻ Shutdown',            desc: 'Power off',           action: () => setPowerState('shutdown') },
+    { id: 'matrix',  label: '🌐 Toggle Matrix Rain', desc: 'Desktop effect',      action: () => toggleMatrix() },
+    { id: 'aurora',  label: '✨ Toggle Aurora',      desc: 'Animated backdrop',   action: () => setSystemSetting('aurora', !sys.aurora) },
+    { id: 'shortcuts', label: '⌨ Shortcuts overlay', desc: 'F1',                  action: () => setShowShortcuts(true) },
+  ].filter(c => !cmdQuery || c.label.toLowerCase().includes(cmdQuery.toLowerCase()) || c.id.includes(cmdQuery.toLowerCase()));
+
   const renderWindowContent = (id: WinId) => {
     return (
       <Suspense fallback={<div style={{ padding: 20, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>Loading app module...</div>}>
@@ -237,6 +335,11 @@ function DesktopContent() {
             case 'calculator': return <CalculatorWindow />;
             case 'quotes': return <QuotesWindow />;
             case 'email': return <GmailWindow />;
+            case 'focus': return <FocusTimerWindow />;
+            case 'typing': return <TypingTestWindow />;
+            case 'toolbox': return <ToolboxWindow />;
+            case 'converter': return <ConverterWindow />;
+            case 'news': return <NewsWindow />;
             default: return <div style={{ padding: 20, color: '#666' }}>App window module: {id}</div>;
           }
         })()}
@@ -254,11 +357,34 @@ function DesktopContent() {
   }
 
   return (
-    <div className="desktop-only" style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+    <div className={`desktop-only${konamiActive ? ' konami-party' : ''}`} style={{ width: '100vw', height: '100vh', overflow: 'hidden', position: 'relative' }}>
       <MatrixRain active={matrixOn} accent={THEMES[theme].accent} />
 
+      {/* Animated aurora backdrop (v4 premium) */}
+      {sys.aurora && !activeWallpaper && <div className="aurora-bg" aria-hidden />}
+
       {activeWallpaper && (
-        <div className="desktop-wp-layer" style={{ position: 'fixed', inset: 0, backgroundImage: `url(${activeWallpaper})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: (Number(localStorage.getItem('sudhi_wp_op') || 90) / 100), zIndex: 1, pointerEvents: 'none', transition: 'background-image 0.5s, opacity 0.2s' }} />
+        <div
+          className="desktop-wp-layer"
+          style={{
+            position: 'fixed', inset: 0,
+            backgroundImage: /^(url\(|data:|blob:|https?:|\/)/.test(activeWallpaper) ? `url(${activeWallpaper})` : activeWallpaper,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            opacity: (Number(localStorage.getItem('sudhi_wp_op') || 90) / 100),
+            zIndex: 1, pointerEvents: 'none', transition: 'background-image 0.5s, opacity 0.2s',
+          }}
+        />
+      )}
+
+      {/* Konami party glow frame */}
+      {konamiActive && <div className="konami-frame" aria-hidden />}
+
+      {/* Night light (warm tint) + brightness dimmer — v4 */}
+      {sys.nightLight && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 999994, pointerEvents: 'none', background: 'rgba(255, 140, 40, 0.13)', mixBlendMode: 'multiply' }} aria-hidden />
+      )}
+      {sys.brightness < 100 && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 999995, pointerEvents: 'none', background: `rgba(0,0,0,${((100 - sys.brightness) / 100) * 0.8})`, transition: 'background 0.2s' }} aria-hidden />
       )}
 
       <div className="bg-grid" style={{ display: localStorage.getItem('sudhi_grid') === 'true' ? 'block' : 'none' }} />
@@ -377,7 +503,53 @@ function DesktopContent() {
                 />
               </div>
 
-              <div style={{ maxHeight: 300, overflowY: 'auto', padding: 8 }}>
+              <div style={{ maxHeight: 340, overflowY: 'auto', padding: 8 }}>
+                {/* Inline calculator result */}
+                {mathResult !== null && (
+                  <div
+                    onClick={() => {
+                      navigator.clipboard?.writeText(String(mathResult)).catch(() => {});
+                      addToast(`Copied: ${mathResult}`, 'success');
+                      setShowCmdPalette(false);
+                    }}
+                    style={{
+                      padding: '10px 14px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
+                      background: 'rgba(var(--accent-rgb),0.18)', marginBottom: 4, border: '1px solid rgba(var(--accent-rgb),0.4)',
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>🧮</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ color: 'var(--accent)', fontSize: 15, fontWeight: 'bold', fontFamily: 'var(--font-mono)' }}>= {mathResult}</div>
+                      <div style={{ color: '#666', fontSize: 10 }}>Click to copy result</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* System commands */}
+                {SYSTEM_CMDS.map(cmd => (
+                  <div
+                    key={cmd.id}
+                    onClick={() => {
+                      cmd.action();
+                      setShowCmdPalette(false);
+                      sfx.play('click');
+                      addToast(`⚡ ${cmd.label}`, 'info');
+                    }}
+                    style={{
+                      padding: '10px 14px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
+                      background: 'rgba(255,255,255,0.03)', marginBottom: 4, transition: 'all 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.2)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                  >
+                    <span style={{ fontSize: 16 }}>{cmd.label.split(' ')[0]}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ color: '#ddd', fontSize: 12, fontWeight: 'bold' }}>{cmd.label.replace(/^\S+\s/, '')}</div>
+                      <div style={{ color: '#666', fontSize: 10 }}>System command • {cmd.desc}</div>
+                    </div>
+                  </div>
+                ))}
+
                 {filteredCmdApps.map(app => (
                   <div
                     key={app.id}
@@ -424,7 +596,36 @@ function DesktopContent() {
         onLogoClick={handleLogoClick}
       />
 
-      <Taskbar onStartClick={() => setStartMenuOpen(v => !v)} />
+      {/* v4 shell overlays */}
+      <AnimatePresence>
+        {showQuickSettings && (
+          <QuickSettings
+            open={showQuickSettings}
+            onClose={() => setShowQuickSettings(false)}
+            anchorRight={16}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showNotifications && (
+          <NotificationCenter
+            open={showNotifications}
+            onClose={() => setShowNotifications(false)}
+            anchorRight={16}
+          />
+        )}
+      </AnimatePresence>
+
+      <ShortcutsOverlay open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+
+      <ToastStack />
+
+      <Taskbar
+        onStartClick={() => { sfx.play('click'); setStartMenuOpen(v => !v); }}
+        onOpenQuickSettings={() => { setShowQuickSettings(v => !v); setShowNotifications(false); }}
+        onOpenNotifications={() => { setShowNotifications(v => !v); setShowQuickSettings(false); }}
+      />
     </div>
   );
 }

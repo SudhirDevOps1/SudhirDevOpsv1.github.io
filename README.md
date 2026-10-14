@@ -1,12 +1,12 @@
-# 🖥️ SUDHI OS v3.0 Pro — 2026 Virtual Desktop OS Portfolio
+# 🖥️ SUDHI OS v4.0 Pro — 2026 Virtual Desktop OS Portfolio
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-3.0_Pro-00FF88?style=for-the-badge)
-![React](https://img.shields.io/badge/React-18.x-00BFFF?style=for-the-badge&logo=react)
+![Version](https://img.shields.io/badge/version-4.0_Pro-00FF88?style=for-the-badge)
+![React](https://img.shields.io/badge/React-19.x-00BFFF?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)
 ![GitHub API](https://img.shields.io/badge/GitHub_API-SudhirDevOps1-FFB300?style=for-the-badge&logo=github)
-![Apps](https://img.shields.io/badge/Real_Apps-27_Total-00FF88?style=for-the-badge)
+![Apps](https://img.shields.io/badge/Real_Apps-32_Total-00FF88?style=for-the-badge)
 ![Build](https://img.shields.io/badge/build-passing-00FF88?style=for-the-badge)
 
 **The most advanced 2026 Web Desktop OS Portfolio for Sudhir Singh (SudhirDevOps1)**
@@ -25,10 +25,15 @@ Every application is **fully interactive and functional in client memory** with 
 
 ---
 
-## ✨ 2026 Functional Applications (27 Total)
+## ✨ 2026 Functional Applications (32 Total)
 
 | Icon | App Name | Description & Key Features |
 |---|---|---|
+| ⏱️ | **FOCUS.timer** | **NEW in v4** — Pomodoro focus suite (25/5/15 cycle, auto-start, session stats) + centisecond Stopwatch with laps + World Clocks (IST/EST/UTC/JST). |
+| ⌨️ | **TYPE.run** | **NEW in v4** — Cyber typing speed test: 15 dev passages, 15/30/60/120s modes, live WPM/accuracy, per-second WPM sparkline, personal bests. |
+| 🧰 | **DEV.tools** | **NEW in v4** — Developer toolbox: JSON format/minify, Base64, URL codec, SHA-256/512 hash, UUID generator, password generator, unix timestamp tools. |
+| 📐 | **CONVERT.exe** | **NEW in v4** — Unit converter: length, mass, temperature, speed, data, time & live currency rates with quick-conversion chips. |
+| 📰 | **DEV.wire** | **NEW in v4** — Hacker News front-page reader with live Firebase API feed, search, sort, and offline fallback edition. |
 | 🤖 | **AI_BOT.exe** | **SUDHI AI Chatbot Assistant** trained on Sudhir Singh's portfolio dataset. Features 6 quick preset prompts & voice/text OS command launcher (*"open terminal"*, *"open weather"*). |
 | 🌌 | **SPACES.layout** | **Project Spaces & Workspaces Launcher** — 1-click multi-window app grouping & workspace automation (*DevOps Suite*, *Portfolio Hub*, *Media Center*, *Live Telemetry*, *AI Suite*). |
 | ⚡ | **DEVOPS.cloud** | **DevOps Cloud & CI/CD Telemetry Monitor** with live CPU/RAM/Bandwidth metrics, Docker container manager, Kubernetes status, and GitHub Actions pipeline feeds. |

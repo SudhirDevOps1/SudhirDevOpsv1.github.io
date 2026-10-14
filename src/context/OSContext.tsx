@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, createContext, useContext } from 'react';
 import { THEMES, loadAllData } from '../data';
-import { ThemeKey, PowerState, WinId, WinState, Toast, LoadedJsonData, OSContextType } from '../types/os';
+import { ThemeKey, PowerState, WinId, WinState, Toast, LoadedJsonData, OSContextType, OSNotification } from '../types/os';
 import { loadSavedState, saveState } from '../lib/storage';
 
 const OSContext = createContext<OSContextType>(null!);
@@ -14,6 +14,9 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const [windows, setWindows] = useState<WinState[]>([]);
   const [powerState, setPowerStateRaw] = useState<PowerState>('booting');
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [notifications, setNotifications] = useState<OSNotification[]>([]);
+  const [dnd, setDndState] = useState<boolean>(() => localStorage.getItem('sudhi_dnd') === 'true');
+  const [konamiActive, setKonamiActive] = useState(false);
   const startupTime = React.useRef(Date.now());
 
   const [jsonData, setJsonData] = useState<LoadedJsonData>({
@@ -56,6 +59,49 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
+  // ─── Notification Center (v4) ─────────────────────────────────────────────
+  const pushNotification = useCallback((title: string, body: string, icon?: string) => {
+    if (localStorage.getItem('sudhi_dnd') === 'true') return; // Focus mode: swallow
+    const id = Math.random().toString(36).substring(2, 10);
+    setNotifications(prev => [{ id, title, body, icon, time: Date.now() }, ...prev].slice(0, 30));
+  }, []);
+
+  const clearNotifications = useCallback(() => setNotifications([]), []);
+
+  const setDnd = useCallback((v: boolean) => {
+    setDndState(v);
+    localStorage.setItem('sudhi_dnd', String(v));
+  }, []);
+
+  // ─── Konami Code → Party Mode (v4) ────────────────────────────────────────
+  useEffect(() => {
+    const SEQ = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let progress = 0;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const onKey = (e: KeyboardEvent) => {
+      const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (key === SEQ[progress]) {
+        progress++;
+        if (progress === SEQ.length) {
+          progress = 0;
+          setKonamiActive(true);
+          setToasts(prev => [...prev.slice(-4), { id: 'konami', message: '🎉 KONAMI PARTY MODE! 30s of pure neon chaos!', type: 'success' }]);
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => setKonamiActive(false), 30000);
+        }
+      } else {
+        progress = key === SEQ[0] ? 1 : 0;
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
+
   const openWindow = useCallback((id: WinId) => {
     setWindows(prev => {
       const existing = prev.find(w => w.id === id);
@@ -91,6 +137,11 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         email:        { w: 720, h: 520 },
         contact:      { w: 600, h: 480 },
         settings:     { w: 680, h: 520 },
+        focus:        { w: 760, h: 540 },
+        typing:       { w: 820, h: 560 },
+        toolbox:      { w: 820, h: 560 },
+        converter:    { w: 720, h: 540 },
+        news:         { w: 920, h: 600 },
       };
 
       const size = APP_SIZES[id] || { w: 760, h: 520 };
@@ -111,6 +162,8 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         notepad: '📋 Notepad', calendar: '📅 Calendar', map: '🗺️ Maps',
         weather: '⛅ Weather', crypto: '₿ Crypto', space: '🚀 Space', countries: '🌐 Globe',
         email: '📧 Email', contact: '✉ Contact', settings: '⚙ Settings',
+        focus: '⏱ Focus Timer', typing: '⌨ TYPE.RUN', toolbox: '🧰 DEV.TOOLBOX',
+        converter: '📐 Unit Converter', news: '📰 DEV.WIRE',
       };
 
       return [...prev, {
@@ -154,8 +207,9 @@ export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     theme, setTheme, activeWallpaper, setWallpaper, matrixOn, toggleMatrix,
     windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow,
     updateWindowPos, updateWindowSize, powerState, setPowerState: setPowerStateRaw,
-    addToast, startupTime: startupTime.current, visitorCount: 1, konamiActive: false, jsonData
-  }), [theme, setTheme, activeWallpaper, setWallpaper, matrixOn, toggleMatrix, windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow, updateWindowPos, updateWindowSize, powerState, addToast, jsonData]);
+    addToast, startupTime: startupTime.current, visitorCount: 1, konamiActive, jsonData,
+    notifications, pushNotification, clearNotifications, dnd, setDnd, toasts, removeToast
+  }), [theme, setTheme, activeWallpaper, setWallpaper, matrixOn, toggleMatrix, windows, openWindow, closeWindow, minimizeWindow, maximizeWindow, focusWindow, updateWindowPos, updateWindowSize, powerState, addToast, jsonData, konamiActive, notifications, pushNotification, clearNotifications, dnd, setDnd, toasts, removeToast]);
 
   return (
     <OSContext.Provider value={osValue}>
