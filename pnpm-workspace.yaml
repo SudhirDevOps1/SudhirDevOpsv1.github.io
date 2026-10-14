@@ -1,0 +1,4 @@
+# pnpm v11+ build-script approval (pnpm 12 reads settings from this file)
+# esbuild (Vite's bundler) needs its postinstall to link the platform binary.
+allowBuilds:
+  esbuild: true
