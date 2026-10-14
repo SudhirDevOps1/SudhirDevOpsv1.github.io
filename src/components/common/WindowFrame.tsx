@@ -1,6 +1,6 @@
 import { memo, useRef, useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Pin } from 'lucide-react';
+import { Pin, Minus, Square, Copy, X } from 'lucide-react';
 import { WinState } from '../../types/os';
 import { sfx } from '../../lib/sfx';
 
@@ -69,10 +69,16 @@ export const WindowFrame = memo(({
     snapHoverTimer.current = setTimeout(() => setShowSnapMenu(true), 320);
   }, []);
 
-  const cancelSnapMenu = useCallback(() => {
+  // Grace period close: lets the pointer travel from the button into the flyout without it vanishing
+  const closeSnapMenuDelayed = useCallback(() => {
+    if (snapHoverTimer.current) clearTimeout(snapHoverTimer.current);
+    snapHoverTimer.current = setTimeout(() => setShowSnapMenu(false), 220);
+  }, []);
+
+  const keepSnapMenuOpen = useCallback(() => {
     if (snapHoverTimer.current) clearTimeout(snapHoverTimer.current);
     snapHoverTimer.current = null;
-    setShowSnapMenu(false);
+    setShowSnapMenu(true);
   }, []);
 
   const handleTitleDoubleClick = useCallback(() => {
@@ -326,40 +332,32 @@ export const WindowFrame = memo(({
               <Pin size={11} style={{ transform: isAlwaysOnTop ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }} />
             </button>
 
-            {/* Minimize — yellow dot */}
+            {/* Minimize — premium custom control */}
             <button
-              onClick={(e) => { e.stopPropagation(); onMinimize(); }}
-              title="Minimize (–)"
-              style={{
-                width: 13, height: 13, border: 'none',
-                background: '#FFB300', color: 'transparent',
-                cursor: 'pointer', borderRadius: '50%',
-                transition: 'filter 0.15s', flexShrink: 0,
-                boxShadow: '0 0 4px rgba(255,179,0,0.4)',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = '–'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '10px'; e.currentTarget.style.fontWeight = 'bold'; }}
-              onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
-            />
+              className="win-ctl win-ctl--min"
+              onClick={(e) => { e.stopPropagation(); onMinimize(); sfx.play('minimize'); }}
+              title="Minimize"
+              aria-label="Minimize"
+            >
+              <Minus size={9} strokeWidth={3} color="rgba(60,35,0,0.85)" />
+            </button>
 
-            {/* Maximize — green dot + Snap Layouts flyout */}
+            {/* Maximize — premium custom control + Snap Layouts flyout */}
             <div
               style={{ position: 'relative' }}
               onMouseEnter={openSnapMenuDelayed}
-              onMouseLeave={cancelSnapMenu}
+              onMouseLeave={closeSnapMenuDelayed}
             >
               <button
+                className="win-ctl win-ctl--max"
                 onClick={(e) => { e.stopPropagation(); onMaximize(); sfx.play(win.maximized ? 'minimize' : 'maximize'); }}
-                title={win.maximized ? 'Restore' : 'Maximize (⛶) — hover for Snap Layouts'}
-                style={{
-                  width: 13, height: 13, border: 'none',
-                  background: '#00C853', color: 'transparent',
-                  cursor: 'pointer', borderRadius: '50%',
-                  transition: 'filter 0.15s', flexShrink: 0,
-                  boxShadow: '0 0 4px rgba(0,200,83,0.4)',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = win.maximized ? '⊡' : '⛶'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '9px'; }}
-                onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
-              />
+                title={win.maximized ? 'Restore' : 'Maximize — hover for Snap Layouts'}
+                aria-label={win.maximized ? 'Restore' : 'Maximize'}
+              >
+                {win.maximized
+                  ? <Copy size={8} strokeWidth={2.5} color="rgba(0,45,20,0.85)" />
+                  : <Square size={8} strokeWidth={3} color="rgba(0,45,20,0.85)" fill="rgba(0,45,20,0.15)" />}
+              </button>
 
               {/* Windows 11 Snap Layouts menu */}
               {showSnapMenu && (
@@ -369,6 +367,8 @@ export const WindowFrame = memo(({
                   transition={{ duration: 0.14 }}
                   onClick={e => e.stopPropagation()}
                   onMouseDown={e => e.stopPropagation()}
+                  onMouseEnter={keepSnapMenuOpen}
+                  onMouseLeave={closeSnapMenuDelayed}
                   style={{
                     position: 'absolute', bottom: '150%', right: -8, zIndex: 3000,
                     background: 'rgba(13,15,22,0.97)', border: '1px solid rgba(var(--accent-rgb),0.45)',
@@ -431,21 +431,16 @@ export const WindowFrame = memo(({
               )}
             </div>
 
-            {/* Close — red dot */}
+            {/* Close — premium custom control */}
             <button
+              className="win-ctl win-ctl--close"
               onClick={(e) => { e.stopPropagation(); onClose(); }}
-              title="Close (×)"
-              style={{
-                width: 13, height: 13, border: 'none',
-                background: '#FF3B30', color: 'transparent',
-                cursor: 'pointer', borderRadius: '50%',
-                transition: 'filter 0.15s', flexShrink: 0,
-                boxShadow: '0 0 4px rgba(255,59,48,0.4)',
-                marginLeft: 2,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.3)'; e.currentTarget.textContent = '×'; e.currentTarget.style.color = 'rgba(0,0,0,0.6)'; e.currentTarget.style.fontSize = '12px'; e.currentTarget.style.fontWeight = 'bold'; }}
-              onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.textContent = ''; }}
-            />
+              title="Close"
+              aria-label="Close"
+              style={{ marginLeft: 2 }}
+            >
+              <X size={9} strokeWidth={3} color="rgba(60,0,0,0.85)" />
+            </button>
           </div>
         </div>
 
