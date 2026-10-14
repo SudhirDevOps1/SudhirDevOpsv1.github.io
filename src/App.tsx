@@ -17,6 +17,7 @@ import { useSystemSettings } from './hooks/useSystemSettings';
 import { setSystemSetting } from './lib/sysSettings';
 import { sfx } from './lib/sfx';
 import { DESKTOP_ICONS, THEMES } from './data';
+import { getAppIcon } from './iconMeta';
 import { ThemeKey, WinId } from './types/os';
 
 // ─── Code Splitting / Lazy Loaded Window Components ─────────────────────────
@@ -566,7 +567,15 @@ function DesktopContent() {
                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.2)'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
                   >
-                    <span style={{ fontSize: 20 }}>{app.emoji || '🪟'}</span>
+                    <span style={{
+                      width: 32, height: 32, borderRadius: 9, flexShrink: 0, position: 'relative', overflow: 'hidden',
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      background: `linear-gradient(135deg, ${getAppIcon(app.id).from} 0%, ${getAppIcon(app.id).to} 100%)`,
+                      boxShadow: `0 3px 8px rgba(0,0,0,0.35), 0 5px 12px ${getAppIcon(app.id).glow}`,
+                    }}>
+                      <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0) 45%)' }} />
+                      {React.createElement(getAppIcon(app.id).glyph, { size: 18, color: '#fff', strokeWidth: 2 })}
+                    </span>
                     <div style={{ flex: 1 }}>
                       <div style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 'bold' }}>{app.label}</div>
                       <div style={{ color: '#666', fontSize: 10 }}>App identifier: {app.id}</div>

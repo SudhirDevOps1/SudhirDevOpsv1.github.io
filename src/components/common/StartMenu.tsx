@@ -4,6 +4,30 @@ import { useOS } from '../../context/OSContext';
 import { THEMES, DESKTOP_ICONS } from '../../data';
 import { ThemeKey, WinId } from '../../types/os';
 import { sfx } from '../../lib/sfx';
+import { getAppIcon } from '../../iconMeta';
+
+/** Small real-OS gradient app tile used across the Start menu. */
+const AppTile = ({ id, size = 34 }: { id: string; size?: number }) => {
+  const meta = getAppIcon(id);
+  const Glyph = meta.glyph;
+  return (
+    <span
+      style={{
+        width: size, height: size, borderRadius: Math.round(size * 0.28),
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        background: `linear-gradient(135deg, ${meta.from} 0%, ${meta.to} 100%)`,
+        boxShadow: `0 3px 8px rgba(0,0,0,0.35), 0 5px 12px ${meta.glow}`,
+        position: 'relative', overflow: 'hidden',
+      }}
+    >
+      <span style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0) 45%)',
+      }} />
+      <Glyph size={Math.round(size * 0.56)} strokeWidth={2} color="#fff" />
+    </span>
+  );
+};
 
 interface StartMenuProps {
   open: boolean;
@@ -111,7 +135,7 @@ export const StartMenu = memo(({ open, onClose, logoClickCount, onLogoClick }: S
                         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.18)'; }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                       >
-                        <span style={{ fontSize: 17, width: 24, textAlign: 'center' }}>{a.emoji || a.icon || '🪟'}</span>
+                        <AppTile id={a.id} size={26} />
                         <span style={{ color: '#ddd', fontSize: 12, fontFamily: 'var(--font-mono)' }}>{a.label}</span>
                         <span style={{ color: '#444', fontSize: 9, marginLeft: 'auto' }}>{a.id}</span>
                       </div>
@@ -150,14 +174,14 @@ export const StartMenu = memo(({ open, onClose, logoClickCount, onLogoClick }: S
                         key={a.id}
                         onClick={() => handleApp(a.id)}
                         style={{
-                          padding: 10, borderRadius: 8, cursor: 'pointer', textAlign: 'center',
+                          padding: 10, borderRadius: 10, cursor: 'pointer', textAlign: 'center',
                           background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)',
                           transition: 'all 0.15s',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.2)'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.2)'; e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'translateY(0)'; }}
                       >
-                        <div style={{ fontSize: 22, marginBottom: 4 }}>{a.icon}</div>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}><AppTile id={a.id} size={40} /></div>
                         <div style={{ color: '#ccc', fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.label}</div>
                       </div>
                     ))}
@@ -182,7 +206,7 @@ export const StartMenu = memo(({ open, onClose, logoClickCount, onLogoClick }: S
                         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.18)'; e.currentTarget.style.color = 'var(--accent)'; }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = '#bbb'; }}
                       >
-                        <span>{a.emoji || a.icon || '🪟'}</span>
+                        <AppTile id={a.id} size={16} />
                         <span>{a.label.split('.')[0]}</span>
                       </button>
                     ))}

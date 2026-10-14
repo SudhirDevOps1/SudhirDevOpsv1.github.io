@@ -2,6 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { useOS } from '../../context/OSContext';
 import { WinId } from '../../types/os';
 import { sfx } from '../../lib/sfx';
+import { getAppIcon } from '../../iconMeta';
 
 interface TaskbarProps {
   onStartClick: () => void;
@@ -9,13 +10,13 @@ interface TaskbarProps {
   onOpenNotifications?: () => void;
 }
 
-const PINNED: { id: WinId; glyph: string; label: string }[] = [
-  { id: 'terminal',     glyph: '>_', label: 'Terminal' },
-  { id: 'browser',      glyph: '🌍', label: 'Browser' },
-  { id: 'projects',     glyph: '📁', label: 'Projects' },
-  { id: 'news',         glyph: '📰', label: 'DEV.WIRE' },
-  { id: 'toolbox',      glyph: '🧰', label: 'DEV.TOOLBOX' },
-  { id: 'settings',     glyph: '⚙',  label: 'Settings' },
+const PINNED: { id: WinId; label: string }[] = [
+  { id: 'terminal',     label: 'Terminal' },
+  { id: 'browser',      label: 'Browser' },
+  { id: 'projects',     label: 'Projects' },
+  { id: 'news',         label: 'DEV.WIRE' },
+  { id: 'toolbox',      label: 'DEV.TOOLBOX' },
+  { id: 'settings',     label: 'Settings' },
 ];
 
 export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifications }: TaskbarProps) => {
@@ -23,6 +24,8 @@ export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifica
   const [now, setNow] = useState(new Date());
   const [battery, setBattery] = useState<{ level: number; charging: boolean } | null>(null);
   const [tabMenu, setTabMenu] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [bouncing, setBouncing] = useState<string | null>(null);
   const activeWinId = [...windows].sort((a, b) => b.zIndex - a.zIndex)[0]?.id;
 
   useEffect(() => {
@@ -74,33 +77,54 @@ export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifica
       display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px',
       backdropFilter: 'blur(20px) saturate(180%)', boxShadow: '0 -4px 20px rgba(0,0,0,0.5)',
     }}>
-      {/* Pinned quick-launch (left) */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        {PINNED.map(p => {
+      {/* Pinned quick-launch (left) — macOS-style dock with magnification */}
+      <div
+        style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: '100%' }}
+        onMouseLeave={() => setHovered(null)}
+      >
+        {PINNED.map((p, i) => {
           const isOpen = windows.some(w => w.id === p.id);
+          const meta = getAppIcon(p.id);
+          const Glyph = meta.glyph;
+          // pointer-distance magnification: hovered = biggest, neighbours slightly larger
+          const dist = hovered === null ? 99 : Math.abs(i - hovered);
+          const scale = dist === 0 ? 1.4 : dist === 1 ? 1.15 : 1;
           return (
             <button
               key={p.id}
-              onClick={() => { sfx.play('click'); openWindow(p.id); }}
-              title={p.label}
+              onClick={() => {
+                sfx.play('click');
+                openWindow(p.id);
+                // launch bounce
+                setBouncing(p.id);
+                setTimeout(() => setBouncing(cur => (cur === p.id ? null : cur)), 620);
+              }}
+              onMouseEnter={() => setHovered(i)}
               style={{
                 width: 34, height: 34, border: 'none', borderRadius: 8, cursor: 'pointer',
-                background: 'rgba(255,255,255,0.04)', color: isOpen ? 'var(--accent)' : '#bbb',
-                fontSize: p.glyph.length > 1 ? 15 : 11, fontWeight: 'bold', fontFamily: 'var(--font-mono)',
+                background: 'transparent', padding: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                position: 'relative', transition: 'all 0.15s',
+                position: 'relative', transition: 'transform 0.2s cubic-bezier(0.2,0.8,0.2,1)',
+                transform: `scale(${scale})`,
+                transformOrigin: 'bottom center',
+                zIndex: hovered === i ? 60 : 10,
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.2)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >
-              {p.glyph}
+              <span className={`dock-tile${bouncing === p.id ? ' dock-bounce' : ''}`}
+                style={{
+                  background: `linear-gradient(135deg, ${meta.from} 0%, ${meta.to} 100%)`,
+                  boxShadow: `0 3px 8px rgba(0,0,0,0.4), 0 6px 14px ${meta.glow}`,
+                }}>
+                <Glyph size={18} strokeWidth={2} color="#fff" />
+              </span>
               {isOpen && (
                 <span style={{
-                  position: 'absolute', bottom: 2, left: '50%', transform: 'translateX(-50%)',
-                  width: 12, height: 2.5, borderRadius: 2, background: 'var(--accent)',
+                  position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)',
+                  width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)',
                   boxShadow: '0 0 6px var(--accent)',
                 }} />
               )}
+              {hovered === i && <span className="dock-tip">{p.label}</span>}
             </button>
           );
         })}
