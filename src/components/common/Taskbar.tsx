@@ -1,8 +1,25 @@
 import React, { memo, useState, useEffect } from 'react';
+import { Wifi, Volume2, VolumeX, Battery, BatteryCharging, Bell, Lock, Moon } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
 import { WinId } from '../../types/os';
 import { sfx } from '../../lib/sfx';
 import { getAppIcon } from '../../iconMeta';
+
+/** SUDHI OS start-button mark — a real vector logo, not an emoji. */
+const StartMark = ({ size = 22 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <defs>
+      <linearGradient id="sudhiStart" x1="0" y1="0" x2="24" y2="24">
+        <stop offset="0%" stopColor="var(--accent)" />
+        <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.65" />
+      </linearGradient>
+    </defs>
+    <rect x="2.5" y="2.5" width="8.4" height="8.4" rx="2.4" fill="url(#sudhiStart)" />
+    <rect x="13.1" y="2.5" width="8.4" height="8.4" rx="2.4" fill="url(#sudhiStart)" opacity="0.75" />
+    <rect x="2.5" y="13.1" width="8.4" height="8.4" rx="2.4" fill="url(#sudhiStart)" opacity="0.75" />
+    <rect x="13.1" y="13.1" width="8.4" height="8.4" rx="2.4" fill="url(#sudhiStart)" opacity="0.55" />
+  </svg>
+);
 
 interface TaskbarProps {
   onStartClick: () => void;
@@ -135,17 +152,19 @@ export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifica
         <button
           onClick={() => { sfx.play('click'); onStartClick(); }}
           title="Start Menu"
+          className="start-btn"
           style={{
-            width: 40, height: 40, border: 'none', borderRadius: 10,
-            background: 'linear-gradient(135deg, rgba(var(--accent-rgb),0.35), rgba(var(--accent-rgb),0.12))',
-            color: 'var(--accent)', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
-            transition: 'all 0.2s', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.15), 0 0 14px rgba(var(--accent-rgb),0.25)',
+            width: 42, height: 42, border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12,
+            background: 'linear-gradient(135deg, rgba(var(--accent-rgb),0.30), rgba(var(--accent-rgb),0.08))',
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'transform 0.18s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.2s, border-color 0.2s',
+            boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.18), 0 4px 12px rgba(var(--accent-rgb),0.22)',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.45)'; e.currentTarget.style.transform = 'scale(1.08)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(var(--accent-rgb),0.35), rgba(var(--accent-rgb),0.12))'; e.currentTarget.style.transform = 'scale(1)'; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.6)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.2), 0 6px 18px rgba(var(--accent-rgb),0.45)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.18), 0 4px 12px rgba(var(--accent-rgb),0.22)'; }}
         >
-          🪟
+          <StartMark size={22} />
         </button>
 
         <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.15)', margin: '0 4px' }} />
@@ -199,25 +218,34 @@ export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifica
       </div>
 
       {/* Windows 11 Right System Tray */}
-      <div style={{ display: 'flex', gap: 4, alignItems: 'center', fontSize: 11, fontFamily: 'var(--font-mono)', marginLeft: 'auto' }}>
-        {/* Quick action icons → Quick Settings */}
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 11, fontFamily: 'var(--font-mono)', marginLeft: 'auto' }}>
+        {/* Quick Settings pill — network / volume / battery (real vector glyphs) */}
         <div
           onClick={() => { sfx.play('click'); onOpenQuickSettings?.(); }}
           title="Quick Settings"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', cursor: 'pointer', transition: 'all 0.15s' }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.18)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+          className="tray-pill"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 9, padding: '6px 11px', borderRadius: 9,
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+            cursor: 'pointer', color: '#cbd5e1', transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.16)'; e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.35)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
         >
-          <span title="Wi-Fi: SUDHI-5G">📶</span>
-          <span title={dnd ? 'Focus mode ON — audio muted' : 'Audio Volume'}>{dnd ? '🔇' : '🔊'}</span>
+          <span title="Wi-Fi: SUDHI-5G" style={{ display: 'flex' }}><Wifi size={15} strokeWidth={2} /></span>
+          <span title={dnd ? 'Focus mode ON — audio muted' : 'Audio Volume'} style={{ display: 'flex' }}>
+            {dnd ? <VolumeX size={15} strokeWidth={2} /> : <Volume2 size={15} strokeWidth={2} />}
+          </span>
           <span
             title={`Battery: ${battery ? `${battery.level}%${battery.charging ? ' (charging)' : ''}` : '92% (est.)'}`}
             style={{ display: 'flex', alignItems: 'center', gap: 3 }}
           >
-            {battery?.charging && <span className="battery-charging">⚡</span>}
-            🔋 {battery ? `${battery.level}%` : '92%'}
+            {battery?.charging
+              ? <span className="battery-charging" style={{ display: 'flex' }}><BatteryCharging size={15} strokeWidth={2} /></span>
+              : <Battery size={15} strokeWidth={2} />}
+            <span style={{ fontSize: 10.5, color: '#e2e8f0' }}>{battery ? `${battery.level}%` : '92%'}</span>
           </span>
-          {dnd && <span title="Focus mode active" style={{ filter: 'drop-shadow(0 0 4px #BF00FF)' }}>🌙</span>}
+          {dnd && <span title="Focus mode active" style={{ display: 'flex', color: '#BF00FF' }}><Moon size={14} strokeWidth={2} /></span>}
         </div>
 
         {/* Notification bell with unread badge */}
@@ -228,10 +256,10 @@ export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifica
           onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.18)'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
         >
-          🔔
+          <Bell size={15} strokeWidth={2} />
           {notifications.length > 0 && (
             <span style={{
-              position: 'absolute', top: 0, right: 0, minWidth: 14, height: 14, padding: '0 3px',
+              position: 'absolute', top: 2, right: 3, minWidth: 14, height: 14, padding: '0 3px',
               borderRadius: 999, background: 'var(--accent)', color: '#000', fontSize: 8.5, fontWeight: 'bold',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 0 8px rgba(var(--accent-rgb),0.8)',
@@ -247,21 +275,21 @@ export const Taskbar = memo(({ onStartClick, onOpenQuickSettings, onOpenNotifica
           style={trayBtn}
           onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.18)'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-        >🔒</button>
+        ><Lock size={15} strokeWidth={2} /></button>
 
         {/* Clock */}
         <button
           onClick={() => { sfx.play('click'); onOpenNotifications?.(); }}
           style={{
             textAlign: 'right', display: 'flex', flexDirection: 'column', cursor: 'pointer',
-            padding: '2px 6px', minWidth: 68, background: 'transparent', border: 'none',
-            fontFamily: 'var(--font-mono)', borderRadius: 7, transition: 'all 0.15s',
+            padding: '2px 8px', minWidth: 70, background: 'transparent', border: 'none',
+            fontFamily: 'var(--font-mono)', borderRadius: 7, transition: 'all 0.15s', lineHeight: 1.25,
           }}
           title={now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           onMouseEnter={e => { e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.15)'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
         >
-          <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 12 }}>{formatTime(now)}</span>
+          <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: 12 }}>{formatTime(now)}</span>
           <span style={{ color: '#888', fontSize: 9 }}>{formatDate(now)}</span>
         </button>
       </div>

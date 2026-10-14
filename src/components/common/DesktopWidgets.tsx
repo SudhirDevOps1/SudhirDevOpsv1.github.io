@@ -1,8 +1,20 @@
 import React, { memo, useState, useEffect, useRef } from 'react';
 import { useOS } from '../../context/OSContext';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, CloudSun, Bitcoin, Rocket, BrainCircuit, StickyNote } from 'lucide-react';
 
-const WMO: Record<number, string> = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 51: '🌦️', 61: '🌧️', 71: '❄️', 80: '🌦️', 95: '⛈️', 99: '⛈️' };
+const WMO: Record<number, { label: string; Icon: React.ComponentType<{ size?: number; strokeWidth?: number }> }> = {
+  0:  { label: 'Clear',        Icon: CloudSun },
+  1:  { label: 'Mostly clear', Icon: CloudSun },
+  2:  { label: 'Partly cloudy',Icon: CloudSun },
+  3:  { label: 'Overcast',     Icon: CloudSun },
+  45: { label: 'Fog',          Icon: CloudSun },
+  51: { label: 'Drizzle',      Icon: CloudSun },
+  61: { label: 'Rain',         Icon: CloudSun },
+  71: { label: 'Snow',         Icon: CloudSun },
+  80: { label: 'Showers',      Icon: CloudSun },
+  95: { label: 'Thunderstorm', Icon: CloudSun },
+  99: { label: 'Thunderstorm', Icon: CloudSun },
+};
 
 export const DesktopWidgets = memo(() => {
   const { openWindow } = useOS();
@@ -17,7 +29,7 @@ export const DesktopWidgets = memo(() => {
   // Draggable Widget Position State (default top-right)
   const [position, setPosition] = useState<{ x: number; y: number }>(() => {
     const vw = typeof window !== 'undefined' ? window.innerWidth : 1280;
-    return { x: Math.max(10, vw - 170), y: 12 };
+    return { x: Math.max(10, vw - 212), y: 12 };
   });
 
   const dragRef = useRef<{ isDragging: boolean; startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
@@ -27,8 +39,8 @@ export const DesktopWidgets = memo(() => {
     const handleResize = () => {
       const vw = window.innerWidth;
       setPosition(prev => ({
-        x: Math.min(prev.x, vw - 160),
-        y: Math.min(prev.y, window.innerHeight - 200),
+        x: Math.min(prev.x, vw - 204),
+        y: Math.min(prev.y, window.innerHeight - 240),
       }));
     };
     window.addEventListener('resize', handleResize);
@@ -56,8 +68,8 @@ export const DesktopWidgets = memo(() => {
       }
 
       if (dragRef.current.isDragging) {
-        const newX = Math.max(8, Math.min(window.innerWidth - 160, dragRef.current.startPosX + dx));
-        const newY = Math.max(8, Math.min(window.innerHeight - 180, dragRef.current.startPosY + dy));
+        const newX = Math.max(8, Math.min(window.innerWidth - 204, dragRef.current.startPosX + dx));
+        const newY = Math.max(8, Math.min(window.innerHeight - 220, dragRef.current.startPosY + dy));
         setPosition({ x: newX, y: newY });
       }
     };
@@ -140,19 +152,30 @@ export const DesktopWidgets = memo(() => {
     return () => clearInterval(t);
   }, [nextLaunch]);
 
+  // Liquid Glass-style card: continuous corners, hairline border, layered depth
   const widgetBase: React.CSSProperties = {
-    padding: '8px 12px',
-    borderRadius: 10,
-    border: '1px solid rgba(255,255,255,0.08)',
-    background: 'rgba(5,7,14,0.88)',
-    backdropFilter: 'blur(14px)',
+    padding: '13px 15px',
+    borderRadius: 18,
+    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'linear-gradient(150deg, rgba(20,24,34,0.82) 0%, rgba(8,10,18,0.9) 100%)',
+    backdropFilter: 'blur(20px) saturate(180%)',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'transform 0.2s cubic-bezier(0.2,0.8,0.2,1), border-color 0.2s, box-shadow 0.2s',
     display: 'flex',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
     userSelect: 'none',
+    boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.14), 0 6px 20px rgba(0,0,0,0.45)',
+    minWidth: 172,
   };
+
+  // Small circular icon badge used inside each glass widget
+  const badge = (color: string): React.CSSProperties => ({
+    width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: `rgba(${color},0.16)`, border: `1px solid rgba(${color},0.28)`,
+    color: `rgb(${color})`,
+  });
 
   return (
     <div style={{
@@ -162,75 +185,83 @@ export const DesktopWidgets = memo(() => {
       zIndex: 100, // Below active app windows (active windows have zIndex 1000+) so apps open OVER widgets
       display: 'flex',
       flexDirection: 'column',
-      gap: 8,
+      gap: 10,
       pointerEvents: 'auto',
+      width: 196,
     }}>
       {/* Widget Drag Handle */}
       <div
         onMouseDown={handleMouseDown}
         title="Drag widget anywhere on screen 🖐️"
         style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '3px 0', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 6, cursor: 'grab', color: '#666', transition: 'all 0.15s',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+          padding: '4px 0', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 8, cursor: 'grab', color: '#666', transition: 'all 0.15s',
         }}
         onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.15)'; }}
         onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
       >
         <GripVertical size={12} />
-        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', marginLeft: 4 }}>Drag Widget</span>
+        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: 0.5 }}>Drag Widget</span>
       </div>
 
       {/* Clock Widget */}
-      <div style={{ ...widgetBase, flexDirection: 'column', alignItems: 'flex-end', minWidth: 130, gap: 2 }}>
-        <div style={{ fontSize: 20, fontWeight: 'bold', color: 'var(--accent)', fontVariantNumeric: 'tabular-nums', fontFamily: 'var(--font-mono)', letterSpacing: 1 }}>
+      <div style={{ ...widgetBase, flexDirection: 'column', alignItems: 'flex-start', gap: 3, cursor: 'default' }}>
+        <div style={{ fontSize: 9, color: '#64748b', fontFamily: 'var(--font-mono)', letterSpacing: 1.5 }}>
+          {time.toLocaleDateString('en-IN', { weekday: 'long' }).toUpperCase()}
+        </div>
+        <div style={{ fontSize: 28, fontWeight: 'bold', color: '#f8fafc', fontVariantNumeric: 'tabular-nums', fontFamily: 'var(--font-mono)', letterSpacing: 1, lineHeight: 1 }}>
           {time.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
         </div>
-        <div style={{ fontSize: 9, color: '#555', fontFamily: 'var(--font-mono)' }}>
-          {time.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}
+        <div style={{ fontSize: 10, color: '#94a3b8', fontFamily: 'var(--font-mono)' }}>
+          {time.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
         </div>
       </div>
 
       {/* Weather Widget */}
-      {weather && (
-        <div style={{ ...widgetBase }} onClick={() => openWindow('weather')}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.4)'; e.currentTarget.style.background = 'rgba(var(--accent-rgb),0.12)'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(5,7,14,0.88)'; }}
-        >
-          <span style={{ fontSize: 20 }}>{WMO[weather.code] || '🌡️'}</span>
-          <div>
-            <div style={{ fontSize: 15, fontWeight: 'bold', color: '#fff', fontFamily: 'var(--font-mono)' }}>{weather.temp}°C</div>
-            <div style={{ fontSize: 9, color: '#555' }}>Bihar, India</div>
+      {weather && (() => {
+        const w = WMO[weather.code] || { label: 'Conditions', Icon: CloudSun };
+        const Icon = w.Icon;
+        return (
+          <div style={widgetBase} onClick={() => openWindow('weather')}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.45)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.14), 0 10px 26px rgba(var(--accent-rgb),0.25)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.14), 0 6px 20px rgba(0,0,0,0.45)'; }}
+          >
+            <span style={badge('56,189,248')}><Icon size={18} strokeWidth={2} /></span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 17, fontWeight: 'bold', color: '#f8fafc', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>{weather.temp}°C</div>
+              <div style={{ fontSize: 9.5, color: '#94a3b8' }}>{w.label} • Bihar</div>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* BTC Price Widget */}
       {btcPrice && (
-        <div style={{ ...widgetBase }} onClick={() => openWindow('crypto')}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,179,0,0.4)'; e.currentTarget.style.background = 'rgba(255,179,0,0.08)'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(5,7,14,0.88)'; }}
+        <div style={widgetBase} onClick={() => openWindow('crypto')}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(251,191,36,0.45)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.14), 0 10px 26px rgba(251,191,36,0.25)'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.14), 0 6px 20px rgba(0,0,0,0.45)'; }}
         >
-          <span style={{ fontSize: 16 }}>₿</span>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 'bold', color: '#FFB300', fontFamily: 'var(--font-mono)' }}>
+          <span style={badge('251,191,36')}><Bitcoin size={18} strokeWidth={2} /></span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 15, fontWeight: 'bold', color: '#fbbf24', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>
               ${btcPrice.toLocaleString('en-US', { maximumFractionDigits: 0 })}
             </div>
-            <div style={{ fontSize: 9, color: '#555' }}>Bitcoin • Live</div>
+            <div style={{ fontSize: 9.5, color: '#94a3b8' }}>Bitcoin • Live</div>
           </div>
         </div>
       )}
 
       {/* SpaceX Countdown Widget */}
       {nextLaunch && countdown && (
-        <div style={{ ...widgetBase }} onClick={() => openWindow('space')}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,191,255,0.4)'; e.currentTarget.style.background = 'rgba(0,191,255,0.08)'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(5,7,14,0.88)'; }}
+        <div style={widgetBase} onClick={() => openWindow('space')}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(45,212,191,0.45)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.14), 0 10px 26px rgba(45,212,191,0.25)'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'inset 0 1px 1px rgba(255,255,255,0.14), 0 6px 20px rgba(0,0,0,0.45)'; }}
         >
-          <span style={{ fontSize: 16 }}>🚀</span>
-          <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 11, fontWeight: 'bold', color: '#00BFFF', fontFamily: 'var(--font-mono)' }}>{countdown}</div>
-            <div style={{ fontSize: 9, color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 100 }}>
+          <span style={badge('45,212,191')}><Rocket size={18} strokeWidth={2} /></span>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <div style={{ fontSize: 13, fontWeight: 'bold', color: '#2dd4bf', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>{countdown}</div>
+            <div style={{ fontSize: 9.5, color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {nextLaunch.name}
             </div>
           </div>
@@ -238,35 +269,35 @@ export const DesktopWidgets = memo(() => {
       )}
 
       {/* System Health Widget (v4) */}
-      <div style={{ ...widgetBase, justifyContent: 'space-between' }} title="Live JS heap usage (browser engine)"
-        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb),0.4)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
-      >
-        <span style={{ fontSize: 14 }}>🧠</span>
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 'bold', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+      <div style={{ ...widgetBase, cursor: 'default' }} title="Live JS heap usage (browser engine)">
+        <span style={badge('192,132,252')}><BrainCircuit size={18} strokeWidth={2} /></span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 14, fontWeight: 'bold', color: '#f8fafc', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>
             {jsHeap !== null ? `${jsHeap} MB` : '—'}
           </div>
-          <div style={{ fontSize: 9, color: '#555' }}>JS HEAP</div>
+          <div style={{ fontSize: 9.5, color: '#94a3b8' }}>JS Heap</div>
         </div>
       </div>
 
       {/* Sticky Note Widget (v4) */}
       <div
         style={{
-          ...widgetBase, flexDirection: 'column', alignItems: 'stretch', gap: 4,
-          background: 'rgba(255, 214, 90, 0.92)', border: '1px solid rgba(255,179,0,0.6)',
-          boxShadow: '0 6px 18px rgba(0,0,0,0.5)', padding: '6px 8px',
+          ...widgetBase, flexDirection: 'column', alignItems: 'stretch', gap: 6,
+          background: 'linear-gradient(150deg, rgba(255,214,90,0.96) 0%, rgba(255,199,0,0.92) 100%)',
+          border: '1px solid rgba(255,179,0,0.6)',
+          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.4), 0 8px 22px rgba(0,0,0,0.5)',
+          padding: '11px 13px', cursor: 'default',
         }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
         onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 9, fontWeight: 'bold', color: 'rgba(0,0,0,0.55)', fontFamily: 'var(--font-mono)', letterSpacing: 1 }}>📌 STICKY</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <StickyNote size={13} color="rgba(0,0,0,0.55)" />
+          <span style={{ fontSize: 9.5, fontWeight: 'bold', color: 'rgba(0,0,0,0.55)', fontFamily: 'var(--font-mono)', letterSpacing: 1, flex: 1 }}>STICKY</span>
           <button
             onClick={e => { e.stopPropagation(); setSticky(''); }}
             title="Clear note"
-            style={{ background: 'none', border: 'none', color: 'rgba(0,0,0,0.4)', cursor: 'pointer', fontSize: 10, fontFamily: 'var(--font-mono)' }}
+            style={{ background: 'none', border: 'none', color: 'rgba(0,0,0,0.4)', cursor: 'pointer', fontSize: 11, fontFamily: 'var(--font-mono)', lineHeight: 1 }}
           >✕</button>
         </div>
         <textarea
@@ -277,7 +308,7 @@ export const DesktopWidgets = memo(() => {
           rows={3}
           style={{
             width: '100%', resize: 'none', border: 'none', outline: 'none', background: 'transparent',
-            color: 'rgba(0,0,0,0.8)', fontSize: 10.5, fontFamily: 'var(--font-mono)', lineHeight: 1.45,
+            color: 'rgba(0,0,0,0.8)', fontSize: 11, fontFamily: 'var(--font-mono)', lineHeight: 1.5,
           }}
         />
       </div>
