@@ -1,9 +1,9 @@
 # 📋 SUDHI OS — Feature Catalog
 
-> Complete reference for every feature in SUDHI OS v4.0 Pro.
+> Complete reference for every feature in SUDHI OS v4.1 Pro.
 > All features are functional and client-side — nothing is decorative.
 
-**Legend:** ✅ functional · 🆕 new in v4
+**Legend:** ✅ functional · 🆕 new in v4.1
 
 ---
 
@@ -38,13 +38,13 @@
 | 1 | Multi-window | Unlimited simultaneous windows with cascade positioning |
 | 2 | Drag + double-click title | Move windows; double-click title to maximize/restore |
 | 3 | 8-direction resize | Edge & corner handles with min-size clamping |
-| 4 | Minimize / Maximize | Traffic-light dot controls (macOS style) |
+| 4 | Minimize / Maximize | 🆕 Premium custom gradient controls with hover glyph reveal, scale + glow, press animation, and sound |
 | 5 | Always-on-top pin | 📌 titlebar pin lifts window +500 z-index |
 | 6 | Alt+Tab switcher | Overlay with window thumbnails and keyboard cycling |
 | 7 | Taskbar tabs | Per-window tabs with right-click restore/minimize/close menu |
 | 8 | Edge snapping | Drag to left/right edge → half; top edge → maximize, with previews |
 | 🆕 9 | Corner quarter-snapping | Drag into any corner → quarter tile with dashed preview |
-| 🆕 10 | Snap Layouts flyout | Hover the green maximize dot → 6-zone visual layout picker |
+| 🆕 10 | Snap Layouts flyout | Hover the maximize button → 6-zone visual layout picker (stays open on hover) |
 | 11 | Lazy-loaded apps | Every app is code-split (`React.lazy`) for fast first paint |
 
 ---

@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🖥️ SUDHI OS v4.0 Pro
+# 🖥️ SUDHI OS v4.1 Pro
 
 **An interactive virtual desktop operating system — built as a developer portfolio**
 
-![Version](https://img.shields.io/badge/version-4.0_Pro-00FF88?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-4.1_Pro-00FF88?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -25,7 +25,7 @@
 
 It is the portfolio of **Sudhir Singh** ([@SudhirDevOps1](https://github.com/SudhirDevOps1)) — BCA student, DevOps & Full-Stack developer from Bihar, India.
 
-> **Everything you see works.** No fake placeholders, no dead buttons — every app responds, every toggle changes the system, and every API is real.
+> **Everything you see works.** No fake placeholders, no dead buttons — every app responds, every toggle changes the system, every API is real, and the browser/YouTube/Games apps are genuinely functional (no API keys, no broken embeds).
 
 ---
 
@@ -33,11 +33,11 @@ It is the portfolio of **Sudhir Singh** ([@SudhirDevOps1](https://github.com/Sud
 
 | Domain | What you get |
 |---|---|
-| 🪟 **Window Management** | Drag, resize (8 handles), minimize, maximize, always-on-top pin, **Snap Layouts flyout**, edge & **corner quarter-snapping** with live previews, Alt+Tab switcher |
-| 🚀 **32 Applications** | Terminal, AI Assistant, Browser, YouTube, Games Arcade, Dev Toolbox, Typing Test, Focus Timer, News reader, Crypto, Weather, Space tracker, Maps, Countries, Paint, Music & Video players, Gallery, File Explorer, Notepad, Calculator, Calendar, Converter, and more — [full list](./docs/FEATURES.md#-applications) |
+| 🪟 **Window Management** | Drag, resize (8 handles), minimize, maximize, always-on-top pin, **premium custom window controls**, **Snap Layouts flyout**, edge & **corner quarter-snapping** with live previews, Alt+Tab switcher |
+| 🚀 **32 Applications** | Terminal, AI Assistant, Browser (real embeddable web view), YouTube (plays any link, no API key), Games Arcade (unbeatable minimax Tic-Tac-Toe), Dev Toolbox, Typing Test, Focus Timer, News, Crypto, Weather, Space tracker, Maps, Countries, Paint, Music & Video players, Gallery, File Explorer, Notepad, Calculator, Calendar, Converter, and more — [full list](./docs/FEATURES.md#-applications) |
 | ⚡ **Shell** | Boot sequence, lock screen, sleep/shutdown states, **Quick Settings panel**, **Notification Center** with calendar, Command Palette with **inline calculator**, Start Menu with **search + all apps** |
-| 🎨 **Premium Look** | Animated aurora backdrop, Matrix rain, 7 accent themes, 8 gradient wallpaper presets + photo wallpapers, night light, real brightness dimmer, glassmorphism |
-| 🔊 **Sound** | Zero-asset WebAudio sound engine — window open/close, snaps, notifications, boot chime, master volume |
+| 🎨 **Premium Look** | **Real-OS gradient app icons**, **macOS-style dock with magnification**, **Liquid Glass widget panel**, vector system tray, custom **vector Start logo**, animated aurora backdrop, Matrix rain, 7 accent themes, 8 gradient wallpaper presets, night light, real brightness dimmer, glassmorphism |
+| 🔊 **Sound** | Zero-asset WebAudio sound engine — window open/close/minimize/maximize, snaps, notifications, boot chime, master volume |
 | 🔌 **Live APIs** | GitHub, Hacker News, CoinGecko, Open-Meteo, REST Countries, USGS Earthquakes, ISS position, AdviceSlip — all with **silent offline fallbacks** |
 | 🕹️ **Easter Eggs** | Konami party mode, secret logo clicks, terminal `hack` animation, and more |
 
@@ -88,7 +88,7 @@ Full setup, configuration & deployment guide: **[docs/GETTING_STARTED.md](./docs
 | `Ctrl + Alt + N` | Notification Center |
 | `Ctrl + L` | Lock screen |
 | Drag window → edge / corner | Snap half / quarter |
-| Hover green maximize dot | Snap Layouts menu |
+| Hover the maximize button | Snap Layouts menu |
 | `↑ ↑ ↓ ↓ ← → ← → B A` | Konami party mode 🎉 |
 
 ---
@@ -101,6 +101,7 @@ SudhirDevOpsv1.github.io/
 │   ├── App.tsx                  # Desktop shell, overlays, shortcuts
 │   ├── main.tsx                 # Entry point
 │   ├── data.ts                  # Static data, themes, wallpapers, icons
+│   ├── iconMeta.tsx             # Real-OS per-app gradient icon registry
 │   ├── index.css                # Design system + premium CSS layer
 │   ├── context/OSContext.tsx    # Window manager, notifications, power state
 │   ├── hooks/                   # useSystemSettings (reactive store hook)
@@ -129,8 +130,8 @@ SudhirDevOpsv1.github.io/
 |---|---|
 | [**FEATURES.md**](./docs/FEATURES.md) | Complete feature catalog — all 32 apps, 35+ terminal commands, shortcuts, easter eggs |
 | [**GETTING_STARTED.md**](./docs/GETTING_STARTED.md) | Setup, development, build, deployment & troubleshooting |
-| [**DATA_CONFIG.md**](./docs/DATA_CONFIG.md) | Edit the 11 JSON files to customize content without touching code |
-| [**CHANGELOG.md**](./docs/CHANGELOG.md) | Version history — v2 → v3 → v4 |
+| [**DATA_CONFIG.md**](./docs/DATA_CONFIG.md) | Edit the JSON data files — which ones are live-loaded and which are editable references |
+| [**CHANGELOG.md**](./docs/CHANGELOG.md) | Version history — v2 → v3 → v4 → v4.1 |
 
 ---
 
@@ -164,6 +165,6 @@ All network calls fail **silently** with `catch(() => {})` — the console stays
 
 **Built with ❤️, React, and far too much neon green**
 
-`SUDHI OS v4.0 • 32 apps • 100% client-side • MIT License`
+`SUDHI OS v4.1 • 32 apps • 100% client-side • MIT License`
 
 </div>

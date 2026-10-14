@@ -1,6 +1,7 @@
 import { memo, useState } from 'react';
 import type { SyntheticEvent } from 'react';
 import { Youtube as YoutubeIcon, Search, Play, ExternalLink } from 'lucide-react';
+import { useContainerWidth } from '../../lib/useContainerWidth';
 
 interface VideoItem {
   id: string;
@@ -13,15 +14,21 @@ interface VideoItem {
   description: string;
 }
 
-// All entries below are VERIFIED LIVE: each ID was checked against YouTube's
-// public oEmbed endpoint (200 OK) and its title/channel/duration/views come
-// straight from the real video pages. No API key is used anywhere.
+// All entries below are VERIFIED LIVE regular uploads (VODs): each ID was checked
+// against YouTube's public oEmbed endpoint (200 OK) and its title/channel/duration
+// come straight from the real video page. No API key is used anywhere.
+// NOTE: 24/7 *live streams* are deliberately excluded — their embeds render
+// "Video unavailable — this live stream recording is not available", so only
+// standard uploads are listed to guarantee playback.
 const VIDEO_LIBRARY: VideoItem[] = [
-  // Lofi / Music (working VODs & 24/7 streams)
-  { id: 'jfKfPfyJRdk', title: 'lofi hip hop radio \u{1F4DA} beats to relax/study to', channel: 'Lofi Girl', views: '', duration: 'LIVE', category: 'Lofi', thumbnail: 'https://i.ytimg.com/vi/jfKfPfyJRdk/hqdefault.jpg', description: '24/7 lofi hip hop radio to relax and study to.' },
-  { id: 'DWcJFNfaw9c', title: 'lofi hip hop radio \u{1F4A4} beats to sleep/chill to', channel: 'Lofi Girl', views: '', duration: 'LIVE', category: 'Lofi', thumbnail: 'https://i.ytimg.com/vi/DWcJFNfaw9c/hqdefault.jpg', description: 'Lofi Girl sleep/chill radio, streaming around the clock.' },
+  // Lofi / Music (working VODs)
+  { id: 'lTRiuFIWV54', title: '1 A.M Study Session \u{1F319} [lofi hip hop]', channel: 'Lofi Girl', views: '40M views', duration: '1:00:00', category: 'Lofi', thumbnail: 'https://i.ytimg.com/vi/lTRiuFIWV54/hqdefault.jpg', description: 'Lofi Girl 1 A.M study session — a standard upload that embeds cleanly.' },
+  { id: '1ZYbU82GVz4', title: 'Flying: Relaxing Sleep Music for Meditation & Stress Relief', channel: 'Soothing Relaxation', views: '120M views', duration: '1:00:24', category: 'Lofi', thumbnail: 'https://i.ytimg.com/vi/1ZYbU82GVz4/hqdefault.jpg', description: 'Calming sleep/relaxation music by Peder B. Helland for meditation and stress relief.' },
   { id: 'dQw4w9WgXcQ', title: 'Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)', channel: 'Rick Astley', views: '1.8B views', duration: '3:33', category: 'Music', thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg', description: 'The classic, remastered in 4K.' },
   { id: '9bZkp7q19f0', title: 'PSY - GANGNAM STYLE(\u{D55C}\u{AD6D}\uC5F4) M/V', channel: 'officialpsy', views: '6.1B views', duration: '4:12', category: 'Music', thumbnail: 'https://i.ytimg.com/vi/9bZkp7q19f0/hqdefault.jpg', description: "PSY's record-breaking global hit." },
+  { id: 'OPf0YbXqDm0', title: 'Mark Ronson - Uptown Funk (Official Video) ft. Bruno Mars', channel: 'Mark Ronson', views: '5.2B views', duration: '4:30', category: 'Music', thumbnail: 'https://i.ytimg.com/vi/OPf0YbXqDm0/hqdefault.jpg', description: 'Uptown Funk official music video.' },
+  { id: 'kJQP7kiw5Fk', title: 'Luis Fonsi - Despacito ft. Daddy Yankee', channel: 'Luis Fonsi', views: '8.6B views', duration: '4:42', category: 'Music', thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/hqdefault.jpg', description: 'The most-viewed music video on YouTube.' },
+  { id: 'fJ9rUzIMcZQ', title: 'Queen - Bohemian Rhapsody (Official Video Remastered)', channel: 'Queen Official', views: '1.9B views', duration: '5:59', category: 'Music', thumbnail: 'https://i.ytimg.com/vi/fJ9rUzIMcZQ/hqdefault.jpg', description: 'Queen\u2019s Bohemian Rhapsody, remastered.' },
   // Coding / Tech
   { id: 'rfscVS0vtbw', title: 'Learn Python - Full Course for Beginners [Tutorial]', channel: 'freeCodeCamp.org', views: '49M views', duration: '4:26:52', category: 'Coding', thumbnail: 'https://i.ytimg.com/vi/rfscVS0vtbw/hqdefault.jpg', description: 'Full Python programming tutorial for beginners.' },
   { id: 'PkZNo7MFNFg', title: 'Learn JavaScript - Full Course for Beginners', channel: 'freeCodeCamp.org', views: '21M views', duration: '3:26:43', category: 'Coding', thumbnail: 'https://i.ytimg.com/vi/PkZNo7MFNFg/hqdefault.jpg', description: 'Complete JavaScript tutorial.' },
@@ -63,6 +70,7 @@ const handleThumbError = (e: SyntheticEvent<HTMLImageElement>, id: string) => {
 };
 
 export const YoutubeWindow = memo(() => {
+  const { ref, width } = useContainerWidth<HTMLDivElement>();
   const [activeVideo, setActiveVideo] = useState<VideoItem>(VIDEO_LIBRARY[0]);
   const [category, setCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -118,8 +126,12 @@ export const YoutubeWindow = memo(() => {
 
   const openOnYouTube = () => window.open(`https://www.youtube.com/watch?v=${activeVideo.id}`, '_blank');
 
+  // Responsive: below ~760px the fixed 270px sidebar would squeeze the player,
+  // so it collapses into a horizontal strip under the player instead.
+  const compact = width > 0 && width < 760;
+
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#0f0f0f', fontFamily: 'sans-serif', color: '#fff' }}>
+    <div ref={ref} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#0f0f0f', fontFamily: 'sans-serif', color: '#fff' }}>
 
       {/* YouTube Header */}
       <div style={{ padding: '10px 16px', background: '#0f0f0f', borderBottom: '1px solid #272727', display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -176,9 +188,9 @@ export const YoutubeWindow = memo(() => {
         </div>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: compact ? 'column' : 'row', overflow: 'hidden' }}>
         {/* Main Player Area */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden', minHeight: 0 }}>
           {/* Iframe Player (privacy-enhanced embed, no cookies needed) */}
           <div style={{ flex: 1, position: 'relative', background: '#000' }}>
             <iframe
@@ -211,10 +223,17 @@ export const YoutubeWindow = memo(() => {
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div style={{ width: 270, borderLeft: '1px solid #272727', display: 'flex', flexDirection: 'column', background: '#0f0f0f' }}>
+        {/* Sidebar — fixed rail on wide windows, horizontal strip when compact */}
+        <div style={{
+          width: compact ? '100%' : 270,
+          height: compact ? 172 : 'auto',
+          flexShrink: 0,
+          borderLeft: compact ? 'none' : '1px solid #272727',
+          borderTop: compact ? '1px solid #272727' : 'none',
+          display: 'flex', flexDirection: compact ? 'row' : 'column', background: '#0f0f0f', overflow: 'hidden',
+        }}>
           {/* Category Filter */}
-          <div style={{ padding: '8px 8px', borderBottom: '1px solid #272727', display: 'flex', gap: 4, overflowX: 'auto' }}>
+          <div style={{ padding: '8px 8px', borderBottom: compact ? 'none' : '1px solid #272727', borderRight: compact ? '1px solid #272727' : 'none', display: 'flex', gap: 4, overflowX: compact ? 'visible' : 'auto', flexDirection: compact ? 'column' : 'row', flexShrink: 0, maxHeight: compact ? '100%' : undefined, overflowY: compact ? 'auto' : 'visible' }}>
             {CATEGORIES.map(c => (
               <button key={c} onClick={() => setCategory(c)}
                 style={{ padding: '4px 10px', border: 'none', borderRadius: 12, background: category === c ? '#fff' : '#272727', color: category === c ? '#000' : '#fff', cursor: 'pointer', fontSize: 11, whiteSpace: 'nowrap', fontWeight: category === c ? 'bold' : 'normal' }}>
@@ -224,7 +243,7 @@ export const YoutubeWindow = memo(() => {
           </div>
 
           {/* Video List */}
-          <div style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{ flex: 1, overflowY: 'auto', overflowX: compact ? 'hidden' : 'visible', display: compact ? 'flex' : 'block' }}>
             {filtered.length === 0 && (
               <div style={{ padding: 16, fontSize: 11, color: '#777', lineHeight: 1.5 }}>
                 No videos match this filter. Clear the search box or pick another category — or paste a YouTube link above to play it directly.
@@ -232,7 +251,7 @@ export const YoutubeWindow = memo(() => {
             )}
             {filtered.map(v => (
               <div key={v.id} onClick={() => playVideo(v)}
-                style={{ padding: '8px', cursor: 'pointer', display: 'flex', gap: 8, borderBottom: '1px solid #1a1a1a', background: activeVideo.id === v.id ? 'rgba(255,255,255,0.08)' : 'transparent', transition: 'background 0.1s' }}
+                style={{ padding: '8px', cursor: 'pointer', display: 'flex', gap: 8, borderBottom: compact ? 'none' : '1px solid #1a1a1a', borderRight: compact ? '1px solid #1a1a1a' : 'none', minWidth: compact ? 240 : undefined, flexDirection: compact ? 'column' : 'row', background: activeVideo.id === v.id ? 'rgba(255,255,255,0.08)' : 'transparent', transition: 'background 0.1s', flexShrink: 0 }}
                 onMouseEnter={e => { if (activeVideo.id !== v.id) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
                 onMouseLeave={e => { if (activeVideo.id !== v.id) e.currentTarget.style.background = 'transparent'; }}
               >

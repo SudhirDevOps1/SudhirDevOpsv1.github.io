@@ -1,5 +1,6 @@
 import { memo, useState, useRef, useCallback, useEffect, type CSSProperties } from 'react';
 import { ExternalLink, RefreshCw, Globe, AlertCircle, Home, Search, X } from 'lucide-react';
+import { useContainerWidth } from '../../lib/useContainerWidth';
 
 const HOME_URL = 'https://en.m.wikipedia.org/wiki/Main_Page';
 
@@ -58,6 +59,7 @@ const normalizeUrl = (u: string) =>
 const LOAD_TIMEOUT_MS = 12000;
 
 export const BrowserWindow = memo(() => {
+  const { ref, width } = useContainerWidth<HTMLDivElement>();
   const [urlInput, setUrlInput] = useState(HOME_URL);
   const [activeUrl, setActiveUrl] = useState(HOME_URL);
   const [history, setHistory] = useState<string[]>([HOME_URL]);
@@ -186,6 +188,9 @@ export const BrowserWindow = memo(() => {
 
   const hostileDomain = hostileDomainOf(activeUrl);
   const showHostileBanner = hostileDomain !== null && !hostileDismissed;
+  // Responsive: below ~700px the fixed 200px site drawer would squeeze the page,
+  // so it collapses (its bookmarks remain reachable via the bookmarks bar above).
+  const compact = width > 0 && width < 700;
 
   const smallBtn: CSSProperties = {
     padding: '5px 10px', border: '1px solid #222', background: '#111', color: '#aaa',
@@ -194,10 +199,10 @@ export const BrowserWindow = memo(() => {
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#08090d', fontFamily: 'var(--font-mono)' }}>
+    <div ref={ref} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#08090d', fontFamily: 'var(--font-mono)' }}>
 
-      {/* Browser Toolbar */}
-      <div style={{ padding: '8px 12px', borderBottom: '1px solid #13151e', background: '#0d0f18', display: 'flex', gap: 8, alignItems: 'center' }}>
+      {/* Browser Toolbar — wraps onto a second row when the window gets narrow */}
+      <div style={{ padding: '8px 12px', borderBottom: '1px solid #13151e', background: '#0d0f18', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         {/* Nav Buttons */}
         <button onClick={goBack} disabled={histIdx === 0}
           style={{ padding: '5px 10px', border: '1px solid #222', background: '#111', color: histIdx === 0 ? '#333' : '#aaa', borderRadius: 6, cursor: histIdx === 0 ? 'default' : 'pointer', fontSize: 14 }}>
@@ -322,8 +327,10 @@ export const BrowserWindow = memo(() => {
           )}
         </div>
 
-        {/* Site Drawer */}
-        <div style={{ width: 200, borderLeft: '1px solid #0f111a', background: '#09090f', display: 'flex', flexDirection: 'column' }}>
+        {/* Site Drawer — hidden on narrow windows so the page keeps its width
+            (bookmarks remain reachable through the bookmarks bar above) */}
+        {!compact && (
+        <div style={{ width: 200, flexShrink: 0, borderLeft: '1px solid #0f111a', background: '#09090f', display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '8px', borderBottom: '1px solid #0f111a' }}>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search bookmarks..."
               style={{ width: '100%', padding: '5px 8px', background: '#0f1018', border: '1px solid #1a1c28', color: '#fff', borderRadius: 4, fontSize: 10, outline: 'none', fontFamily: 'var(--font-mono)', boxSizing: 'border-box' }} />
@@ -360,6 +367,7 @@ export const BrowserWindow = memo(() => {
             Most sites block iframe embedding due to browser security (X-Frame-Options)
           </div>
         </div>
+        )}
       </div>
     </div>
   );
